@@ -1,8 +1,8 @@
 project = 'Sphinx Needs Data Explorer'
 copyright = '2024, MP'
 author  = 'MP'
-release = '1.0'
-version = '1.0'
+release = '0.7'
+version = '0.7'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -34,4 +34,13 @@ html_theme_options = {
     "home_page_in_toc" : True,
     "use_issues_button": True,
     "use_edit_page_button": True, 
+}
+
+sphinx_needs_data_explorer_config={
+    'link_types':['links'],
+    'type_color_map': {
+        'req'   :'#DEFFDC',
+        'spec'  :'#FFFF99',
+        'test'  :'#87CEFA'
+    }
 }

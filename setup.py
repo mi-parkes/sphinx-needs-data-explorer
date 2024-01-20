@@ -11,6 +11,7 @@ setup(
     license="MIT License",
     package_data={
         "sphinx_needs_data_explorer": [
+            "_static/sphinx_needs_data_explorer.css",
             "_static/sphinx_needs_data_explorer.html",
             "_static/jquery/jquery-3.7.1.min",
             "_static/jquery/LICENSE.txt",

@@ -4,6 +4,8 @@
 to your Sphinx generated documentation 
 when exploring [Sphinx-Needs](https://github.com/useblocks/sphinx-needs) data.
 
+![](https://github.com/mi-parkes/sphinx-needs-data-explorer/blob/main/doc/source/_static/sphinx-needs-data-explorer.gif)
+
 ## Installation
 
 You can install the package with pip

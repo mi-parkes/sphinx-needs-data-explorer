@@ -9,6 +9,7 @@ version = '0.7'
 extensions = [
     'sphinx_needs',
     'sphinx_copybutton',
+    'sphinx.ext.githubpages',
     'sphinx_needs_data_explorer'
 ]
 

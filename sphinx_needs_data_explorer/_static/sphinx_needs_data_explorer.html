@@ -25,16 +25,16 @@
         <style type="text/css">
             .ack-table {
                 width: 100%;
-                border-collapse: collapse; /* Optional: for better border rendering */
+                border-collapse: collapse;
             }
             .ack-th {
-                background-color: #4CAF50; /* Set your desired background color */
-                color: white; /* Set text color for better visibility */
+                background-color: #4CAF50;
+                color: white;
                 padding: 10px;
             
             }
             .ack-th, .ack-td {
-                border: 1px solid #dddddd; /* Optional: add borders to cells */
+                border: 1px solid #dddddd;
                 padding: 8px;
                 text-align: left;
             }
@@ -63,10 +63,6 @@
             .select2-selection__rendered {
                 font-size: 22px;
             }
-/*             
-            .select2-results { background-color: #00f; }
-             .select2-search { background-color: #00f; }
- */
 
             #mynetwork {
                 position: relative;
@@ -102,7 +98,6 @@
             .row>select,
             .row>input
              {
-                /*demo purposes */
                 font-size: 22px;
                 margin: 5px 10px;
                 height: 30px;
@@ -110,7 +105,6 @@
             }
             .row>button
              {
-                /*demo purposes */
                 font-size: 22px;
                 margin: 5px 5px;
                 height: 30px;
@@ -323,12 +317,6 @@
                 </div>
                 <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                 </select>
-                <!-- <button onclick="openWindow()">Open Window</button> -->
-<!-- 
-                <textarea title="textArea" id="freeform" name="freeform" rows="4" cols="50">
-                Enter text here...
-                </textarea>
- -->
                 <input title="customFilter" type="text" id="input">
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
@@ -590,17 +578,7 @@
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
             });
 
-            type2color={
-                'func'  :'#D4E6F1',
-                'uc'    :'#D4E6F1',
-                'req'   :'#DEFFDC',
-                'dia'   :'#D4E6F1',
-                'spec'  :'#FFFF99',
-                'need'  :'#668cff',
-                'test'  :'#87CEFA',
-                'impl'  :'#ffcccc',
-            };
-
+            type2color= {{TYPE2COLOR}};
             window.addEventListener('resize', handleResize);
 
             function handleResize() {
@@ -609,7 +587,7 @@
             }                
 
             function parse_links(need) {
-                link_types = ['links', 'satisfies', 'specifies', 'implements', 'verifies', 'composed', 'part'];
+                link_types = {{ LINK_TYPES }};
                 links = [];
                 for(const link_type of link_types) {
                     if(link_type in need)
@@ -958,15 +936,33 @@
                     console.log('tmp_nodes empty!');
                 }
                 for (let each of tmp_nodes) {
-                    // this is temporary debug assignment
-                    //gnodes[each]["title-html"]=`<b>type</b>=${gnodes[each]["data"]["type"]}<br><b>sum</b>=${gnodes[each]["data"]["sum"]}<br><b>children</b>=${children[each].length}<br><b>depth</b>=${gnodes[each]["data"]["depth"]}`
-                    /////gnodes[each]["title-html"]=`<b>id</b>=${gnodes[each]["id"]}<br><b>type</b>=${gnodes[each]["data"]["type"]}<br><b>title</b>=${gnodes[each]["data"]["title"]}<br><b>description</b>=${gnodes[each]["data"]["description"]}`
                     if("lineno" in gnodes[each]["data"])
                         lineno=gnodes[each]["data"]["lineno"]
                     else
                         lineno=1
-                    //gnodes[each]["title"]=`id=${gnodes[each]["id"]}\ntype=${gnodes[each]["data"]["type"]}`
-                    gnodes[each]["title-html"]=`<b>id</b>=${gnodes[each]["id"]}<br><b>type</b>=${gnodes[each]["data"]["type"]}<br><b>title</b>=${gnodes[each]["data"]["title"]}<br><a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">docname</a><br><b>description</b>=${gnodes[each]["data"]["description"]}`
+
+                    gnodes[each]["title-html"]=`
+                    <table class="ack-table">
+                        <thead>
+                        <tr>
+                            <th class="ack-td">id</th>
+                            <th class="ack-td">type</th>
+                            <th class="ack-td">title</th>
+                            <th class="ack-td">docname</th>
+                            <th class="ack-td">description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="ack-td">${gnodes[each]["id"]}</td>
+                            <td class="ack-td">${gnodes[each]["data"]["type"]}</td>
+                            <td class="ack-td">${gnodes[each]["data"]["title"]}</td>
+                            <td class="ack-td"><a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
+                            <td class="ack-td">${gnodes[each]["data"]["description"]}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                    `                    
                     var opt = document.createElement('option');
                             opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
                             svalue.appendChild(opt);
@@ -1120,9 +1116,8 @@
                         }
                     }
                 };
-                //network.fit();                
-                network = new vis.Network(container, data, options);
 
+                network = new vis.Network(container, data, options);
                 saveOpt = { 
                     interaction: JSON.parse( JSON.stringify( network.interactionHandler.options ) ) 
                 };
@@ -1139,8 +1134,6 @@
                 });
 
                 network.on("doubleClick", function (properties) {
-                    //alert('DoubleClick');
-
                     var ids = properties.nodes;
                     if(ids.length==0) {
                         return
@@ -1174,7 +1167,27 @@
                     }
                 });
                 
+                function updateCenterOnZoom(network, scale) {
+                    var canvas = network.canvas.frame.canvas;
+                    var container = network.getContainer();
+
+                    var containerRect = container.getBoundingClientRect();
+                    var x = containerRect.width / 2;
+                    var y = containerRect.height / 2;
+
+                    var canvasCenter = network.DOMtoCanvas({ x: x, y: y });
+
+                    var deltaX = (canvas.width / 2 - canvasCenter.x) * (scale - 1);
+                    var deltaY = (canvas.height / 2 - canvasCenter.y) * (scale - 1);
+
+                    network.moveTo({
+                        position: { x: network.getViewPosition().x - deltaX, y: network.getViewPosition().y - deltaY },
+                        scale: scale
+                    });
+                }                
                 network.on("zoom",function(params){
+                    updateCenterOnZoom(network, params.scale);
+                    return;
                     let scale = network.getScale()
                     if(verbose)
                         console.log(`zoom handler: scale=${scale} MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
@@ -1295,6 +1308,7 @@
                 edges = new vis.DataSet(tmp_edges);
                 network.setData({ nodes: nodes, edges: edges });
                 network.fit({maxZoomLevel:0.4});
+                lastZoomPosition = {x:0, y:0}
             }
             
             $(document).ready(function() {

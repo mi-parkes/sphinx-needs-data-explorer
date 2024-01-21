@@ -13,6 +13,13 @@ You can install the package with pip
 
     pip install sphinx-needs-data-explorer
 
+Alternatively
+
+    git clone https://github.com/mi-parkes/sphinx-needs-data-explorer.git
+    cd sphinx-needs-data-explorer
+    python -m build --wheel
+    pip install dist/sphinx_needs_data_explorer-0.7.0-py3-none-any.whl
+
 ## Activation
 
 In your conf.py configuration file, add `sphinx_needs_data_explorer` to your extensions list. And, please, make sure that `sphinx_needs` extension is configured to generate needs.json file in the root of your documentation E.g.:

@@ -33,12 +33,9 @@ In your conf.py configuration file, add `sphinx_needs_data_explorer` to your ext
     needs_build_json = True
 
 
-Then, add the `sphinx_needs_data_explorer` role in your index.rst file or in any other convenient place(s) in your documentation project.
+Add the following role in your index.rst file.
 
     :sphinx_needs_data_explorer:`Sphinx-Needs Data Explorer`
-
-
-In your conf.py configuration file, add this extension to your extensions list.
 
 ## Configuration
 
@@ -56,8 +53,3 @@ The following configuration parameters are supported:
             'test'  :'#87CEFA'
         }
       }
-
-Add the following role in your index.rst file.
-
-
-    :sphinx_needs_data_explorer:`Sphinx-Needs Data Explorer`

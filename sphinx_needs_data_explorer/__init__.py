@@ -83,7 +83,7 @@ def add_files(app, config):
 
 def SphinxNeedsDataExplorer_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
     node = nodes.raw('', 
-        f"""<a href="/_static/sphinx_needs_data_explorer.html" 
+        f"""<a href="_static/sphinx_needs_data_explorer.html" 
         class="custom-reference" title="Follow this link to explore your sphinx-needs data">{text}</a>""", format='html')
     return [node], []
 

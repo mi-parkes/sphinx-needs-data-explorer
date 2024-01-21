@@ -56,8 +56,7 @@ The following configuration parameters are supported:
       }
    }
 
-Add the following role in your index.rst file or in any other convenient place(s) in your documentation project.
-
+Add the following role in your index.rst file.
 
 .. code-block:: rst
 

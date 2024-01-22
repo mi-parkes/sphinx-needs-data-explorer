@@ -895,6 +895,10 @@
                 return str.trim().replace(/\n/g,'');
             }
 
+            function trimStringIfLongerThan(str,maxLen) {
+                return str.length>maxLen?str.slice(0,maxLen)+"...":str;
+            }
+
             function handleSelectTypeEvent() {
                 clearFilter();
                 let stype=document.getElementById('select-type');
@@ -935,9 +939,13 @@
                         lineno=gnodes[each]["data"]["lineno"]
                     else
                         lineno=1
-                    const maxDescrLen=10
-                    const descr=gnodes[each]["data"]["description"].length()>maxDescrLen? 
-                        gnodes[each]["data"]["description"].slice(0,maxDescrLen)+"...":gnodes[each]["data"]["description"]
+
+                    const id=trimStringIfLongerThan(gnodes[each]["id"],10);
+                    const type=trimStringIfLongerThan(gnodes[each]["data"]["type"],10);
+                    const title=trimStringIfLongerThan(gnodes[each]["data"]["title"],80);
+                    const description=trimStringIfLongerThan(gnodes[each]["data"]["description"],180);
+                    const docname=trimStringIfLongerThan(`${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}`,35);
+
                     gnodes[each]["title-html"]=`
                     <table class="ack-table">
                         <thead>
@@ -951,11 +959,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="ack-td">${gnodes[each]["id"]}</td>
-                            <td class="ack-td">${gnodes[each]["data"]["type"]}</td>
-                            <td class="ack-td">${gnodes[each]["data"]["title"]}</td>
-                            <td class="ack-td"><a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
-                            <td class="ack-td">${descr}</td>
+                            <td class="ack-td" title="${id}">${id}</td>
+                            <td class="ack-td" title="${type}">${type}</td>
+                            <td class="ack-td" title="${gnodes[each]["data"]["title"]}">${title}</td>
+                            <td class="ack-td">
+                                <a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}"
+                                title="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${docname}</a></td>
+                            <td class="ack-td" title="${gnodes[each]["data"]["description"]}">${description}</td>
                         </tr>
                     </tbody>
                     </table>

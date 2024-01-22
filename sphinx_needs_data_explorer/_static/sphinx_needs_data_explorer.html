@@ -935,7 +935,9 @@
                         lineno=gnodes[each]["data"]["lineno"]
                     else
                         lineno=1
-
+                    const maxDescrLen=10
+                    const descr=gnodes[each]["data"]["description"].length()>maxDescrLen? 
+                        gnodes[each]["data"]["description"].slice(0,maxDescrLen)+"...":gnodes[each]["data"]["description"]
                     gnodes[each]["title-html"]=`
                     <table class="ack-table">
                         <thead>
@@ -953,7 +955,7 @@
                             <td class="ack-td">${gnodes[each]["data"]["type"]}</td>
                             <td class="ack-td">${gnodes[each]["data"]["title"]}</td>
                             <td class="ack-td"><a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
-                            <td class="ack-td">${gnodes[each]["data"]["description"]}</td>
+                            <td class="ack-td">${descr}</td>
                         </tr>
                     </tbody>
                     </table>

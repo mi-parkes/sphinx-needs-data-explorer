@@ -28,11 +28,33 @@
                 padding: 10px;
             
             }
-            .ack-th, .ack-td {
+            .ack-th, .ack-td  .at-th, .at-td {
                 border: 1px solid #dddddd;
                 padding: 8px;
                 text-align: left;
             }
+
+            /* Define column widths in percentage */
+            .at-th:first-child, .at-td:first-child {
+                width: 10%;
+            }
+
+            .at-th:nth-child(2), .at-td:nth-child(2) {
+                width: 10%;
+            }
+
+            .at-th:nth-child(3), .at-td:nth-child(3) {
+                width: 30%;
+            }
+
+            .at-th:nth-child(4), .at-td:nth-child(4) {
+                width: 20%;
+            }
+
+            .at-th:nth-child(5), .at-td:nth-child(5) {
+                width: 30%;
+            }
+
             .typedrop {
                 font-size: 22px;
             }
@@ -353,6 +375,7 @@
             var children;
             var children_edges;
             var parents;
+            var parents_edges;
             var 
             needsURL = "../needs.json";
             var parser;
@@ -752,7 +775,7 @@
                 `;
                 parser=peg.generate(grammar,traceParser?{trace:true}:{});
             }            
-            function processJSON(data) {                
+            function processJSON(data) {
                 var vkey="";
                 Object.keys(data['versions']).forEach(function(key) {
                     vkey=key;
@@ -766,6 +789,7 @@
                 children={};
                 children_edges={};
                 parents={};
+                parents_edges={};
                 gnodes={};
                 let typeSet = new Set(['any']);
                 for(const key in needs) {
@@ -774,6 +798,7 @@
                     children[key]=[];
                     children_edges[key]=[];
                     parents[key]=[];
+                    parents_edges[key]=[];
                     typeSet.add(needs[key]['type']);
                     var jsonData={'data':{
                         "type"  :       needs[key]['type'],
@@ -810,6 +835,7 @@
                             children[to].push(key);
                             children_edges[to].push(jsonData);
                             parents[key].push(to);
+                            parents_edges[key].push(jsonData);
                         }
                     }
                 }
@@ -820,22 +846,6 @@
                         opt.innerHTML = elm;
                         stype.appendChild(opt);
                 }
-/*                
-                const str2 = Array.from(typeSet).join(' ,');
-                console.log(str2);
-                let keys = Array();
-                let stype=document.getElementById('select-type')
-                for(elm of ['any','need','func','req','uc','dia','spec','impl','test']) {
-                    if(typeSet.has(elm)) {
-                        keys.push(elm)                    
-                        var opt = document.createElement('option');
-                        opt.value = elm;
-                        opt.innerHTML = elm;
-                        stype.appendChild(opt);
-                    }
-                }
-                console.log(keys.join(' ,'));
-*/
                 computeNodeDepth();
                 computeNodeSumOfSubnodes();
                 return;
@@ -882,10 +892,6 @@
                 var text="";
                 if(svalue.options.length>0) {
                      text = svalue.options[svalue.selectedIndex].text;
-                     //if('NeedID_F7A07' in gnodes)
-                     //   text = 'NeedID_F7A07';
-                    //if('ReqID_B0003' in gnodes)
-                    //    text = 'ReqID_B0003';
                 }
                 topDownMode=true;
                 drawFilteredGraph(getID(text));
@@ -893,6 +899,10 @@
 
             function removeNewlinesAndTrimString(str) {
                 return str.trim().replace(/\n/g,'');
+            }
+
+            function trimStringIfLongerThan(str,maxLen) {
+                return str.length>maxLen?str.slice(0,maxLen)+"...":str;
             }
 
             function handleSelectTypeEvent() {
@@ -936,24 +946,32 @@
                     else
                         lineno=1
 
+                    const id=trimStringIfLongerThan(gnodes[each]["id"],10);
+                    const type=trimStringIfLongerThan(gnodes[each]["data"]["type"],10);
+                    const title=trimStringIfLongerThan(gnodes[each]["data"]["title"],80);
+                    const description=trimStringIfLongerThan(gnodes[each]["data"]["description"],180);
+                    const docname=trimStringIfLongerThan(`${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}`,35);
+
                     gnodes[each]["title-html"]=`
                     <table class="ack-table">
                         <thead>
                         <tr>
-                            <th class="ack-td">id</th>
-                            <th class="ack-td">type</th>
-                            <th class="ack-td">title</th>
-                            <th class="ack-td">docname</th>
-                            <th class="ack-td">description</th>
+                            <th class="at-td">id</th>
+                            <th class="at-td">type</th>
+                            <th class="at-td">title</th>
+                            <th class="at-td">docname</th>
+                            <th class="at-td">description</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="ack-td">${gnodes[each]["id"]}</td>
-                            <td class="ack-td">${gnodes[each]["data"]["type"]}</td>
-                            <td class="ack-td">${gnodes[each]["data"]["title"]}</td>
-                            <td class="ack-td"><a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
-                            <td class="ack-td">${gnodes[each]["data"]["description"]}</td>
+                            <td class="at-td" title="${id}">${id}</td>
+                            <td class="at-td" title="${type}">${type}</td>
+                            <td class="at-td" title="${gnodes[each]["data"]["title"]}">${title}</td>
+                            <td class="at-td">
+                                <a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}"
+                                title="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${docname}</a></td>
+                            <td class="at-td" title="${gnodes[each]["data"]["description"]}">${description}</td>
                         </tr>
                     </tbody>
                     </table>
@@ -996,7 +1014,7 @@
 
             function clearFilter() {
                 $('#select-need-id').val('');
-                $('#select-need-id').empty();               
+                $('#select-need-id').empty();
             }
 
             function getInteractionData() {
@@ -1012,36 +1030,6 @@
                                 // enabled:!textBoxEditingActive
                             }
                         };
-            }
-            function drawCurrentSelection(pnode) {
-                var pnodeId=pnode.id
-                const expanded=!pnode.expanded;
-                const visited = [];
-                var stack = [];
-                stack=[pnodeId];
-                var clickedNode = nodes.get(pnodeId);
-                
-                nodes.update({id:pnodeId,expanded:expanded,
-                    shape:expanded?'box':'big ellipse'});
-                while(stack.length) {
-                    const currentNode = stack.pop();
-                    if(visited.includes(currentNode))
-                        continue;
-                    visited.push(currentNode);
-                    if(currentNode!=pnodeId) {
-                        nodes.update({id:currentNode,hidden:!expanded});
-                        if(nodes.get(currentNode).expanded) {
-                            for(const node of children[currentNode])
-                                stack.push(gnodes[node].id);
-                        }
-                    } else {
-                        for(const node of children[currentNode]) {
-                            if(topDownMode || !topDownMode && parents[node].length==1)
-                                stack.push(gnodes[node].id);
-                        }
-                    }
-                }
-                network.fit({maxZoomLevel:0.4});                
             }
 
             function initNetwork() {
@@ -1179,7 +1167,8 @@
                         position: { x: network.getViewPosition().x - deltaX, y: network.getViewPosition().y - deltaY },
                         scale: scale
                     });
-                }                
+                }
+
                 network.on("zoom",function(params){
                     //updateCenterOnZoom(network, params.scale);
                     //return;
@@ -1204,22 +1193,22 @@
                     }
                 });
 
-            function doOnHoverNode(e) {
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                }
-                timeoutId = setTimeout(function() {
-                    const tooltipElement = document.getElementsByClassName('vis-tooltip');
-                    if(tooltipElement!=null) {
-                        try {
-                            tooltipElement[0].style.visibility='hidden';
-                        }
-                        catch(err) {
-                            console.log(`Caught exception '${err.message}' while processing "tooltipElement[0].style.visibility='hidden'"`)
-                        }
+                function doOnHoverNode(e) {
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
                     }
-                }, 4000);
-            }
+                    timeoutId = setTimeout(function() {
+                        const tooltipElement = document.getElementsByClassName('vis-tooltip');
+                        if(tooltipElement!=null) {
+                            try {
+                                tooltipElement[0].style.visibility='hidden';
+                            }
+                            catch(err) {
+                                console.log(`Caught exception '${err.message}' while processing "tooltipElement[0].style.visibility='hidden'"`)
+                            }
+                        }
+                    }, 4000);
+                }
 
                 network.on("dragEnd",function(params){
                     lastZoomPosition = network.getViewPosition()
@@ -1259,39 +1248,77 @@
                         //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);                            
                         handleSelectNextNodeEvent();
                     }
-                    // if(tooltipElement!=null && (event.keyCode === 27)) {
-                    //     ////tooltipElement[0].style.visibility='hidden';
-                    // }
-                    //inKeyupHandler=false;
                 });
             }
 
+            function drawCurrentSelection(pnode) {
+                var pnodeId=pnode.id
+                const expanded=!pnode.expanded;
+                const visited = [];
+                var stack = [];
+                stack=[pnodeId];
+                var clickedNode = nodes.get(pnodeId);
+                
+                nodes.update({id:pnodeId,expanded:expanded,
+                    shape:expanded?'box':'big ellipse'});
+                while(stack.length) {
+                    const currentNode = stack.pop();
+                    if(visited.includes(currentNode))
+                        continue;
+                    visited.push(currentNode);
+                    if(currentNode!=pnodeId) {
+                        nodes.update({id:currentNode,hidden:!expanded});
+                        if(nodes.get(currentNode).expanded) {
+                            for(const node of children[currentNode])
+                                stack.push(gnodes[node].id);
+                        }
+                    } else {
+                        for(const node of children[currentNode]) {
+                            if(topDownMode || !topDownMode && parents[node].length==1)
+                                stack.push(gnodes[node].id);
+                        }
+                    }
+                }
+                network.fit({maxZoomLevel:0.4});                
+            }
+
             function drawFilteredGraph(rootNodeLabel) {
-                //topDownMode=true;
                 const visited = [];
                 var stack = [];
                 if(rootNodeLabel in gnodes)
                     stack=[gnodes[rootNodeLabel]];
                 tmp_nodes=[];
                 let tmp_edges=[];
-                while(stack.length) {
-                    const currentNode = stack.pop();
-                    if(visited.includes(currentNode.label))
-                        continue;
-                    visited.push(currentNode.label);
-                    var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                    tmp_nodes.push(clonedObject);                  
-                    for(const node of children[currentNode.label]) {
-                        stack.push(gnodes[node]);
-                        if(!topDownMode) {
-                            for(const n of parents[node])
-                                stack.push(gnodes[n]);
+                if(topDownMode) {
+                    while(stack.length) {
+                        const currentNode = stack.pop();
+                        if(visited.includes(currentNode.label))
+                            continue;
+                        visited.push(currentNode.label);
+                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                        tmp_nodes.push(clonedObject);                  
+                        for(const node of children[currentNode.label]) {
+                            stack.push(gnodes[node]);
+                            if(!topDownMode) {
+                                for(const n of parents[node])
+                                    stack.push(gnodes[n]);
+                            }
                         }
+                        tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                     }
-                    tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
+                } else {
+                    while(stack.length) {
+                        const currentNode = stack.pop();
+                        if(visited.includes(currentNode.label))
+                            continue;
+                        visited.push(currentNode.label);
+                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                        tmp_nodes.push(clonedObject);
+                        for(const node of parents[currentNode.label])
+                            stack.push(gnodes[node]);
+                        tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                    }
                 }
-
-                //console.log(`tmp_edges.length=${tmp_edges.length}`);
                 if(verbose) {
                     console.log("nodes");
                     console.log(tmp_nodes);

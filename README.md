@@ -1,10 +1,18 @@
 ## About
 
-`sphinx_needs_data_explorer` adds new interactivity 
-to your Sphinx generated documentation 
-when exploring [Sphinx-Needs](https://github.com/useblocks/sphinx-needs) data.
+`sphinx_needs_data_explorer` enhances the interactivity of your Sphinx-generated documentation by enabling you to explore [Sphinx-Needs](https://github.com/useblocks/sphinx-needs) data.
 
-![](https://github.com/mi-parkes/sphinx-needs-data-explorer/blob/main/doc/source/_static/sphinx-needs-data-explorer.gif)
+Example 1: exploring In-Neighbours, Our-Neighbours or both
+
+![](doc/source/_static/images/sh2.jpg)
+
+Example 2: switching between network visualization and documentation
+
+![](doc/source/_static/images/sh3.jpg)
+
+Example 3: interaction
+![](doc/source/_static/sphinx-needs-data-explorer.gif)
+
 
 ## Installation
 

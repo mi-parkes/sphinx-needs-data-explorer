@@ -9,7 +9,11 @@ in your Sphinx generated documentation.
 
 .. image:: _static/sphinx-needs-data-explorer.gif
 
-|
+Goals and Realization of this project
+--------------------------------------
+
+.. uml:: _static/puml/sphinx_needs_data_explorer.puml
+
 
 See :sphinx_needs_data_explorer:`Sphinx-Needs-Data-Explorer` in action.
 

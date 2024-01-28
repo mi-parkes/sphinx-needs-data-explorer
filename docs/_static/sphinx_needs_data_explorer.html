@@ -32,6 +32,8 @@
                 border: 1px solid #dddddd;
                 padding: 8px;
                 text-align: left;
+                white-space: nowrap;
+                overflow: auto;
             }
 
             /* Define column widths in percentage */
@@ -44,16 +46,16 @@
             }
 
             .at-th:nth-child(3), .at-td:nth-child(3) {
-                width: 30%;
+                width: 50%;
             }
 
-            .at-th:nth-child(4), .at-td:nth-child(4) {
-                width: 20%;
-            }
-
-            .at-th:nth-child(5), .at-td:nth-child(5) {
+            /* .at-th:nth-child(4), .at-td:nth-child(4) {
                 width: 30%;
-            }
+            } */
+
+            /* .at-th:nth-child(5), .at-td:nth-child(5) {
+                width: 30%;
+            } */
 
             .typedrop {
                 font-size: 22px;
@@ -287,15 +289,17 @@
                 <h3>Keyboard shortcuts</h3>
                 <ul>
                     <li>visjs network keyboard shortcuts</li>
-                <ul>
-                    <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
-                    <li>+/- zoom-in/zoom out</li>
+                    <ul>
+                        <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
+                        <li>+/- zoom-in/zoom out</li>
                     </ul>
-                    <li>shift arrow-up, shift arrow-down to navigate through sphinx_need item list</li>
-                    <li>ENTER - to toggle network view between
+                    <li>n(next), p(previous) to navigate through sphinx_need item list</li>
+                    <li>l(layout) toggle between bottom-up and right-left network hierarchical layout directions</li>
+                    <li>ENTER - to cycle network view mode
                         <ul>
-                            <li>selected sphinx_need item and all descendents (bottom down descent)</li>
-                            <li>selected sphinx_need item and all descendents including all nodes reachable from descendents</li>
+                            <li>selected sphinx_need item and all In-neighbours</li>
+                            <li>selected sphinx_need item and all Out-neighbours</li>
+                            <li>selected sphinx_need item and all InOut-neighbours</li>
                           </ul>
                     </li>
                 </ul>
@@ -304,7 +308,6 @@
                     <li>hover over a node shows tooltip</li>
                     <li>a click at node shows detailed node information in window, including a link where complete information 
                         can be found</li>
-                    <li>a click with pressed shift on node toggles collapse/expand node descendents</li>
                 </ul>
                 <h3>The following sphinx_needs attributes can be used in filters</h3>
                 <ul>
@@ -352,11 +355,11 @@
             </div>
         </div>    
         <script type="text/javascript">
+            var ecounter=0;
             let verbose=false;
             let MIN_ZOOM = 0.1;
             let MAX_ZOOM = 4.0;
-            var topDownMode=true;
-            var inKeyupHandler=false;
+            var viewMode=0;
             var textBoxEditingActive=false;
             var lastTextBoxValue="";
             var saveOpt;
@@ -376,6 +379,7 @@
             var children_edges;
             var parents;
             var parents_edges;
+            var layoutDirection='DU';
             var 
             needsURL = "../needs.json";
             var parser;
@@ -866,10 +870,8 @@
                     $select.prop('selectedIndex', svalue.selectedIndex - 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
                     //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    setTimeout(function() {
-                        topDownMode=true;
-                        drawFilteredGraph(getID(text));
-                    },200);
+                    //viewMode=0;
+                    drawFilteredGraph(getID(text));
                 }
             }
 
@@ -880,20 +882,17 @@
                     $select.prop('selectedIndex', svalue.selectedIndex + 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
                     //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    setTimeout(function() {
-                        topDownMode=true;
-                        drawFilteredGraph(getID(text));
-                    },200);
+                    //viewMode=0;
+                    drawFilteredGraph(getID(text));
                 }
             }
 
             function handleSelectNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
                 var text="";
-                if(svalue.options.length>0) {
+                if(svalue.options.length>0)
                      text = svalue.options[svalue.selectedIndex].text;
-                }
-                topDownMode=true;
+                //viewMode=0;
                 drawFilteredGraph(getID(text));
             }
 
@@ -901,14 +900,10 @@
                 return str.trim().replace(/\n/g,'');
             }
 
-            function trimStringIfLongerThan(str,maxLen) {
-                return str.length>maxLen?str.slice(0,maxLen)+"...":str;
-            }
-
             function handleSelectTypeEvent() {
                 clearFilter();
                 let stype=document.getElementById('select-type');
-                let type = stype.options[stype.selectedIndex].value;                
+                let type = stype.options[stype.selectedIndex].value;
                 let svalue=document.getElementById('select-need-id');
                 let tmp_nodes=[]
                 var customFilterExpression=null;
@@ -946,12 +941,6 @@
                     else
                         lineno=1
 
-                    const id=trimStringIfLongerThan(gnodes[each]["id"],10);
-                    const type=trimStringIfLongerThan(gnodes[each]["data"]["type"],10);
-                    const title=trimStringIfLongerThan(gnodes[each]["data"]["title"],80);
-                    const description=trimStringIfLongerThan(gnodes[each]["data"]["description"],180);
-                    const docname=trimStringIfLongerThan(`${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}`,35);
-
                     gnodes[each]["title-html"]=`
                     <table class="ack-table">
                         <thead>
@@ -960,18 +949,16 @@
                             <th class="at-td">type</th>
                             <th class="at-td">title</th>
                             <th class="at-td">docname</th>
-                            <th class="at-td">description</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="at-td" title="${id}">${id}</td>
-                            <td class="at-td" title="${type}">${type}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["title"]}">${title}</td>
+                            <td class="at-td" title="${gnodes[each]["id"]}">${gnodes[each]["id"]}</td>
+                            <td class="at-td" title="${gnodes[each]["data"]["type"]}">${gnodes[each]["data"]["type"]}</td>
+                            <td class="at-td" title="${gnodes[each]["data"]["title"]}">${gnodes[each]["data"]["title"]}</td>
                             <td class="at-td">
                                 <a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}"
-                                title="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}">${docname}</a></td>
-                            <td class="at-td" title="${gnodes[each]["data"]["description"]}">${description}</td>
+                                title="${gnodes[each]["data"]["docname"]}.html}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
                         </tr>
                     </tbody>
                     </table>
@@ -1037,7 +1024,7 @@
                 nodes = new vis.DataSet([]);
                 edges = new vis.DataSet([]);
                 // adding nodes and edges to the graph
-                data = {nodes: nodes, edges: edges};                  
+                data = {nodes: nodes, edges: edges};
                 var options = {
                     autoResize: false,
                     locale: 'en',
@@ -1049,7 +1036,8 @@
                             border:"black"
                         },
                         // size : 15,
-                        font: {'face': 'monospace', 'align': 'left',size: 40, color: "Black"},
+                        //font: { align: 'center', valign: 'middle' }
+                        font: {'face': 'monospace', 'align': 'center',size: 40, color: "Black"},
                         fixed: {
                                 'x': false,
                                 'y': true,
@@ -1089,7 +1077,7 @@
                             enabled: true,
                             sortMethod: 'directed',  // hubsize, directed
                             shakeTowards: 'leaves',  // roots, leaves
-                            direction: 'DU',   // UD, DU, LR, RL
+                            direction: layoutDirection,   // UD, DU, LR, RL
                             levelSeparation: 350,
                             nodeSpacing: 350,
                             // treeSpacing: 200,
@@ -1141,7 +1129,7 @@
                             return;
                         }
                         var id = properties.nodes[0];
-                        var clickedNode = nodes.get(id);                      
+                        var clickedNode = nodes.get(id);
                         //document.getElementById('tooltip-window').value     = clickedNode['title'];
                         document.getElementById('tooltip-window').innerHTML = clickedNode['title-html'];
                     } else {
@@ -1150,6 +1138,9 @@
                     }
                 });
                 
+                network.on('afterDrawing', () => {
+                });
+
                 function updateCenterOnZoom(network, scale) {
                     var canvas = network.canvas.frame.canvas;
                     var container = network.getContainer();
@@ -1216,7 +1207,7 @@
                 });
                 
                 network.on('hoverNode', function (e) {
-                    doOnHoverNode(e)
+                    //doOnHoverNode(e)
                 });
 
                 const canvasElement = document.getElementById('mynetwork');
@@ -1230,26 +1221,168 @@
                     //network.keyboard.enabled = true;
                 }
                 document.addEventListener('keyup', function(event) {
-                    inKeyupHandler=true;
+                    ecounter+=1;
                     if(event.keyCode===13) {
-                        topDownMode=!topDownMode;
+                        event.preventDefault();
                         console.log("ENTER pressed");
                         let svalue=document.getElementById('select-need-id');
                         if(svalue.options.length>0) {
                             text = svalue.options[svalue.selectedIndex].text;
+                            viewMode=(viewMode+1)%3;
                             drawFilteredGraph(getID(text));
+                            //console.log(`viewMode update -> ${viewMode}`);
                         }
                     }
-                    if(event.keyCode===38 && event.shiftKey) {
+                    // previous node
+                    if(event.keyCode===80||event.keyCode===112) {
+                        event.preventDefault();
                         //console.log(`ArrowUp: keyup event.keyCode:${event.keyCode.toString()}`);
+                        console.log(`prev Key Up ${ecounter}`);
                         handleSelectPrevNodeEvent();
                     }
-                    if(event.keyCode===40 && event.shiftKey) {
+                    // next node
+                    if(event.keyCode===78||event.keyCode===112) {
+                        event.preventDefault();
                         //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);                            
+                        console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
+                    }
+                    // toggle network layout direction
+                    if(event.keyCode===76||event.keyCode===108) {
+                        layoutDirection=layoutDirection!=='RL'?'RL':'DU';
+                        network.setOptions( { layout: { hierarchical: { direction:layoutDirection } } } );
+                        network.fit({maxZoomLevel:0.4});
+                    }
+
+                    // copy current network as JSON to clipboard
+                    if(event.ctrlKey && (event.keyCode===67||event.keyCode===99)) {
+                        copyNetworkToClipboard();
+                    }
+
+                    // copy current network as SVG to clipboard
+                    if(event.ctrlKey && (event.keyCode===83||event.keyCode===115)) {
+                        copyNetworkAsSVGToClipboard();
                     }
                 });
             }
+
+            function copyNetworkAsSVGToClipboard() {                
+                return
+            }
+
+            function copyNetworkToClipboard() {
+                var serializedData = {
+                    nodes: network.body.data.nodes.get({ returnType: "Object" }),
+                    edges: network.body.data.edges.get({ returnType: "Object" })
+                };
+                // Step 2: Convert serialized data to a string
+                var serializedString = JSON.stringify(serializedData);
+                // Step 3: Copy the string to clipboard
+                navigator.clipboard.writeText(serializedString)
+                    .then(function() {
+                        console.log('Network data copied to clipboard successfully!');
+                    })
+                    .catch(function(error) {
+                        console.error('Unable to copy network data to clipboard: ', error);
+                    });
+            }
+
+            function identifyCyclicReferences(network) {
+                const visitedNodes = {}; // Set to track visited nodes
+                const cyclicReferences = []; // Array to store cyclic references
+
+                // Traverse the network using DFS
+                function dfs(node) {
+                    visitedNodes[node.id] = true; // Mark node as visited
+
+                    for (const connectedNode of node.links) {
+                    if (visitedNodes[connectedNode.id]) {
+                        // Detect cyclic reference
+                        cyclicReferences.push([node.id, connectedNode.id]);
+                        return true; // Stop traversing
+                    } else if (dfs(connectedNode)) {
+                        return true; // Stop traversing if a cyclic reference is detected
+                    }
+                    }
+
+                    return false; // No cyclic reference found
+                }
+
+                // Perform DFS for all nodes
+                for (const node of network.nodes) {
+                    if (!visitedNodes[node.id] && dfs(node)) {
+                    break; // Stop after detecting the first cyclic reference
+                    }
+                }
+                return cyclicReferences;
+            }
+
+            function createLoopNode(cyclicReference) {
+                const loopNode = {
+                    id: 'loop_' + new Date().getTime(), // Generate a unique ID for the loop node
+                    label: 'Cyclic Loop', // Set a descriptive label
+                    nodes: cyclicReference, // Store the nodes involved in the loop
+                    incoming: [], // Create empty connections arrays
+                    outgoing: [],
+                };
+                return loopNode;
+            }
+
+            function updateNodeConnections(cyclicReference, loopNode) {
+                // Extract nodes involved in the loop
+                const [node1, node2] = cyclicReference;
+
+                // Update connections for node 1
+                node1.incoming.forEach((connection) => {
+                    if (connection.to.id === node2.id) {
+                    connection.to = loopNode;
+                    }
+                });
+
+                node1.outgoing.forEach((connection) => {
+                    if (connection.from.id === node2.id) {
+                    connection.from = loopNode;
+                    }
+                });
+
+                // Update connections for node 2
+                node2.incoming.forEach((connection) => {
+                    if (connection.to.id === node1.id) {
+                    connection.to = loopNode;
+                    }
+                });
+
+                node2.outgoing.forEach((connection) => {
+                    if (connection.from.id === node1.id) {
+                    connection.from = loopNode;
+                    }
+                });
+            }
+
+            function copyCyclicNetworkToClipboard(network) {
+                // Identify and handle cyclic references
+                const cyclicReferences = identifyCyclicReferences(network);
+                for (const cyclicReference of cyclicReferences) {
+                    // Represent the loop as a single node
+                    const loopNode = createLoopNode(cyclicReference);
+                    network.addNode(loopNode);
+
+                    // Update node connections to connect to the loop node
+                    updateNodeConnections(cyclicReference, loopNode);
+                }
+                // Convert network data to clipboard format
+                const networkData = convertNetworkDataToClipboardFormat(network);
+                // Set clipboard content
+                setClipboardContent(networkData);
+            }
+
+            // function copyNetworkToClipboard(network) {
+            //     document.addEventListener('copy', (event) => {
+            //         const networkData = JSON.stringify(network); // Convert network data to JSON
+            //         event.clipboardData.setData('text/plain', networkData); // Set clipboard content
+            //         alert('Network copied to clipboard successfully!'); // Notify user
+            //     });
+            // }
 
             function drawCurrentSelection(pnode) {
                 var pnodeId=pnode.id
@@ -1274,12 +1407,19 @@
                         }
                     } else {
                         for(const node of children[currentNode]) {
-                            if(topDownMode || !topDownMode && parents[node].length==1)
+                            //if(viewMode || !viewMode && parents[node].length==1)
+                            if(viewMode==0)
                                 stack.push(gnodes[node].id);
                         }
                     }
                 }
-                network.fit({maxZoomLevel:0.4});                
+                network.fit({maxZoomLevel:0.4});
+            }
+
+            function incType(typeFrequency,type) {
+                if(!(type in typeFrequency))
+                    typeFrequency[type]=0
+                typeFrequency[type]+=1;
             }
 
             function drawFilteredGraph(rootNodeLabel) {
@@ -1289,28 +1429,38 @@
                     stack=[gnodes[rootNodeLabel]];
                 tmp_nodes=[];
                 let tmp_edges=[];
-                if(topDownMode) {
+                var numChildren=-1;
+                var numParents=-1;
+                var typeFrequency={};
+                if(viewMode===0) {
                     while(stack.length) {
                         const currentNode = stack.pop();
                         if(visited.includes(currentNode.label))
                             continue;
+                        if(currentNode.label!=rootNodeLabel)
+                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                        numChildren+=1;
                         visited.push(currentNode.label);
                         var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);                  
+                        tmp_nodes.push(clonedObject);
                         for(const node of children[currentNode.label]) {
                             stack.push(gnodes[node]);
-                            if(!topDownMode) {
-                                for(const n of parents[node])
-                                    stack.push(gnodes[n]);
-                            }
+                            // if(!viewMode) {
+                            //     for(const n of parents[node])
+                            //         stack.push(gnodes[n]);
+                            // }
                         }
                         tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                     }
-                } else {
+                }
+                if(viewMode===1) {
                     while(stack.length) {
                         const currentNode = stack.pop();
                         if(visited.includes(currentNode.label))
                             continue;
+                        if(currentNode.label!=rootNodeLabel)
+                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                        numParents+=1;
                         visited.push(currentNode.label);
                         var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
                         tmp_nodes.push(clonedObject);
@@ -1319,18 +1469,90 @@
                         tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
                     }
                 }
+                if(viewMode===2) {
+                    while(stack.length) {
+                        const currentNode = stack.pop();
+                        if(visited.includes(currentNode.label))
+                            continue;
+                        if(currentNode.label!=rootNodeLabel)
+                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                        numChildren+=1;
+                        visited.push(currentNode.label);
+                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                        tmp_nodes.push(clonedObject);
+                        for(const node of children[currentNode.label]) {
+                            stack.push(gnodes[node]);
+                            // if(!viewMode) {
+                            //     for(const n of parents[node])
+                            //         stack.push(gnodes[n]);
+                            // }
+                        }
+                        tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
+                    }
+
+                    for(const node of parents[rootNodeLabel])
+                        stack.push(gnodes[node]);
+                    tmp_edges=tmp_edges.concat(parents_edges[rootNodeLabel]);
+                    numParents=0;
+                    while(stack.length) {
+                        const currentNode = stack.pop();
+                        if(visited.includes(currentNode.label))
+                            continue;
+                        if(currentNode.label!=rootNodeLabel)
+                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                        numParents+=1;
+                        visited.push(currentNode.label);
+                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                        tmp_nodes.push(clonedObject);
+                        for(const node of parents[currentNode.label])
+                            stack.push(gnodes[node]);
+                        tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                    }
+                }
+
                 if(verbose) {
                     console.log("nodes");
                     console.log(tmp_nodes);
                     console.log("edges");
                     console.log(tmp_edges);
-                }
-
+                }                
                 nodes = new vis.DataSet(tmp_nodes);
                 edges = new vis.DataSet(tmp_edges);
+
                 network.setData({ nodes: nodes, edges: edges });
+
+                var msg;
+                if(viewMode==0)
+                    msg=`=== In-neighbours View\n\nNumber of incoming neighbours=${numChildren}`
+                else if(viewMode==1)
+                    msg=`=== Out-neighbours View\n\nNumber of outgoing neighbours=${numParents}`
+                else
+                    msg=`=== InOut-neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
+                if(Object.keys(typeFrequency).length>0)
+                    msg+="\n\n"
+                for(const type in  typeFrequency)
+                    msg+=`.. '${type}'=${typeFrequency[type]}\n`
+                if(Object.keys(typeFrequency).length>0)
+                    msg+="\n"
+                else
+                    msg+="\n\n"
+                nodes.update({
+                    id:rootNodeLabel,
+                    title:`${msg}${gnodes[rootNodeLabel]['title']}`,
+                    borderWidth:2,
+                    heightConstraint: {
+                            minimum: 200
+                    },
+                    widthConstraint: {
+                        minimum: 300,
+                        maximum: 300
+                    },
+                    color: {
+                        border:'red'
+                    }
+                });
                 network.fit({maxZoomLevel:0.4});
-                lastZoomPosition = {x:0, y:0}
+                lastZoomPosition = {x:0,y:0}
             }
             
             $(document).ready(function() {
@@ -1363,7 +1585,7 @@
 
                     // Prevent any interactions
                     // 
-                    network.setOptions( newOpt );                    
+                    network.setOptions( newOpt );
                 }
 
                 console.log(`$("#input").focus(function())`)

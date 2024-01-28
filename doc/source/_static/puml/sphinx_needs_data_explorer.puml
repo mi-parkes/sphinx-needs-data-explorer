@@ -1,0 +1,32 @@
+@startmindmap sphinx_needs_data_explorer
+
+scale 0.6
+!$rootColor="#Orange"
+
+!procedure $mcolor($arg1,$arg2)
+<color:blue>[[ $arg1 $arg2 ]]</color>
+!endprocedure
+
+*[$rootColor] sphinx_needs_data_explorer
+**[#lightgreen] Open Source Project available in
+*** Github
+*** PYPI
+**[#lightgreen] Platforms
+*** Windows +10
+*** Linux
+**[#lightgreen] Sphinx
+*** Sphinx Extension
+****[#LightSkyBlue] Automotive Requirement Traceability
+****[#LightSkyBlue] Interactive Web-based Analytical Tool
+***** HTML
+***** CSS
+***** JavaScript
+****** visjs
+******* Dynamic and interactive data network visualization
+****** pegjs
+******* Powerful and flexible parser generator
+****** select2
+******* Library for creating and managing user input
+****[#LightSkyBlue] Complement to Sphinx-Needs
+
+@endmindmap

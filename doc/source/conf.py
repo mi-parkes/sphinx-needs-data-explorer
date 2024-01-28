@@ -1,3 +1,5 @@
+import os, sys
+
 project = 'Sphinx Needs Data Explorer'
 copyright = '2024, MP'
 author  = 'MP'
@@ -10,6 +12,7 @@ extensions = [
     'sphinx_needs',
     'sphinx_copybutton',
     'sphinx.ext.githubpages',
+    'sphinxcontrib.plantuml',
     'sphinx_needs_data_explorer'
 ]
 
@@ -36,6 +39,17 @@ html_theme_options = {
     "use_issues_button": True,
     "use_edit_page_button": True, 
 }
+
+env_plantuml = os.getenv("PLANTUML")
+if env_plantuml != None:
+    plantuml = env_plantuml
+else:
+    if sys.platform.startswith("linux"):
+        plantuml = 'java -jar /usr/share/plantuml/plantuml.jar'
+    elif sys.platform == "darwin":
+        plantuml = 'java -jar /usr/local/plantuml/plantuml.jar'
+
+plantuml_output_format = 'svg'
 
 sphinx_needs_data_explorer_config={
     'link_types':['links'],

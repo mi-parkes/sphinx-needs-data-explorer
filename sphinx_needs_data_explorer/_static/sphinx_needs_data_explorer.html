@@ -355,8 +355,9 @@
                     <div id="mynetwork"></div>
                 </div>
             </div>
-        </div>    
+        </div>
         <script type="text/javascript">
+            var startTime;
             var ecounter=0;
             let verbose=false;
             let MIN_ZOOM = 0.1;
@@ -387,6 +388,15 @@
             var parser;
             let grammar;
             const traceParser=false;
+
+            function startTimer() {
+                startTime = performance.now();
+            }
+
+            function stopTimer(msg) {
+                const endTime = performance.now();
+                console.log(`Execution time of ${msg}`,endTime - startTime);
+            }
 
             class Node {
                 constructor(left, right, operand) {
@@ -825,6 +835,31 @@
                     //jsonData["size"]= { width: 30, height: 30 } }
                     jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\ntitle=${needs[key]['title']}`
                     jsonData["title-html"]=`<b>type</b>=${needs[key]['type']}<br>`
+                    //
+                    // gnodes[each]["title-html"]=
+                    jsonData["title-html"]=`
+                    <table class="ack-table">
+                        <thead>
+                        <tr>
+                            <th class="at-td">id</th>
+                            <th class="at-td">type</th>
+                            <th class="at-td">title</th>
+                            <th class="at-td">docname</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="at-td" title="${jsonData["id"]}">${jsonData["id"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["type"]}">${jsonData["data"]["type"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["title"]}">${jsonData["data"]["title"]}</td>
+                            <td class="at-td">
+                                <a href="../${jsonData["data"]["docname"]}.html#${jsonData["id"]}"
+                                title="${jsonData["data"]["docname"]}.html}">${jsonData["data"]["docname"]}.html#${jsonData["id"]}</a></td>
+                        </tr>
+                    </tbody>
+                    </table>
+                    `
+                    //
                     if(needs[key].type in type2color) {
                         jsonData["color"]=type2color[needs[key].type];
                     } else {
@@ -935,36 +970,9 @@
                     console.log('tmp_nodes empty!');
                 }
                 for (let each of tmp_nodes) {
-                    if("lineno" in gnodes[each]["data"])
-                        lineno=gnodes[each]["data"]["lineno"]
-                    else
-                        lineno=1
-
-                    gnodes[each]["title-html"]=`
-                    <table class="ack-table">
-                        <thead>
-                        <tr>
-                            <th class="at-td">id</th>
-                            <th class="at-td">type</th>
-                            <th class="at-td">title</th>
-                            <th class="at-td">docname</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="at-td" title="${gnodes[each]["id"]}">${gnodes[each]["id"]}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["type"]}">${gnodes[each]["data"]["type"]}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["title"]}">${gnodes[each]["data"]["title"]}</td>
-                            <td class="at-td">
-                                <a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}"
-                                title="${gnodes[each]["data"]["docname"]}.html}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
-                        </tr>
-                    </tbody>
-                    </table>
-                    `                    
                     var opt = document.createElement('option');
-                            opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
-                            svalue.appendChild(opt);
+                    opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
+                    svalue.appendChild(opt);
                 }
                 // Change Select List Option Background-Color on Hover in CSS
                 // for(option of svalue.options) {
@@ -1220,8 +1228,7 @@
                     //network.keyboard.enabled = true;
                 }
 
-                function debounce(func, delay) 
-                {
+                function debounce(func, delay) {
                     let timeoutId;
                     return function() {
                         const context = this;
@@ -1539,11 +1546,11 @@
 
                 var msg;
                 if(viewMode==0)
-                    msg=`=== In-neighbours View\n\nNumber of incoming neighbours=${numChildren}`
+                    msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
                 else if(viewMode==1)
-                    msg=`=== Out-neighbours View\n\nNumber of outgoing neighbours=${numParents}`
+                    msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
                 else
-                    msg=`=== InOut-neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
+                    msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
                 if(Object.keys(typeFrequency).length>0)
                     msg+="\n\n"
                 for(const type in  typeFrequency)

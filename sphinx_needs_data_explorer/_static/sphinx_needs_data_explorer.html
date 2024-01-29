@@ -288,11 +288,13 @@
             <h2>Help Information</h2>
                 <h3>Keyboard shortcuts</h3>
                 <ul>
+<!-- 
                     <li>visjs network keyboard shortcuts</li>
                     <ul>
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
                         <li>+/- zoom-in/zoom out</li>
                     </ul>
+ -->
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
                     <li>l(layout) toggle between bottom-up and right-left network hierarchical layout directions</li>
                     <li>ENTER - to cycle network view mode
@@ -869,20 +871,18 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex - 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    //viewMode=0;
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
 
             function handleSelectNextNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
-                if(svalue.options.length>0 && (svalue.selectedIndex+1)<svalue.options.length) {                    
+                if(svalue.options.length>0 && (svalue.selectedIndex+1)<svalue.options.length) {
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex + 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    //viewMode=0;
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -892,7 +892,6 @@
                 var text="";
                 if(svalue.options.length>0)
                      text = svalue.options[svalue.selectedIndex].text;
-                //viewMode=0;
                 drawFilteredGraph(getID(text));
             }
 
@@ -1013,7 +1012,7 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:true
+                                enabled:false
                                 // enabled:!textBoxEditingActive
                             }
                         };
@@ -1220,7 +1219,22 @@
                     //// canvasElement.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }));
                     //network.keyboard.enabled = true;
                 }
-                document.addEventListener('keyup', function(event) {
+
+                function debounce(func, delay) 
+                {
+                    let timeoutId;
+                    return function() {
+                        const context = this;
+                        const args = arguments;
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(() => {
+                            func.apply(context, args);
+                        }, delay);
+                    };
+                }
+
+                function handleKeyUp(event) {
+                    // console.log(event.target.value);
                     ecounter+=1;
                     if(event.keyCode===13) {
                         event.preventDefault();
@@ -1243,7 +1257,7 @@
                     // next node
                     if(event.keyCode===78||event.keyCode===112) {
                         event.preventDefault();
-                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);                            
+                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
                     }
@@ -1263,10 +1277,12 @@
                     if(event.ctrlKey && (event.keyCode===83||event.keyCode===115)) {
                         copyNetworkAsSVGToClipboard();
                     }
-                });
+                }
+                
+                document.addEventListener('keyup',debounce(handleKeyUp,300));
             }
 
-            function copyNetworkAsSVGToClipboard() {                
+            function copyNetworkAsSVGToClipboard() {
                 return
             }
 

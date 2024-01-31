@@ -35,27 +35,15 @@
                 white-space: nowrap;
                 overflow: auto;
             }
-
+            
             /* Define column widths in percentage */
-            .at-th:first-child, .at-td:first-child {
+            .at-th:nth-child(-n+3), .at-td:nth-(-n+3) {
                 width: 10%;
             }
 
-            .at-th:nth-child(2), .at-td:nth-child(2) {
-                width: 10%;
-            }
-
-            .at-th:nth-child(3), .at-td:nth-child(3) {
+            .at-th:nth-child(4), .at-td:nth-child(4) {
                 width: 50%;
             }
-
-            /* .at-th:nth-child(4), .at-td:nth-child(4) {
-                width: 30%;
-            } */
-
-            /* .at-th:nth-child(5), .at-td:nth-child(5) {
-                width: 30%;
-            } */
 
             .typedrop {
                 font-size: 22px;
@@ -288,11 +276,13 @@
             <h2>Help Information</h2>
                 <h3>Keyboard shortcuts</h3>
                 <ul>
+<!-- 
                     <li>visjs network keyboard shortcuts</li>
                     <ul>
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
                         <li>+/- zoom-in/zoom out</li>
                     </ul>
+ -->
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
                     <li>l(layout) toggle between bottom-up and right-left network hierarchical layout directions</li>
                     <li>ENTER - to cycle network view mode
@@ -353,8 +343,9 @@
                     <div id="mynetwork"></div>
                 </div>
             </div>
-        </div>    
+        </div>
         <script type="text/javascript">
+            var startTime;
             var ecounter=0;
             let verbose=false;
             let MIN_ZOOM = 0.1;
@@ -385,6 +376,15 @@
             var parser;
             let grammar;
             const traceParser=false;
+
+            function startTimer() {
+                startTime = performance.now();
+            }
+
+            function stopTimer(msg) {
+                const endTime = performance.now();
+                console.log(`Execution time of ${msg}`,endTime - startTime);
+            }
 
             class Node {
                 constructor(left, right, operand) {
@@ -821,8 +821,35 @@
                     jsonData["id"]=needs[key].id
                     jsonData["label"]=needs[key].id
                     //jsonData["size"]= { width: 30, height: 30 } }
-                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\ntitle=${needs[key]['title']}`
+                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\nstatus=${needs[key]['status']}\ntitle=${needs[key]['title']}`
                     jsonData["title-html"]=`<b>type</b>=${needs[key]['type']}<br>`
+                    //
+                    // gnodes[each]["title-html"]=
+                    jsonData["title-html"]=`
+                    <table class="ack-table">
+                        <thead>
+                        <tr>
+                            <th class="at-td">id</th>
+                            <th class="at-td">type</th>
+                            <th class="at-td">status</th>
+                            <th class="at-td">title</th>
+                            <th class="at-td">docname</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="at-td" title="${jsonData["id"]}">${jsonData["id"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["type"]}">${jsonData["data"]["type"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["status"]}">${jsonData["data"]["status"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["title"]}">${jsonData["data"]["title"]}</td>
+                            <td class="at-td">
+                                <a href="../${jsonData["data"]["docname"]}.html#${jsonData["id"]}"
+                                title="${jsonData["data"]["docname"]}.html}">${jsonData["data"]["docname"]}.html#${jsonData["id"]}</a></td>
+                        </tr>
+                    </tbody>
+                    </table>
+                    `
+                    //
                     if(needs[key].type in type2color) {
                         jsonData["color"]=type2color[needs[key].type];
                     } else {
@@ -869,20 +896,18 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex - 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    //viewMode=0;
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
 
             function handleSelectNextNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
-                if(svalue.options.length>0 && (svalue.selectedIndex+1)<svalue.options.length) {                    
+                if(svalue.options.length>0 && (svalue.selectedIndex+1)<svalue.options.length) {
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex + 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    //viewMode=0;
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -892,7 +917,6 @@
                 var text="";
                 if(svalue.options.length>0)
                      text = svalue.options[svalue.selectedIndex].text;
-                //viewMode=0;
                 drawFilteredGraph(getID(text));
             }
 
@@ -936,36 +960,9 @@
                     console.log('tmp_nodes empty!');
                 }
                 for (let each of tmp_nodes) {
-                    if("lineno" in gnodes[each]["data"])
-                        lineno=gnodes[each]["data"]["lineno"]
-                    else
-                        lineno=1
-
-                    gnodes[each]["title-html"]=`
-                    <table class="ack-table">
-                        <thead>
-                        <tr>
-                            <th class="at-td">id</th>
-                            <th class="at-td">type</th>
-                            <th class="at-td">title</th>
-                            <th class="at-td">docname</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="at-td" title="${gnodes[each]["id"]}">${gnodes[each]["id"]}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["type"]}">${gnodes[each]["data"]["type"]}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["title"]}">${gnodes[each]["data"]["title"]}</td>
-                            <td class="at-td">
-                                <a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}"
-                                title="${gnodes[each]["data"]["docname"]}.html}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
-                        </tr>
-                    </tbody>
-                    </table>
-                    `                    
                     var opt = document.createElement('option');
-                            opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
-                            svalue.appendChild(opt);
+                    opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
+                    svalue.appendChild(opt);
                 }
                 // Change Select List Option Background-Color on Hover in CSS
                 // for(option of svalue.options) {
@@ -1013,14 +1010,14 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:true
+                                enabled:false
                                 // enabled:!textBoxEditingActive
                             }
                         };
             }
 
             function initNetwork() {
-                var container = document.getElementById('mynetwork');                            
+                var container = document.getElementById('mynetwork');
                 nodes = new vis.DataSet([]);
                 edges = new vis.DataSet([]);
                 // adding nodes and edges to the graph
@@ -1220,7 +1217,21 @@
                     //// canvasElement.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }));
                     //network.keyboard.enabled = true;
                 }
-                document.addEventListener('keyup', function(event) {
+
+                function debounce(func, delay) {
+                    let timeoutId;
+                    return function() {
+                        const context = this;
+                        const args = arguments;
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(() => {
+                            func.apply(context, args);
+                        }, delay);
+                    };
+                }
+
+                function handleKeyUp(event) {
+                    // console.log(event.target.value);
                     ecounter+=1;
                     if(event.keyCode===13) {
                         event.preventDefault();
@@ -1243,7 +1254,7 @@
                     // next node
                     if(event.keyCode===78||event.keyCode===112) {
                         event.preventDefault();
-                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);                            
+                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
                     }
@@ -1263,10 +1274,12 @@
                     if(event.ctrlKey && (event.keyCode===83||event.keyCode===115)) {
                         copyNetworkAsSVGToClipboard();
                     }
-                });
+                }
+                
+                document.addEventListener('keyup',debounce(handleKeyUp,300));
             }
 
-            function copyNetworkAsSVGToClipboard() {                
+            function copyNetworkAsSVGToClipboard() {
                 return
             }
 
@@ -1523,11 +1536,11 @@
 
                 var msg;
                 if(viewMode==0)
-                    msg=`=== In-neighbours View\n\nNumber of incoming neighbours=${numChildren}`
+                    msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
                 else if(viewMode==1)
-                    msg=`=== Out-neighbours View\n\nNumber of outgoing neighbours=${numParents}`
+                    msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
                 else
-                    msg=`=== InOut-neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
+                    msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
                 if(Object.keys(typeFrequency).length>0)
                     msg+="\n\n"
                 for(const type in  typeFrequency)
@@ -1626,3 +1639,9 @@
         </script>
     </body>
 </html>
+
+
+<!-- 
+ADD STATUS ATTRIBUTE!!!
+Node Min,Max width
+ -->

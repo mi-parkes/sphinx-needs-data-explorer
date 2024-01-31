@@ -35,27 +35,15 @@
                 white-space: nowrap;
                 overflow: auto;
             }
-
+            
             /* Define column widths in percentage */
-            .at-th:first-child, .at-td:first-child {
+            .at-th:nth-child(-n+3), .at-td:nth-(-n+3) {
                 width: 10%;
             }
 
-            .at-th:nth-child(2), .at-td:nth-child(2) {
-                width: 10%;
-            }
-
-            .at-th:nth-child(3), .at-td:nth-child(3) {
+            .at-th:nth-child(4), .at-td:nth-child(4) {
                 width: 50%;
             }
-
-            /* .at-th:nth-child(4), .at-td:nth-child(4) {
-                width: 30%;
-            } */
-
-            /* .at-th:nth-child(5), .at-td:nth-child(5) {
-                width: 30%;
-            } */
 
             .typedrop {
                 font-size: 22px;
@@ -833,7 +821,7 @@
                     jsonData["id"]=needs[key].id
                     jsonData["label"]=needs[key].id
                     //jsonData["size"]= { width: 30, height: 30 } }
-                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\ntitle=${needs[key]['title']}`
+                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\nstatus=${needs[key]['status']}\ntitle=${needs[key]['title']}`
                     jsonData["title-html"]=`<b>type</b>=${needs[key]['type']}<br>`
                     //
                     // gnodes[each]["title-html"]=
@@ -843,6 +831,7 @@
                         <tr>
                             <th class="at-td">id</th>
                             <th class="at-td">type</th>
+                            <th class="at-td">status</th>
                             <th class="at-td">title</th>
                             <th class="at-td">docname</th>
                         </tr>
@@ -851,6 +840,7 @@
                         <tr>
                             <td class="at-td" title="${jsonData["id"]}">${jsonData["id"]}</td>
                             <td class="at-td" title="${jsonData["data"]["type"]}">${jsonData["data"]["type"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["status"]}">${jsonData["data"]["status"]}</td>
                             <td class="at-td" title="${jsonData["data"]["title"]}">${jsonData["data"]["title"]}</td>
                             <td class="at-td">
                                 <a href="../${jsonData["data"]["docname"]}.html#${jsonData["id"]}"
@@ -1027,7 +1017,7 @@
             }
 
             function initNetwork() {
-                var container = document.getElementById('mynetwork');                            
+                var container = document.getElementById('mynetwork');
                 nodes = new vis.DataSet([]);
                 edges = new vis.DataSet([]);
                 // adding nodes and edges to the graph
@@ -1649,3 +1639,9 @@
         </script>
     </body>
 </html>
+
+
+<!-- 
+ADD STATUS ATTRIBUTE!!!
+Node Min,Max width
+ -->

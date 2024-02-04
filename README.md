@@ -3,7 +3,7 @@
 
 <br>
 
-`sphinx_needs_data_explorer` enhances the interactivity of your Sphinx <br> generated documentation by enabling you to explore [Sphinx-Needs](https://github.com/useblocks/sphinx-needs) data.
+`sphinx_needs_data_explorer` enhances the interactivity of your Sphinx <br> generated documentation by enabling you to explore [Sphinx-Needs](https://www.sphinx-needs.com) data.
 
 ## Goals and Realization
 

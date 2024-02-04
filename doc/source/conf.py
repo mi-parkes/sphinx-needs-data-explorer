@@ -21,6 +21,7 @@ extensions = [
 needs_build_json = True
 
 exclude_patterns = []
+exclude_patterns = ['project','mydir1']
 
 language = 'en'
 
@@ -95,22 +96,25 @@ def copy_and_modify_readme_md(app, docname, source):
                 with open(ofilename,'w',encoding='utf-8') as thefile:
                     thefile.write(replacedText)
 
+needs_statuses = [
+    dict(name="open", description="Nothing done yet"),
+    dict(name="in progress", description="Someone is working on it"),
+    dict(name="implemented", description="Work is done and implemented"),
+]
+
 needs_types = [
-    dict(directive="req",    title="Requirement" , prefix="R_",    color="#DEFFDC", style="rectangle"),
-    dict(directive="spec",   title="SpecItem"    , prefix="S_",    color="#FFFF99", style="rectangle"),
-    {"directive": "test",    "title": "Test Case", "prefix": "T_", "color": "#87CEFA", "style": "node"},
+    dict(directive="req",  title="Requirement",      prefix="R_", color="#DEFFDC", style="node"),
+    dict(directive="spec", title="Specification",    prefix="S_", color="#FFFF99", style="node"),
+    dict(directive="impl", title="Implementation",   prefix="I_", color="#ffcccc", style="node"),
+    dict(directive="test", title="Test Case",        prefix="T_", color="#87CEFA", style="node"),
+    dict(directive="need", title="Need",             prefix="N_", color="#668cff", style="node")
 ]
 
 needs_extra_links = [
     {
-        "option": "checks",
-        "incoming": "is checked by",
-        "outgoing": "checks",
-    },
-    {
-        "option": "triggers",
-        "incoming": "is triggered by",
-        "outgoing": "triggers",
+        "option": "refines",
+        "incoming": "is refined by",
+        "outgoing": "refines",
         "copy": False,
         "allow_dead_links": True,
         "style": "#00AA00",

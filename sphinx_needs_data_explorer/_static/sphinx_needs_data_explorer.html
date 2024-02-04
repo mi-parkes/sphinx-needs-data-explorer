@@ -491,6 +491,16 @@
                                 //console.log(currentNode['data'][this.left]);
                             }
                             break;
+                        case "~i":
+                            //console.log(`${this.left} in ${this.right} = ${ret}`);
+                            // var re = new RegExp("a|b", "i");
+                            var re = new RegExp(this.right['value'],'i');
+                            ret=(this.left['value'] in currentNode['data']) && 
+                            (currentNode['data'][this.left['value']].match(re));
+                            if(ret) {
+                                //console.log(currentNode['data'][this.left]);
+                            }
+                            break;
                         default:
                             break;
                     }
@@ -752,8 +762,11 @@
                     reg_expr_value=r:$(reg_expr_pattern+) {  
                         return {'value':r,'location':location(),'type':'re'};
                     }
-                    reg_expr = w:Words ws "~" ws "/" p:reg_expr_value "/" {
-                        return { left:w, right:p, operand: '~' }
+                    
+                    //reg_expr = reg_expr_cs / reg_expr_ci
+                    case = "i" / ""
+                    reg_expr = w:Words ws "~" ws "/" p:reg_expr_value "/" c:case {
+                        return { left:w, right:p, operand: '~'+c }
                     }
 
                     Words
@@ -1445,84 +1458,85 @@
                 var numChildren=-1;
                 var numParents=-1;
                 var typeFrequency={};
-                if(viewMode===0) {
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numChildren+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of children[currentNode.label]) {
-                            stack.push(gnodes[node]);
-                            // if(!viewMode) {
-                            //     for(const n of parents[node])
-                            //         stack.push(gnodes[n]);
-                            // }
+                if(rootNodeLabel!=="") {
+                    if(viewMode===0) {
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numChildren+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of children[currentNode.label]) {
+                                stack.push(gnodes[node]);
+                                // if(!viewMode) {
+                                //     for(const n of parents[node])
+                                //         stack.push(gnodes[n]);
+                                // }
+                            }
+                            tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                         }
-                        tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                     }
-                }
-                if(viewMode===1) {
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numParents+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of parents[currentNode.label])
-                            stack.push(gnodes[node]);
-                        tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
-                    }
-                }
-                if(viewMode===2) {
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numChildren+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of children[currentNode.label]) {
-                            stack.push(gnodes[node]);
-                            // if(!viewMode) {
-                            //     for(const n of parents[node])
-                            //         stack.push(gnodes[n]);
-                            // }
+                    if(viewMode===1) {
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numParents+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of parents[currentNode.label])
+                                stack.push(gnodes[node]);
+                            tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
                         }
-                        tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                     }
+                    if(viewMode===2) {
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numChildren+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of children[currentNode.label]) {
+                                stack.push(gnodes[node]);
+                                // if(!viewMode) {
+                                //     for(const n of parents[node])
+                                //         stack.push(gnodes[n]);
+                                // }
+                            }
+                            tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
+                        }
 
-                    for(const node of parents[rootNodeLabel])
-                        stack.push(gnodes[node]);
-                    tmp_edges=tmp_edges.concat(parents_edges[rootNodeLabel]);
-                    numParents=0;
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numParents+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of parents[currentNode.label])
+                        for(const node of parents[rootNodeLabel])
                             stack.push(gnodes[node]);
-                        tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                        tmp_edges=tmp_edges.concat(parents_edges[rootNodeLabel]);
+                        numParents=0;
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numParents+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of parents[currentNode.label])
+                                stack.push(gnodes[node]);
+                            tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                        }
                     }
                 }
-
                 if(verbose) {
                     console.log("nodes");
                     console.log(tmp_nodes);
@@ -1534,36 +1548,39 @@
 
                 network.setData({ nodes: nodes, edges: edges });
 
-                var msg;
-                if(viewMode==0)
-                    msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
-                else if(viewMode==1)
-                    msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
-                else
-                    msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
-                if(Object.keys(typeFrequency).length>0)
-                    msg+="\n\n"
-                for(const type in  typeFrequency)
-                    msg+=`.. '${type}'=${typeFrequency[type]}\n`
-                if(Object.keys(typeFrequency).length>0)
-                    msg+="\n"
-                else
-                    msg+="\n\n"
-                nodes.update({
-                    id:rootNodeLabel,
-                    title:`${msg}${gnodes[rootNodeLabel]['title']}`,
-                    borderWidth:2,
-                    heightConstraint: {
-                            minimum: 200
-                    },
-                    widthConstraint: {
-                        minimum: 300,
-                        maximum: 300
-                    },
-                    color: {
-                        border:'red'
-                    }
-                });
+                if(rootNodeLabel!=="") {
+                    var msg;
+                    if(viewMode==0)
+                        msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
+                    else if(viewMode==1)
+                        msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
+                    else
+                        msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
+                    if(Object.keys(typeFrequency).length>0)
+                        msg+="\n\n"
+                    for(const type in  typeFrequency)
+                        msg+=`.. '${type}'=${typeFrequency[type]}\n`
+                    if(Object.keys(typeFrequency).length>0)
+                        msg+="\n"
+                    else
+                        msg+="\n\n"
+                    
+                    nodes.update({
+                        id:rootNodeLabel,
+                        title:`${msg}${gnodes[rootNodeLabel]['title']}`,
+                        borderWidth:2,
+                        heightConstraint: {
+                                minimum: 200
+                        },
+                        widthConstraint: {
+                            minimum: 300,
+                            maximum: 300
+                        },
+                        color: {
+                            border:'red'
+                        }
+                    });
+                }
                 network.fit({maxZoomLevel:0.4});
                 lastZoomPosition = {x:0,y:0}
             }

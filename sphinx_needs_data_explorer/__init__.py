@@ -5,6 +5,7 @@ from docutils import nodes
 import json
 from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
+from sphinx.errors import ExtensionError
 
 __version__ = "0.7"
 version_info = (0,7)
@@ -41,30 +42,41 @@ _FILES = (
 
 sphinx_needs_data_explorer_config_link_types_default    =['links']
 sphinx_needs_data_explorer_config_type_color_map_default={}
+static_directory='_static'
+
+class sphinx_needs_data_explorer_ExtensionError(ExtensionError):
+    pass
 
 def add_files(app, config):
     if sphinx.version_info[:2]>=(5,0) and not getattr(app, "sphinx_needs_data_explorer_installed", False):
-        makedirs(path.join(app.outdir, '_static'), exist_ok=True)
-        for (filename, integrity) in _FILES:
-            ifile=path.join(_ROOT_DIR,'_static',filename)
-            ofile=path.join(app.outdir,'_static', filename)
-            if path.isdir(ifile):
-                if path.exists(ofile):
-                    shutil.rmtree(ofile)
-                shutil.copytree(
-                    ifile,
-                    ofile
-                )
-            elif path.isfile(ifile):
-                shutil.copyfile(
-                    ifile,
-                    ofile
-                )
-                
-        environment = Environment(loader=FileSystemLoader(path.join(_ROOT_DIR,'_static')))
+        try:
+            makedirs(path.join(app.outdir,static_directory),exist_ok=True)
+            for (filename, integrity) in _FILES:
+                ifile=path.join(_ROOT_DIR,static_directory,filename)
+                ofile=path.join(app.outdir,static_directory,filename)
+                if path.isdir(ifile):
+                    if path.exists(ofile):
+                        shutil.rmtree(ofile)
+                    shutil.copytree(
+                        ifile,
+                        ofile
+                    )
+                elif path.isfile(ifile):
+                    shutil.copyfile(
+                        ifile,
+                        ofile
+                    )
+        except shutil.Error as err:
+            for src, dst, msg in err.args[0]:
+                logger.critical(f"Error copying {src} to {dst}: {msg}")
+            raise sphinx_needs_data_explorer_ExtensionError("Something went wrong in my extension")
+        except OSError as err:
+            logger.critical(f"Error: {err}")
+            raise sphinx_needs_data_explorer_ExtensionError("Something went wrong in my extension")
+        environment = Environment(loader=FileSystemLoader(path.join(_ROOT_DIR,static_directory)))
         filename="sphinx_needs_data_explorer.html"
         ifile=environment.get_template(filename)
-        ofile=path.join(app.outdir,'_static', filename)
+        ofile=path.join(app.outdir,static_directory, filename)
 
         link_types=['links']
         for item in getattr(app.config,"needs_extra_links",[]):
@@ -85,16 +97,13 @@ def add_files(app, config):
     app.sphinx_needs_data_explorer_installed = True
 
 def SphinxNeedsDataExplorer_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
-    #print("inliner.document.settings.env.app.srcdir",inliner.document.settings.env.app.srcdir)
-    #print("inliner.document.settings.env.app.outdir",inliner.document.settings.env.app.outdir)
-    app = inliner.document.settings.env.app
     print(inliner.document.current_source)    
     srcdir=str(inliner.document.settings.env.app.srcdir)
     current_source=inliner.document.current_source.replace(srcdir,"")
     nn=current_source.split('/')
-    prefix="../"*(len(nn)-2)
+    prefix="../"*(len(nn)-2) if len(nn)>1 else  ""
     node = nodes.raw('', 
-        f"""<a href="{prefix}_static/sphinx_needs_data_explorer.html" 
+        f"""<a href="{prefix}{static_directory}/sphinx_needs_data_explorer.html" 
         class="custom-reference" title="Follow this link to explore your sphinx-needs data">{text}</a>""", format='html')
     return [node], []
 

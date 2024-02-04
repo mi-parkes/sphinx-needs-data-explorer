@@ -66,6 +66,7 @@ def config_inited(app, config):
     pass
 
 def build_finished(app,docname):
+    #return
     ofilename = os.path.join(app.srcdir,'_README.txt')
     try:
         print(f"Removing {colorize('darkgreen',ofilename)}")
@@ -84,6 +85,11 @@ def copy_and_modify_readme_md(app, docname, source):
         with open(ifilename,encoding='utf-8') as thefile:
             content = thefile.read()
             replacedText = content.replace('doc/source/_static','_static')
+            # This needs to be redesigned!!!
+            replacedText = replacedText.replace('''![](_static/images/sphinx_needs_data_explorer.svg)''',
+            """```{raw} html
+<object data="_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml"></object>
+```""")
             if replacedText!=content:
                 print(f"Creating {colorize('darkgreen',ofilename)}")
                 with open(ofilename,'w',encoding='utf-8') as thefile:

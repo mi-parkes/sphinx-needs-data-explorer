@@ -9,9 +9,7 @@
 
 <br>
 
-```{raw} html
-<object data="doc/source/_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml"></object>
-```
+![](doc/source/_static/images/sphinx_needs_data_explorer.svg)
 
 <br>
 

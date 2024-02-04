@@ -51,7 +51,7 @@ scale 0.5
 **[#lightgreen] Platforms
 *** Windows +10
 *** Linux
-**[#lightgreen] Sphinx
+**[#lightgreen] [[ https://www.sphinx-doc.org/en/master/ Sphinx ]]
 *** Sphinx Extension
 ****[#LightSkyBlue] Documentation
 ****[#LightSkyBlue] Automotive Requirement\nTraceability
@@ -59,13 +59,13 @@ scale 0.5
 ***** HTML
 ***** CSS
 *****[#Yellow] JavaScript
-****** visjs
+****** [[ https://visjs.org visjs ]]
 ******* Dynamic and interactive\ndata network visualization
-****** pegjs
+****** [[ https://github.com/peggyjs/peggy pegjs ]]
 ******* Powerful and flexible\nparser generator
-****** select2
+****** [[ https://github.com/select2/select2 select2 ]]
 ******* Library for creating\nand managing user input
-****** jQuery
+****** [[ https://github.com/jquery/jquery jQuery ]]
 ******* DOM manipulation library
 
 ****[#LightSkyBlue] Complement to Sphinx-Needs

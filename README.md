@@ -9,7 +9,9 @@
 
 <br>
 
-![](doc/source/_static/images/sphinx_needs_data_explorer.png)
+```{raw} html
+<object data="doc/source/_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml"></object>
+```
 
 <br>
 

@@ -85,8 +85,16 @@ def add_files(app, config):
     app.sphinx_needs_data_explorer_installed = True
 
 def SphinxNeedsDataExplorer_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+    #print("inliner.document.settings.env.app.srcdir",inliner.document.settings.env.app.srcdir)
+    #print("inliner.document.settings.env.app.outdir",inliner.document.settings.env.app.outdir)
+    app = inliner.document.settings.env.app
+    print(inliner.document.current_source)    
+    srcdir=str(inliner.document.settings.env.app.srcdir)
+    current_source=inliner.document.current_source.replace(srcdir,"")
+    nn=current_source.split('/')
+    prefix="../"*(len(nn)-2)
     node = nodes.raw('', 
-        f"""<a href="_static/sphinx_needs_data_explorer.html" 
+        f"""<a href="{prefix}_static/sphinx_needs_data_explorer.html" 
         class="custom-reference" title="Follow this link to explore your sphinx-needs data">{text}</a>""", format='html')
     return [node], []
 

@@ -5,8 +5,6 @@
 
 `sphinx_needs_data_explorer` enhances the interactivity of your Sphinx <br> generated documentation by enabling you to explore [Sphinx-Needs](https://github.com/useblocks/sphinx-needs) data.
 
-<br>
-
 ## Goals and Realization
 
 <br>
@@ -17,7 +15,7 @@
 
 ## Screenshots
 
-**Example 1:** exploring In-Neighbours, Our-Neighbours or both
+**Example 1:** exploring In-Neighbours, Out-Neighbours or both
 
 ![](doc/source/_static/images/sh2.jpg)
 
@@ -66,9 +64,9 @@ In your conf.py configuration file, add `sphinx_needs_data_explorer` to your ext
     needs_build_json = True
 
 
-Add the following role in your index.rst file (At this moment the role can be used only in the RST files stored in the same directory as conf.py).
+You can create hyperlink to `sphinx_needs_data_explorer` by adding the following role in your .rst file(s)
 
-    :sphinx_needs_data_explorer:`Sphinx Needs Data Explorer`
+    :sphinx_needs_data_explorer:`Sphinx Needs Data Explorer Test`
 
 ## Configuration
 

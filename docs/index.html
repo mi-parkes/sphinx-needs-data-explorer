@@ -412,7 +412,6 @@ document.write(`
 <h2>About<a class="headerlink" href="#about" title="Link to this heading">#</a></h2>
 <br>
 <p><code class="docutils literal notranslate"><span class="pre">sphinx_needs_data_explorer</span></code> enhances the interactivity of your Sphinx <br> generated documentation by enabling you to explore <a class="reference external" href="https://github.com/useblocks/sphinx-needs">Sphinx-Needs</a> data.</p>
-<br>
 </section>
 <section id="goals-and-realization">
 <h2>Goals and Realization<a class="headerlink" href="#goals-and-realization" title="Link to this heading">#</a></h2>
@@ -422,7 +421,7 @@ document.write(`
 </section>
 <section id="screenshots">
 <h2>Screenshots<a class="headerlink" href="#screenshots" title="Link to this heading">#</a></h2>
-<p><strong>Example 1:</strong> exploring In-Neighbours, Our-Neighbours or both</p>
+<p><strong>Example 1:</strong> exploring In-Neighbours, Out-Neighbours or both</p>
 <p><img alt="" src="_images/sh2.jpg" /></p>
 <br>
 <p><strong>Example 2:</strong> switching between network visualization and documentation</p>
@@ -463,8 +462,8 @@ pip install dist/sphinx_needs_data_explorer-0.7.0-py3-none-any.whl
 needs_build_json = True
 </pre></div>
 </div>
-<p>Add the following role in your index.rst file (At this moment the role can be used only in the RST files stored in the same directory as conf.py).</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:sphinx_needs_data_explorer:`Sphinx Needs Data Explorer`
+<p>You can create hyperlink to <code class="docutils literal notranslate"><span class="pre">sphinx_needs_data_explorer</span></code> by adding the following role in your .rst file(s)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>:sphinx_needs_data_explorer:`Sphinx Needs Data Explorer Test`
 </pre></div>
 </div>
 </section>

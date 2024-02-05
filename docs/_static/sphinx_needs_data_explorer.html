@@ -345,6 +345,7 @@
             </div>
         </div>
         <script type="text/javascript">
+            const link_types = ['links', 'refines'];
             var startTime;
             var ecounter=0;
             let verbose=false;
@@ -619,7 +620,6 @@
             }                
 
             function parse_links(need) {
-                link_types = ['links', 'refines'];
                 links = [];
                 for(const link_type of link_types) {
                     if(link_type in need)
@@ -830,6 +830,12 @@
                         "count" :0,
                         "sum":0
                     }};
+
+                    for(const link_type of link_types) {
+                        if(link_type in needs[key])
+                            jsonData['data'][link_type]=needs[key][link_type]
+                    }
+
                     jsonData["shape"]='box'
                     jsonData["id"]=needs[key].id
                     jsonData["label"]=needs[key].id

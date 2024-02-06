@@ -909,6 +909,28 @@
                 return "";
             }
 
+            function handleSelectFirstNodeEvent() {
+                let svalue=document.getElementById('select-need-id');
+                if(svalue.options.length>0 && svalue.selectedIndex!=0) {
+                    var $select = $('#select-need-id');
+                    $select.prop('selectedIndex',0).trigger('change');
+                    var text = $('#select-need-id option:selected').text();
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    drawFilteredGraph(getID(text));
+                }
+            }
+
+            function handleSelectLastNodeEvent() {
+                let svalue=document.getElementById('select-need-id');
+                if(svalue.options.length>0 && svalue.selectedIndex!=(svalue.options.length-1)) {
+                    var $select = $('#select-need-id');
+                    $select.prop('selectedIndex',svalue.options.length-1).trigger('change');
+                    var text = $('#select-need-id option:selected').text();
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    drawFilteredGraph(getID(text));
+                }
+            }
+
             function handleSelectPrevNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
                 if(svalue.options.length>0 && svalue.selectedIndex>0) {
@@ -1263,6 +1285,16 @@
                             //console.log(`viewMode update -> ${viewMode}`);
                         }
                     }
+                    // jump to node list beginning
+                    if(event.keyCode===66||event.keyCode===98) {
+                        handleSelectFirstNodeEvent();
+                    }
+
+                    // jump to node list end
+                    if(event.keyCode===69||event.keyCode===101) {
+                        handleSelectLastNodeEvent();
+                    }
+
                     // previous node
                     if(event.keyCode===80||event.keyCode===112) {
                         event.preventDefault();

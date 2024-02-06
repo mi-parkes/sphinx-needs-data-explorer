@@ -345,7 +345,7 @@
             </div>
         </div>
         <script type="text/javascript">
-            const link_types = {{ LINK_TYPES }};
+            const link_types = ['links', 'refines'];
             var startTime;
             var ecounter=0;
             let verbose=false;
@@ -611,7 +611,7 @@
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
             });
 
-            type2color= {{TYPE2COLOR}};
+            type2color= {'req': '#DEFFDC', 'spec': '#FFFF99', 'impl': '#ffcccc', 'test': '#87CEFA', 'need': '#668cff'};
             window.addEventListener('resize', handleResize);
 
             function handleResize() {

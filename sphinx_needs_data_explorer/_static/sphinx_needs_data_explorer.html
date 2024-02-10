@@ -55,6 +55,13 @@
                 font-size: 22px;
             }
 
+            .bigdropFilter {
+                width: 1000px !important;
+                margin-top: +20px;
+                margin-left: -400px;
+                font-size: 22px;
+            }
+
             .select2-container--default .select2-results>.select2-results__options{
                 max-height: 500px !important;
             }
@@ -149,7 +156,7 @@
             }
             #input {
                 position: relative;
-                flex: 1 25%;
+                flex: 1 15%;
                 max-width: 25%;
                 font-size: 22px;
                 border-radius: 4px;
@@ -162,6 +169,9 @@
                 padding-left: 10px;
                 padding-right: 10px;                
                 background-color: rgb(23, 70, 210);
+            }
+            #select-filter {
+                flex: 1 10%;
             }
             #input:focus {
                 display: flex;
@@ -328,6 +338,9 @@
                 <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                 </select>
                 <input title="customFilter" type="text" id="input">
+                <select title="selectFilter" id="select-filter" class="select2 select2-container select2-container--bootstrap select2-container--focus>
+                    <option value="">Select</option>
+                </select>
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
                 </select>
@@ -346,6 +359,7 @@
         </div>
         <script type="text/javascript">
             const link_types = {{ LINK_TYPES }};
+            var userInput;
             var startTime;
             var ecounter=0;
             let verbose=false;
@@ -1632,6 +1646,7 @@
                     //width: '100%' // need to override the changed default
                     dropdownCssClass : 'bigdrop',
                 });
+                initSelectFilter();
             });
 
             const textBox = document.getElementById('input');
@@ -1662,9 +1677,9 @@
             $("#input").blur(function(){
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
-                handleSelectTypeEvent();                        
+                handleSelectTypeEvent();
                 console.log(`$("#input").blur(function())`);
-                $(this).off('keydown',handleKeydown);                
+                //$(this).off('keydown',handleKeydown);
                 if(network!=null) {
                     network.setOptions( saveOpt );
                 }
@@ -1675,11 +1690,42 @@
                 }
             });
 
-            function handleKeydown(event) {
+            function handleKeydown(e) {
                 //console.log(`$('#input').on('keydown',function(event))`)
-                if (event.key === '\n') {
-                    // Prevent the user from pressing the Enter key
-                    event.preventDefault();
+                //if (event.key === '\n') {
+                //    // Prevent the user from pressing the Enter key
+                //    event.preventDefault();
+               // }
+               if (e.key === 'Enter') {
+                    var newText = $('#input').val().trim();
+                    var selectedValue = $('#select-filter').val();
+
+                    var selectedOption = $('#select-filter').select2('data')[0];
+                    if (selectedOption) {
+                        console.log("Selected text:", selectedOption.text);
+                        console.log("Selected value:", selectedOption.id);
+                    }
+
+                    const existingOption = $("#select-filter").find("option[text='" + newText + "']");
+
+                    if (textExists(newText)) {
+                        console.log("Option with text '" + newText + "' already exists.");
+                        setCurrentSelectionByText(newText);
+                    } else {
+                        console.log("Option with text '" + newText + "' does not exist.");
+                        if(selectedOption!=null) {
+                            $('#select-filter option[value="' + selectedValue + '"]').text(newText);
+                            $('#select-filter option').filter(function () {
+                                return $(this).text() === 'Select';
+                            }).remove();
+                            $('#select-filter').trigger('change.select2');
+                        } else {
+                            userInput=newText;
+                            task();
+                        }
+                        handleSelectTypeEvent();
+                    }
+                    initSelectFilter();
                 }
             }
 
@@ -1689,6 +1735,84 @@
                 const modal = document.getElementById('helpModal');
                 if (event.target === modal) {
                     modal.style.display = 'none';
+                }
+            }
+
+
+            function textExists(text) {
+                var exists = false;
+                $('#select-filter option').each(function () {
+                    if ($(this).text().trim() === text.trim()) {
+                    exists = true;
+                    return false;
+                    }
+                });
+                return exists;
+            }
+
+            function initSelectFilter() {
+                $('#select-filter').select2({
+                    dropdownCssClass: 'bigdropFilter',
+                    allowClear: true,
+                    placeholder: 'Filters',
+                    language: {
+                    noResults: function () {
+                        return `<button style="width: 100%" type="button"
+                            class="btn btn-primary" 
+                            onClick='task()'>+ Add New Item</button>
+                            </li>`;
+                    }
+                    },
+                    escapeMarkup: function (markup) {
+                    return markup;
+                    }
+                });
+
+                $('#select-filter').on('select2:open', function () {
+                    $('.select2-search__field').on('input', function () {
+                    userInput = $(this).val();
+                    });
+                });
+
+                // Event listener to handle removal of options
+                $('#select-filter').on('select2:unselecting', function (e) {
+                    var removedOption = $(e.params.args.data.element);
+                    removedOption.remove(); // Remove the option from the dropdown
+                });
+
+                $('#select-filter').on('select2:select', function (e) {
+                    const selectedOption = e.params.data;
+                    const selectedValue = selectedOption.id; // Access option ID if needed
+                    const selectedText = selectedOption.text;
+                    var inputField = $('#input');
+                    inputField.val(selectedText);
+                    handleSelectTypeEvent();
+                });
+            }
+
+            function setCurrentSelectionByText(text) {
+                $('#select-filter option').each(function () {
+                    if ($(this).text().trim() === text.trim()) {
+                        $('#select-filter').val($(this).val()).trigger('change.select2');
+                        return false;
+                    }
+                });
+            }
+
+            function task(updateInput=true) {
+                console.log(userInput);
+                if (userInput) {
+                    $('#select-filter').append($('<option>', {
+                    value: userInput,
+                    text: userInput
+                    })).trigger('change.select2');
+                    $('#select-filter').val(userInput).trigger('change.select2');
+                    if(updateInput) {
+                        var inputField = $('#input');
+                        inputField.val(userInput);
+                        initSelectFilter();
+                        handleSelectTypeEvent();
+                    }
                 }
             }
         </script>

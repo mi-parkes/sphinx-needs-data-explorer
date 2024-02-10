@@ -302,6 +302,8 @@
                             <li>selected sphinx_need item and all InOut-neighbours</li>
                           </ul>
                     </li>
+                    <li>b(beginning) of sphinx_need item list</li>
+                    <li>e(end) of sphinx_need item list</li>
                 </ul>
                 <h3>Mouse events</h3>
                 <ul>
@@ -310,13 +312,14 @@
                         can be found</li>
                 </ul>
                 <h3>The following sphinx_needs attributes can be used in filters</h3>
-                <ul>
+                <ul id="help-attributes">
+                    <!-- 
                     <li>id</li>
                     <li>type</li>
                     <li>status</li>
                     <li>title</li>
                     <li>docname</li>
-                    <li>description</li>
+                    <li>description</li> -->
                 </ul>
                 <h3>Examples of filtering</h3>
                 <ul>
@@ -440,7 +443,7 @@
                     return Node.create(node);
                 }
                 //isObject(node) { return typeof node === "object" }
-                isObject(node) { return !('type' in node); }                
+                isObject(node) { return !('type' in node); }
                 evaluate(currentNode) {
                     var ret=false;
                     // console.log(`" --> ${this.operand}"`);
@@ -715,12 +718,12 @@
                 grammar = `
                     start = expr
                     ws = ws:[ \t]* { return ws.join("").length>0?" ":""}
-                    newline = [ \\t\\n\\r]* { return { left: "", right: "", operand: "EOL" } }                    
+                    newline = [ \\t\\n\\r]* { return { left: "", right: "", operand: "EOL" } }
                     QuotedString = "'" text:[A-Za-z0-9_/\\-]+ "'" { 
                         return {'value':text.join(""),'location':location(),'type':'qs'};
                     }
 
-                    QuotedStringx = "'" text:[A-Za-z0-9_/\\-]+ "'" { return text.join(""); }                    
+                    QuotedStringx = "'" text:[A-Za-z0-9_/\\-]+ "'" { return text.join(""); }
 
                     LOperator = "&&" / "||"
 
@@ -836,6 +839,7 @@
                         "title" :       needs[key]['title'],
                         "status":       needs[key]['status'],
                         "docname":      needs[key]['docname'],
+                        "tags":         needs[key]['tags'],
                         "lineno":       'lineno' in needs[key]?needs[key]['lineno']:1,
                         //"description":  convert_text_to_html(needs[key]['description']),
                         "description":  needs[key]['description'],
@@ -890,6 +894,15 @@
                     }
                     gnodes[key]=jsonData
                 }
+                
+                if(Object.keys(gnodes).length>0) {
+                    const firstKey = Object.keys(gnodes)[0];
+                    for(const att of Object.keys(gnodes[firstKey]['data']).sort()){
+                        if(!['depth','sum','count'].includes(att)) 
+                            $("#help-attributes").append(`<li>"${att}</li>`);
+                    }
+                }
+
                 for(const key in needs) {
                     for(to of parse_links(needs[key])) {
                         if(to in needs) {

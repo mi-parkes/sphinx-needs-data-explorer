@@ -119,10 +119,11 @@
             }
             .row>div,
             .row>select,
-            .row>input
+            .row>input,
+            .row>span
              {
                 font-size: 22px;
-                margin: 5px 10px;
+                margin: 5px 5px;
                 height: 30px;
                 border: none;
             }
@@ -165,7 +166,7 @@
             }
             #input {
                 position: relative;
-                flex: 1 15%;
+                flex: 1 14%;
                 max-width: 25%;
                 font-size: 22px;
                 border-radius: 4px;
@@ -176,11 +177,13 @@
                 text-overflow: ellipsis; 
                 overflow: hidden;
                 padding-left: 10px;
-                padding-right: 10px;                
+                padding-right: 10px;
                 background-color: rgb(23, 70, 210);
             }
             #select-filter {
                 flex: 1 10%;
+                font-size: 22px;
+                border-radius: 4px;
             }
             #input:focus {
                 display: flex;
@@ -320,7 +323,7 @@
                     <li>a click at node shows detailed node information in window, including a link where complete information 
                         can be found</li>
                 </ul>
-                <h3>The following sphinx_needs attributes are available in this documentation and can be used for filtering</h3>
+                <h3>The following sphinx_needs attributes are available in your documentation and can be used for filtering</h3>
                 <table class="ack-table">
                     <thead>
                       <tr>
@@ -367,7 +370,7 @@
                 <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                 </select>
                 <input title="customFilter" type="text" id="input">
-                <select title="selectFilter" id="select-filter" class="select2 select2-container select2-container--bootstrap select2-container--focus>
+                <select title="selectFilter" id="select-filter" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select</option>
                 </select>
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
@@ -924,12 +927,13 @@
                 if(Object.keys(gnodes).length>0) {
                     const firstKey = Object.keys(gnodes)[0];
                     for(const att of Object.keys(gnodes[firstKey]['data']).sort()){
-                        if(!['depth','sum','count'].includes(att)) 
+                        if(!['depth','sum','count'].includes(att))  {
                             //$("#help-attributes").append(`<li>'${att}':${typeof gnodes[firstKey]['data'][att]}</li>`);
                             $("#help-attributes").append(`<tr>
-                            <td class="att-td">'${att}'</td>
+                            <td class="att-td">${att}</td>
                             <td class="att-td">${typeof gnodes[firstKey]['data'][att]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
+                        }
                     }
                 }
 

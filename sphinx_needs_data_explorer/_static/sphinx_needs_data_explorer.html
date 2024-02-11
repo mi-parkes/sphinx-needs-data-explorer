@@ -927,12 +927,13 @@
                 if(Object.keys(gnodes).length>0) {
                     const firstKey = Object.keys(gnodes)[0];
                     for(const att of Object.keys(gnodes[firstKey]['data']).sort()){
-                        if(!['depth','sum','count'].includes(att)) 
+                        if(!['depth','sum','count'].includes(att))  {
                             //$("#help-attributes").append(`<li>'${att}':${typeof gnodes[firstKey]['data'][att]}</li>`);
                             $("#help-attributes").append(`<tr>
-                            <td class="att-td">'${att}'</td>
+                            <td class="att-td">${att}</td>
                             <td class="att-td">${typeof gnodes[firstKey]['data'][att]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
+                        }
                     }
                 }
 

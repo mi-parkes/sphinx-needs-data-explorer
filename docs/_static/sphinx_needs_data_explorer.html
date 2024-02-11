@@ -1737,33 +1737,41 @@
                 }
             });
 
+            function findOptionByText(select2Element,text) {
+                return option = select2Element.find('option').filter(function() {
+                        const curText=$(this).text().trim();
+                        return curText === text.trim();
+                    });
+            }
+            function printOption(option) {
+                if (option.length > 0) {
+                    console.log(`option.value=${option.val()}`);
+                    console.log(`option.text=${option.text()}`);
+                    console.log(`option.info=${option.data('info')}`);
+                } else {
+                    console.log(`The option is invalid and cannot be printed`);
+                }
+            }
             function handleKeydown(e) {
-                //console.log(`$('#input').on('keydown',function(event))`)
-                //if (event.key === '\n') {
-                //    // Prevent the user from pressing the Enter key
                 //    event.preventDefault();
-               // }
                if (e.key === 'Enter') {
-                    var newText = $('#input').val().trim();
+                    var newText = $('#input').val().trim();                    
                     var selectedValue = $('#select-filter').val();
-
-                    var selectedOption = $('#select-filter').select2('data')[0];
-                    if (selectedOption) {
-                        console.log("Selected text:", selectedOption.text);
-                        console.log("Selected value:", selectedOption.id);
-                    }
-
-                    const existingOption = $("#select-filter").find("option[text='" + newText + "']");
-
-                    if (textExists(newText)) {
-                        console.log("Option with text '" + newText + "' already exists.");
+                    var selectedOption = $('#select-filter').select2('data')[0];                    
+                    //printOption(selectedOption);
+                    const option = findOptionByText($("#select-filter"),"Select");
+                    //printOption(option);
+                    newOption=findOptionByText($("#select-filter"),newText);
+                    if (newOption.length > 0) {
+                        //console.log("Option with text '" + newText + "' already exists.");
                         setCurrentSelectionByText(newText);
                     } else {
                         console.log("Option with text '" + newText + "' does not exist.");
-                        if(selectedOption!=null) {
-                            $('#select-filter option[value="' + selectedValue + '"]').text(newText);
+                        if(newOption.length>0) {
+                            //$('#select-filter option[value=`selectedValue`]').text(newText);
+                            setCurrentSelectionByText(newText);
                             $('#select-filter option').filter(function () {
-                                return $(this).text() === 'Select';
+                                 return $(this).text() === 'Select';
                             }).remove();
                             $('#select-filter').trigger('change.select2');
                         } else {

@@ -35,27 +35,24 @@
                 white-space: nowrap;
                 overflow: auto;
             }
+            .att-td {
+                /* font-family: Consolas, Menlo, Courier, "Lucida Console", Monaco, monospace; */
+                font-family: 'Source Code Pro', monospace;
+                border: 1px solid #dddddd;
+                padding: 8px;
+                text-align: left;
+                white-space: nowrap;
+                overflow: auto;
+            }
 
             /* Define column widths in percentage */
-            .at-th:first-child, .at-td:first-child {
+            .at-th:nth-child(-n+3), .at-td:nth-(-n+3) {
                 width: 10%;
             }
 
-            .at-th:nth-child(2), .at-td:nth-child(2) {
-                width: 10%;
-            }
-
-            .at-th:nth-child(3), .at-td:nth-child(3) {
+            .at-th:nth-child(4), .at-td:nth-child(4) {
                 width: 50%;
             }
-
-            /* .at-th:nth-child(4), .at-td:nth-child(4) {
-                width: 30%;
-            } */
-
-            /* .at-th:nth-child(5), .at-td:nth-child(5) {
-                width: 30%;
-            } */
 
             .typedrop {
                 font-size: 22px;
@@ -64,6 +61,13 @@
                 width: 1000px !important;
                 margin-top: +20px;
                 margin-left: -600px;
+                font-size: 22px;
+            }
+
+            .bigdropFilter {
+                width: 1000px !important;
+                margin-top: +20px;
+                margin-left: -400px;
                 font-size: 22px;
             }
 
@@ -82,15 +86,22 @@
             .select2-selection__rendered {
                 font-size: 22px;
             }
-
+            #tooltip-window {
+                width: auto;
+                margin: 15px 5px;
+                margin-right: 20px;
+            }
             #mynetwork {
-                position: relative;
-                width: 100%;
-                height: 90%;
+                /* position: relative; */
+                width: auto;
+                height: 86%;
+                margin: 15px 5px;
+                /* justify-content: space-between; */
+                margin-right: 20px;
                 background-color: #ffffff;
                 /* border: 1px solid lightgray; */
                 /* position: relative; */
-                float: left;
+                /* float: left; */
             }
     
             .ib {
@@ -115,10 +126,11 @@
             }
             .row>div,
             .row>select,
-            .row>input
+            .row>input,
+            .row>span
              {
                 font-size: 22px;
-                margin: 5px 10px;
+                margin: 5px 5px;
                 height: 30px;
                 border: none;
             }
@@ -159,10 +171,15 @@
                 color: white;
                 background-color: rgb(23, 70, 210);
             }
-            #input {
+            #select-filter {
+                flex: 1 10%;
+                font-size: 22px;
+                border-radius: 4px;
+            }
+            .input-inactive {
                 position: relative;
-                flex: 1 25%;
-                max-width: 25%;
+                flex: 1 14%;
+                max-width: 15% important;
                 font-size: 22px;
                 border-radius: 4px;
                 color: white;
@@ -172,19 +189,19 @@
                 text-overflow: ellipsis; 
                 overflow: hidden;
                 padding-left: 10px;
-                padding-right: 10px;                
+                padding-right: 10px;
                 background-color: rgb(23, 70, 210);
             }
-            #input:focus {
+            .input-active {
                 display: flex;
                 color: white;
                 background-color: rgb(90, 101, 128);
                 /* max-width: 300px !important;
                 width: 300px !important;
                 min-width:300px; */
-                width: 100%;
-                min-width:94%;
-                position: absolute;
+                width: 80% important;
+                /* min-width:80%;
+                position: absolute; */
                 /*margin-top: +95px; */
                 /* margin-left: 10px; */
                 font-size: 22px;
@@ -288,11 +305,13 @@
             <h2>Help Information</h2>
                 <h3>Keyboard shortcuts</h3>
                 <ul>
+<!-- 
                     <li>visjs network keyboard shortcuts</li>
                     <ul>
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
                         <li>+/- zoom-in/zoom out</li>
                     </ul>
+ -->
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
                     <li>l(layout) toggle between bottom-up and right-left network hierarchical layout directions</li>
                     <li>ENTER - to cycle network view mode
@@ -302,6 +321,8 @@
                             <li>selected sphinx_need item and all InOut-neighbours</li>
                           </ul>
                     </li>
+                    <li>b(beginning) of sphinx_need item list</li>
+                    <li>e(end) of sphinx_need item list</li>
                 </ul>
                 <h3>Mouse events</h3>
                 <ul>
@@ -309,25 +330,43 @@
                     <li>a click at node shows detailed node information in window, including a link where complete information 
                         can be found</li>
                 </ul>
-                <h3>The following sphinx_needs attributes can be used in filters</h3>
-                <ul>
-                    <li>id</li>
-                    <li>type</li>
-                    <li>status</li>
-                    <li>title</li>
-                    <li>docname</li>
-                    <li>description</li>
-                </ul>
+                <h3>The following sphinx_needs attributes are available in your documentation and can be used for filtering</h3>
+                <table class="ack-table">
+                    <thead>
+                      <tr>
+                        <th class="ack-th">Name</th>
+                        <th class="ack-th">Type</th>
+                      </tr>
+                    </thead>
+                    <tbody id="help-attributes">
+                    </tbody>
+                </table>
                 <h3>Examples of filtering</h3>
-                <ul>
-                    <li>'S_\' in id</li>
-                    <li>'arch' in docname</li>
-                    <li>'architecture/architecture-needs'==docname</li>
-                    <li>status in ['open','closed']</li>
-                    <li>(status=='open' && (type in ['req'])) || ('arch' in docname)</li>
-                    <li>title ~ /^Level[ \t]+(?=one)/ #positive lookaheads</li>
-                    <li>title ~ /^Level[ \t]+(?!one)/ #negative lookaheads</li>
-                </ul>
+                <table class="ack-table">
+                    <tbody>
+                        <tr>
+                            <td class="att-td">'S_\' in id</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">'arch' in docname</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">'architecture/architecture-needs'==docname</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">status in ['open','closed']</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">(status=='open' && (type in ['req'])) || ('arch' in docname)</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">title ~ /^Level[ \t]+(?=one)/ #positive lookaheads</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">title ~ /^Level[ \t]+(?!one)/ #negative lookaheads</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <div>
@@ -337,24 +376,29 @@
                 </div>
                 <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                 </select>
-                <input title="customFilter" type="text" id="input">
+                <input title="customFilter" type="text" id="input" class="input-inactive">
+                <select title="selectFilter" id="select-filter" class="select2 select2-container select2-container--bootstrap select2-container--focus">
+                    <option value="">Select</option>
+                </select>
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
                 </select>
                 <button id="reset" onclick="resetNetwork()">Reset</button>
                 <button id="help" onclick="openHelpDialog()">Help</button>
             </div>
-            <div>
-                <div style="display:block">
-                    <div style="display:block;padding: 8px 18px;">
-                        <div id="tooltip-window" class="tooltip-window">
-                        </div>
-                    </div>
-                    <div id="mynetwork"></div>
-                </div>
-            </div>
-        </div>    
+            <ul id="suggestions"></ul>
+            <div id="tooltip-window" class="tooltip-window"></div>
+            <div id="mynetwork"></div>
+        </div>
         <script type="text/javascript">
+            const link_types = ['links', 'refines'];
+            var networkContainer;
+            const autocompletionDelimiters = [" ",",", "[", "("];
+            var suggestionsList;
+            var autocompletionAttributes;
+            var processingInputFilter=false;
+            var userInput;
+            var startTime;
             var ecounter=0;
             let verbose=false;
             let MIN_ZOOM = 0.1;
@@ -385,6 +429,15 @@
             var parser;
             let grammar;
             const traceParser=false;
+
+            function startTimer() {
+                startTime = performance.now();
+            }
+
+            function stopTimer(msg) {
+                const endTime = performance.now();
+                console.log(`Execution time of ${msg}`,endTime - startTime);
+            }
 
             class Node {
                 constructor(left, right, operand) {
@@ -425,7 +478,7 @@
                     return Node.create(node);
                 }
                 //isObject(node) { return typeof node === "object" }
-                isObject(node) { return !('type' in node); }                
+                isObject(node) { return !('type' in node); }
                 evaluate(currentNode) {
                     var ret=false;
                     // console.log(`" --> ${this.operand}"`);
@@ -485,6 +538,16 @@
                             //console.log(`${this.left} in ${this.right} = ${ret}`);
                             // var re = new RegExp("a|b", "i");
                             var re = new RegExp(this.right['value']);
+                            ret=(this.left['value'] in currentNode['data']) && 
+                            (currentNode['data'][this.left['value']].match(re));
+                            if(ret) {
+                                //console.log(currentNode['data'][this.left]);
+                            }
+                            break;
+                        case "~i":
+                            //console.log(`${this.left} in ${this.right} = ${ret}`);
+                            // var re = new RegExp("a|b", "i");
+                            var re = new RegExp(this.right['value'],'i');
                             ret=(this.left['value'] in currentNode['data']) && 
                             (currentNode['data'][this.left['value']].match(re));
                             if(ret) {
@@ -593,6 +656,7 @@
                     console.log(`project=${data['project']}`);
                     processJSON(data);
                     prepareParser();
+                    suggestionsList = document.getElementById("suggestions");
                     initNetwork();
                     handleSelectTypeEvent();
                 }
@@ -600,7 +664,7 @@
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
             });
 
-            type2color= {'req': '#DEFFDC', 'spec': '#FFFF99', 'test': '#87CEFA'};
+            type2color= {'req': '#DEFFDC', 'spec': '#FFFF99', 'impl': '#ffcccc', 'test': '#87CEFA', 'need': '#668cff'};
             window.addEventListener('resize', handleResize);
 
             function handleResize() {
@@ -609,7 +673,6 @@
             }                
 
             function parse_links(need) {
-                link_types = ['links'];
                 links = [];
                 for(const link_type of link_types) {
                     if(link_type in need)
@@ -691,12 +754,12 @@
                 grammar = `
                     start = expr
                     ws = ws:[ \t]* { return ws.join("").length>0?" ":""}
-                    newline = [ \\t\\n\\r]* { return { left: "", right: "", operand: "EOL" } }                    
+                    newline = [ \\t\\n\\r]* { return { left: "", right: "", operand: "EOL" } }
                     QuotedString = "'" text:[A-Za-z0-9_/\\-]+ "'" { 
                         return {'value':text.join(""),'location':location(),'type':'qs'};
                     }
 
-                    QuotedStringx = "'" text:[A-Za-z0-9_/\\-]+ "'" { return text.join(""); }                    
+                    QuotedStringx = "'" text:[A-Za-z0-9_/\\-]+ "'" { return text.join(""); }
 
                     LOperator = "&&" / "||"
 
@@ -752,8 +815,11 @@
                     reg_expr_value=r:$(reg_expr_pattern+) {  
                         return {'value':r,'location':location(),'type':'re'};
                     }
-                    reg_expr = w:Words ws "~" ws "/" p:reg_expr_value "/" {
-                        return { left:w, right:p, operand: '~' }
+                    
+                    //reg_expr = reg_expr_cs / reg_expr_ci
+                    case = "i" / ""
+                    reg_expr = w:Words ws "~" ws "/" p:reg_expr_value "/" c:case {
+                        return { left:w, right:p, operand: '~'+c }
                     }
 
                     Words
@@ -809,6 +875,7 @@
                         "title" :       needs[key]['title'],
                         "status":       needs[key]['status'],
                         "docname":      needs[key]['docname'],
+                        "tags":         needs[key]['tags'],
                         "lineno":       'lineno' in needs[key]?needs[key]['lineno']:1,
                         //"description":  convert_text_to_html(needs[key]['description']),
                         "description":  needs[key]['description'],
@@ -817,12 +884,45 @@
                         "count" :0,
                         "sum":0
                     }};
+
+                    for(const link_type of link_types) {
+                        if(link_type in needs[key])
+                            jsonData['data'][link_type]=needs[key][link_type]
+                    }
+
                     jsonData["shape"]='box'
                     jsonData["id"]=needs[key].id
                     jsonData["label"]=needs[key].id
                     //jsonData["size"]= { width: 30, height: 30 } }
-                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\ntitle=${needs[key]['title']}`
+                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\nstatus=${needs[key]['status']}\ntitle=${needs[key]['title']}`
                     jsonData["title-html"]=`<b>type</b>=${needs[key]['type']}<br>`
+                    //
+                    // gnodes[each]["title-html"]=
+                    jsonData["title-html"]=`
+                    <table class="ack-table">
+                        <thead>
+                        <tr>
+                            <th class="at-td">id</th>
+                            <th class="at-td">type</th>
+                            <th class="at-td">status</th>
+                            <th class="at-td">title</th>
+                            <th class="at-td">docname</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="at-td" title="${jsonData["id"]}">${jsonData["id"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["type"]}">${jsonData["data"]["type"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["status"]}">${jsonData["data"]["status"]}</td>
+                            <td class="at-td" title="${jsonData["data"]["title"]}">${jsonData["data"]["title"]}</td>
+                            <td class="at-td">
+                                <a href="../${jsonData["data"]["docname"]}.html#${jsonData["id"]}"
+                                title="${jsonData["data"]["docname"]}.html}">${jsonData["data"]["docname"]}.html#${jsonData["id"]}</a></td>
+                        </tr>
+                    </tbody>
+                    </table>
+                    `
+                    //
                     if(needs[key].type in type2color) {
                         jsonData["color"]=type2color[needs[key].type];
                     } else {
@@ -830,6 +930,22 @@
                     }
                     gnodes[key]=jsonData
                 }
+                
+                if(Object.keys(gnodes).length>0) {
+                    const firstKey = Object.keys(gnodes)[0];
+                    autocompletionAttributes=[];
+                    for(const att of Object.keys(gnodes[firstKey]['data']).sort()){
+                        if(!['depth','sum','count'].includes(att))  {
+                            //$("#help-attributes").append(`<li>'${att}':${typeof gnodes[firstKey]['data'][att]}</li>`);
+                            $("#help-attributes").append(`<tr>
+                            <td class="att-td">${att}</td>
+                            <td class="att-td">${typeof gnodes[firstKey]['data'][att]}</td>
+                            </tr>`.replace(/^[\s]+/gm,""))
+                            autocompletionAttributes.push(`${att}`);
+                        }
+                    }
+                }
+
                 for(const key in needs) {
                     for(to of parse_links(needs[key])) {
                         if(to in needs) {
@@ -863,26 +979,46 @@
                 return "";
             }
 
+            function handleSelectFirstNodeEvent() {
+                let svalue=document.getElementById('select-need-id');
+                if(svalue.options.length>0 && svalue.selectedIndex!=0) {
+                    var $select = $('#select-need-id');
+                    $select.prop('selectedIndex',0).trigger('change');
+                    var text = $('#select-need-id option:selected').text();
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    drawFilteredGraph(getID(text));
+                }
+            }
+
+            function handleSelectLastNodeEvent() {
+                let svalue=document.getElementById('select-need-id');
+                if(svalue.options.length>0 && svalue.selectedIndex!=(svalue.options.length-1)) {
+                    var $select = $('#select-need-id');
+                    $select.prop('selectedIndex',svalue.options.length-1).trigger('change');
+                    var text = $('#select-need-id option:selected').text();
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    drawFilteredGraph(getID(text));
+                }
+            }
+
             function handleSelectPrevNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
                 if(svalue.options.length>0 && svalue.selectedIndex>0) {
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex - 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    //viewMode=0;
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
 
             function handleSelectNextNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
-                if(svalue.options.length>0 && (svalue.selectedIndex+1)<svalue.options.length) {                    
+                if(svalue.options.length>0 && (svalue.selectedIndex+1)<svalue.options.length) {
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex + 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    //console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
-                    //viewMode=0;
+                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -892,7 +1028,6 @@
                 var text="";
                 if(svalue.options.length>0)
                      text = svalue.options[svalue.selectedIndex].text;
-                //viewMode=0;
                 drawFilteredGraph(getID(text));
             }
 
@@ -936,36 +1071,9 @@
                     console.log('tmp_nodes empty!');
                 }
                 for (let each of tmp_nodes) {
-                    if("lineno" in gnodes[each]["data"])
-                        lineno=gnodes[each]["data"]["lineno"]
-                    else
-                        lineno=1
-
-                    gnodes[each]["title-html"]=`
-                    <table class="ack-table">
-                        <thead>
-                        <tr>
-                            <th class="at-td">id</th>
-                            <th class="at-td">type</th>
-                            <th class="at-td">title</th>
-                            <th class="at-td">docname</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="at-td" title="${gnodes[each]["id"]}">${gnodes[each]["id"]}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["type"]}">${gnodes[each]["data"]["type"]}</td>
-                            <td class="at-td" title="${gnodes[each]["data"]["title"]}">${gnodes[each]["data"]["title"]}</td>
-                            <td class="at-td">
-                                <a href="../${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}"
-                                title="${gnodes[each]["data"]["docname"]}.html}">${gnodes[each]["data"]["docname"]}.html#${gnodes[each]["id"]}</a></td>
-                        </tr>
-                    </tbody>
-                    </table>
-                    `                    
                     var opt = document.createElement('option');
-                            opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
-                            svalue.appendChild(opt);
+                    opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
+                    svalue.appendChild(opt);
                 }
                 // Change Select List Option Background-Color on Hover in CSS
                 // for(option of svalue.options) {
@@ -1013,14 +1121,14 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:true
+                                enabled:false
                                 // enabled:!textBoxEditingActive
                             }
                         };
             }
 
             function initNetwork() {
-                var container = document.getElementById('mynetwork');                            
+                var container = document.getElementById('mynetwork');
                 nodes = new vis.DataSet([]);
                 edges = new vis.DataSet([]);
                 // adding nodes and edges to the graph
@@ -1116,6 +1224,8 @@
                 });
                 
                 network.on('click', function (properties) {
+                    suggestionsList.innerHTML = "";
+                    $('#input').removeClass('input-active').addClass('input-inactive');
                     var oEvent = properties.event.srcEvent;
                     if(properties.nodes.length>0) {
                         if(oEvent.shiftKey) {
@@ -1220,7 +1330,25 @@
                     //// canvasElement.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }));
                     //network.keyboard.enabled = true;
                 }
-                document.addEventListener('keyup', function(event) {
+
+                function debounce(func, delay) {
+                    let timeoutId;
+                    return function() {
+                        const context = this;
+                        const args = arguments;
+                        clearTimeout(timeoutId);
+                        timeoutId = setTimeout(() => {
+                            func.apply(context, args);
+                        }, delay);
+                    };
+                }
+
+                function handleKeyUp(event) {
+                    // console.log(event.target.value);
+                    if(processingInputFilter)
+                        return
+                    suggestionsList.innerHTML = "";
+                    $('#input').removeClass('input-active').addClass('input-inactive');
                     ecounter+=1;
                     if(event.keyCode===13) {
                         event.preventDefault();
@@ -1233,6 +1361,16 @@
                             //console.log(`viewMode update -> ${viewMode}`);
                         }
                     }
+                    // jump to node list beginning
+                    if(event.keyCode===66||event.keyCode===98) {
+                        handleSelectFirstNodeEvent();
+                    }
+
+                    // jump to node list end
+                    if(event.keyCode===69||event.keyCode===101) {
+                        handleSelectLastNodeEvent();
+                    }
+
                     // previous node
                     if(event.keyCode===80||event.keyCode===112) {
                         event.preventDefault();
@@ -1243,7 +1381,7 @@
                     // next node
                     if(event.keyCode===78||event.keyCode===112) {
                         event.preventDefault();
-                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);                            
+                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
                     }
@@ -1263,10 +1401,12 @@
                     if(event.ctrlKey && (event.keyCode===83||event.keyCode===115)) {
                         copyNetworkAsSVGToClipboard();
                     }
-                });
+                }
+                networkContainer = document.getElementById('mynetwork');
+                networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));                
             }
 
-            function copyNetworkAsSVGToClipboard() {                
+            function copyNetworkAsSVGToClipboard() {
                 return
             }
 
@@ -1432,84 +1572,85 @@
                 var numChildren=-1;
                 var numParents=-1;
                 var typeFrequency={};
-                if(viewMode===0) {
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numChildren+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of children[currentNode.label]) {
-                            stack.push(gnodes[node]);
-                            // if(!viewMode) {
-                            //     for(const n of parents[node])
-                            //         stack.push(gnodes[n]);
-                            // }
+                if(rootNodeLabel!=="") {
+                    if(viewMode===0) {
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numChildren+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of children[currentNode.label]) {
+                                stack.push(gnodes[node]);
+                                // if(!viewMode) {
+                                //     for(const n of parents[node])
+                                //         stack.push(gnodes[n]);
+                                // }
+                            }
+                            tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                         }
-                        tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                     }
-                }
-                if(viewMode===1) {
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numParents+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of parents[currentNode.label])
-                            stack.push(gnodes[node]);
-                        tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
-                    }
-                }
-                if(viewMode===2) {
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numChildren+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of children[currentNode.label]) {
-                            stack.push(gnodes[node]);
-                            // if(!viewMode) {
-                            //     for(const n of parents[node])
-                            //         stack.push(gnodes[n]);
-                            // }
+                    if(viewMode===1) {
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numParents+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of parents[currentNode.label])
+                                stack.push(gnodes[node]);
+                            tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
                         }
-                        tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
                     }
+                    if(viewMode===2) {
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numChildren+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of children[currentNode.label]) {
+                                stack.push(gnodes[node]);
+                                // if(!viewMode) {
+                                //     for(const n of parents[node])
+                                //         stack.push(gnodes[n]);
+                                // }
+                            }
+                            tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
+                        }
 
-                    for(const node of parents[rootNodeLabel])
-                        stack.push(gnodes[node]);
-                    tmp_edges=tmp_edges.concat(parents_edges[rootNodeLabel]);
-                    numParents=0;
-                    while(stack.length) {
-                        const currentNode = stack.pop();
-                        if(visited.includes(currentNode.label))
-                            continue;
-                        if(currentNode.label!=rootNodeLabel)
-                            incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
-                        numParents+=1;
-                        visited.push(currentNode.label);
-                        var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
-                        tmp_nodes.push(clonedObject);
-                        for(const node of parents[currentNode.label])
+                        for(const node of parents[rootNodeLabel])
                             stack.push(gnodes[node]);
-                        tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                        tmp_edges=tmp_edges.concat(parents_edges[rootNodeLabel]);
+                        numParents=0;
+                        while(stack.length) {
+                            const currentNode = stack.pop();
+                            if(visited.includes(currentNode.label))
+                                continue;
+                            if(currentNode.label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            numParents+=1;
+                            visited.push(currentNode.label);
+                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            tmp_nodes.push(clonedObject);
+                            for(const node of parents[currentNode.label])
+                                stack.push(gnodes[node]);
+                            tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                        }
                     }
                 }
-
                 if(verbose) {
                     console.log("nodes");
                     console.log(tmp_nodes);
@@ -1521,36 +1662,39 @@
 
                 network.setData({ nodes: nodes, edges: edges });
 
-                var msg;
-                if(viewMode==0)
-                    msg=`=== In-neighbours View\n\nNumber of incoming neighbours=${numChildren}`
-                else if(viewMode==1)
-                    msg=`=== Out-neighbours View\n\nNumber of outgoing neighbours=${numParents}`
-                else
-                    msg=`=== InOut-neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
-                if(Object.keys(typeFrequency).length>0)
-                    msg+="\n\n"
-                for(const type in  typeFrequency)
-                    msg+=`.. '${type}'=${typeFrequency[type]}\n`
-                if(Object.keys(typeFrequency).length>0)
-                    msg+="\n"
-                else
-                    msg+="\n\n"
-                nodes.update({
-                    id:rootNodeLabel,
-                    title:`${msg}${gnodes[rootNodeLabel]['title']}`,
-                    borderWidth:2,
-                    heightConstraint: {
-                            minimum: 200
-                    },
-                    widthConstraint: {
-                        minimum: 300,
-                        maximum: 300
-                    },
-                    color: {
-                        border:'red'
-                    }
-                });
+                if(rootNodeLabel!=="") {
+                    var msg;
+                    if(viewMode==0)
+                        msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
+                    else if(viewMode==1)
+                        msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
+                    else
+                        msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
+                    if(Object.keys(typeFrequency).length>0)
+                        msg+="\n\n"
+                    for(const type in  typeFrequency)
+                        msg+=`.. '${type}'=${typeFrequency[type]}\n`
+                    if(Object.keys(typeFrequency).length>0)
+                        msg+="\n"
+                    else
+                        msg+="\n\n"
+                    
+                    nodes.update({
+                        id:rootNodeLabel,
+                        title:`${msg}${gnodes[rootNodeLabel]['title']}`,
+                        borderWidth:2,
+                        heightConstraint: {
+                                minimum: 200
+                        },
+                        widthConstraint: {
+                            minimum: 300,
+                            maximum: 300
+                        },
+                        color: {
+                            border:'red'
+                        }
+                    });
+                }
                 network.fit({maxZoomLevel:0.4});
                 lastZoomPosition = {x:0,y:0}
             }
@@ -1564,15 +1708,23 @@
                     //width: '100%' // need to override the changed default
                     dropdownCssClass : 'bigdrop',
                 });
+                initSelectFilter();
             });
 
             const textBox = document.getElementById('input');
 
             $("#input").focus(function(){
+                processingInputFilter=true;
                 textBox.style.width = '100%';
                 textBox.style.zIndex = 10;
                 textBoxEditingActive=true;
-
+                $('#mynetwork').css('opacity','0.5');
+                /*$('#mynetwork').css({
+                    'border': '5px solid red',
+                    'padding': '10px'
+                });*/
+                //$('#input').attr("class","input-active");
+                $('#input').removeClass('input-inactive').addClass('input-active');
                 if(network!=null) {
                     var newOpt = { interaction: {} };
                     Object.keys( saveOpt.interaction ).forEach( function(k) {
@@ -1591,12 +1743,16 @@
                 console.log(`$("#input").focus(function())`)
             });
 
-            $("#input").blur(function(){
+            $("#input").blur(function() {
+                processingInputFilter=false;
+                $('#mynetwork').css('opacity','1.0');
+                //$('#mynetwork').css('border','none');
+                return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
-                handleSelectTypeEvent();                        
+                handleSelectTypeEvent();
                 console.log(`$("#input").blur(function())`);
-                $(this).off('keydown',handleKeydown);                
+                //$(this).off('keydown',handleKeydown);
                 if(network!=null) {
                     network.setOptions( saveOpt );
                 }
@@ -1607,11 +1763,87 @@
                 }
             });
 
-            function handleKeydown(event) {
-                //console.log(`$('#input').on('keydown',function(event))`)
-                if (event.key === '\n') {
-                    // Prevent the user from pressing the Enter key
-                    event.preventDefault();
+            function findOptionByText(select2Element,text) {
+                return option = select2Element.find('option').filter(function() {
+                        const curText=$(this).text().trim();
+                        return curText === text.trim();
+                    });
+            }
+            function printOption(option) {
+                if (option.length > 0) {
+                    console.log(`option.value=${option.val()}`);
+                    console.log(`option.text=${option.text()}`);
+                    console.log(`option.info=${option.data('info')}`);
+                } else {
+                    console.log(`The option is invalid and cannot be printed`);
+                }
+            }
+            function handleKeydown(e) {
+                //e.preventDefault();
+                if (e.key === 'Escape') {
+                    suggestionsList.innerHTML = "";
+                    //$('#input').addClass("input-inactive").removeClass("input-active");
+                    //$('#input').attr("class","input-inactive");
+                    $('#input').removeClass('input-active').addClass('input-inactive');
+                    if(canvasElement!=null)
+                        canvasElement.onclick();
+                } else
+                if (e.key === 'Enter') {
+                    suggestionsList.innerHTML = "";
+                    var newText = $('#input').val().trim();
+                    var selectedValue = $('#select-filter').val();
+                    var selectedOption = $('#select-filter').select2('data')[0];
+                    //printOption(selectedOption);
+                    const option = findOptionByText($("#select-filter"),"Select");
+                    //printOption(option);
+                    newOption=findOptionByText($("#select-filter"),newText);
+                    if (newOption.length > 0) {
+                        //console.log("Option with text '" + newText + "' already exists.");
+                        setCurrentSelectionByText(newText);
+                    } else {
+                        console.log("Option with text '" + newText + "' does not exist.");
+                        if(newOption.length>0) {
+                            //$('#select-filter option[value=`selectedValue`]').text(newText);
+                            setCurrentSelectionByText(newText);
+                            $('#select-filter option').filter(function () {
+                                 return $(this).text() === 'Select';
+                            }).remove();
+                            $('#select-filter').trigger('change.select2');
+                        } else {
+                            userInput=newText;
+                            task();
+                        }
+                        handleSelectTypeEvent();
+                    }
+                    initSelectFilter();
+                    //$('#input').attr("class","input-inactive");
+                    $('#input').removeClass('input-active').addClass('input-inactive');
+                }  else {
+                    const phrase = $('#input').val();
+                    const suggestions = [];
+
+                    const currentWord = phrase.split(new RegExp(`[${autocompletionDelimiters.join("\\")}]`)).pop();
+                    const regex = new RegExp("^" + currentWord, "i");
+                    for (const word of autocompletionAttributes) {
+                        if (regex.test(word)) {
+                            suggestions.push(word);
+                            console.log(`suggestion=${word}`)
+                        }
+                    }
+                    suggestionsList.innerHTML = "";
+                    for (const suggestion of suggestions) {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = suggestion;
+                        listItem.addEventListener("click", function () {
+                            console.log(`currentWord=${currentWord}`);
+                            console.log(`phrase=${phrase.replace(/\\/g,"")}`);
+                            const regex = new RegExp(`${currentWord}$`);
+                            //input.value = phrase.replace(regex,"").replace(/\\/g,"") + suggestion;
+                            var inputField = $('#input');
+                            inputField.val(phrase.replace(regex,"").replace(/\\/g,"") + suggestion);
+                        });
+                        suggestionsList.appendChild(listItem);
+                    }
                 }
             }
 
@@ -1623,6 +1855,90 @@
                     modal.style.display = 'none';
                 }
             }
+
+
+            function textExists(text) {
+                var exists = false;
+                $('#select-filter option').each(function () {
+                    if ($(this).text().trim() === text.trim()) {
+                    exists = true;
+                    return false;
+                    }
+                });
+                return exists;
+            }
+
+            function initSelectFilter() {
+                $('#select-filter').select2({
+                    dropdownCssClass: 'bigdropFilter',
+                    allowClear: true,
+                    placeholder: 'Filters',
+                    language: {
+                    noResults: function () {
+                        return `<button style="width: 100%" type="button"
+                            class="btn btn-primary" 
+                            onClick='task()'>+ Add New Item</button>
+                            </li>`;
+                    }
+                    },
+                    escapeMarkup: function (markup) {
+                    return markup;
+                    }
+                });
+
+                $('#select-filter').on('select2:open', function () {
+                    $('.select2-search__field').on('input', function () {
+                    userInput = $(this).val();
+                    });
+                });
+
+                // Event listener to handle removal of options
+                $('#select-filter').on('select2:unselecting', function (e) {
+                    var removedOption = $(e.params.args.data.element);
+                    removedOption.remove(); // Remove the option from the dropdown
+                });
+
+                $('#select-filter').on('select2:select', function (e) {
+                    const selectedOption = e.params.data;
+                    const selectedValue = selectedOption.id; // Access option ID if needed
+                    const selectedText = selectedOption.text;
+                    var inputField = $('#input');
+                    inputField.val(selectedText);
+                    handleSelectTypeEvent();
+                });
+            }
+
+            function setCurrentSelectionByText(text) {
+                $('#select-filter option').each(function () {
+                    if ($(this).text().trim() === text.trim()) {
+                        $('#select-filter').val($(this).val()).trigger('change.select2');
+                        return false;
+                    }
+                });
+            }
+
+            function task(updateInput=true) {
+                console.log(userInput);
+                if (userInput) {
+                    $('#select-filter').append($('<option>', {
+                    value: userInput,
+                    text: userInput
+                    })).trigger('change.select2');
+                    $('#select-filter').val(userInput).trigger('change.select2');
+                    if(updateInput) {
+                        var inputField = $('#input');
+                        inputField.val(userInput);
+                        initSelectFilter();
+                        handleSelectTypeEvent();
+                    }
+                }
+            }
         </script>
     </body>
 </html>
+
+
+<!-- 
+ADD STATUS ATTRIBUTE!!!
+Node Min,Max width
+-->

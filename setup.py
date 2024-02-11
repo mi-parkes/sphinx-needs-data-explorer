@@ -28,6 +28,6 @@ setup(
             "_static/vis-network/LICENSE-MIT"
         ]
     },
-    python_requires=">=3.11",
+    python_requires=">=3.10",
     install_requires=["Sphinx>=5.3.0"],
 )

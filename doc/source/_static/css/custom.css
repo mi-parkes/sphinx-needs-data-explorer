@@ -1,0 +1,21 @@
+.bd-sidebar-primary {
+    display: none;
+}
+
+.bd-content {
+    flex-grow: 1;
+    max-width: 100%;
+    justify-content: left;
+}
+
+.bd-article-container {
+    max-width: 100%;
+}
+
+.bd-main .bd-content .bd-article-container {
+    max-width: 100%;
+}
+
+#main-content > div.bd-content > div.bd-article-container > div.bd-header-article.noprint > div > div.header-article-items__start > div > label {
+    display: none;
+}

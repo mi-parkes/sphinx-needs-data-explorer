@@ -4,9 +4,13 @@ import shutil
 from docutils import nodes
 import json
 from jinja2 import Environment, FileSystemLoader
+from sphinx.util import logging
+from sphinx.errors import ExtensionError
 
 __version__ = "0.7"
 version_info = (0,7)
+
+logger = logging.getLogger(__name__)
 
 _ROOT_DIR = path.abspath(path.dirname(__file__))
 _FILES = (
@@ -38,39 +42,50 @@ _FILES = (
 
 sphinx_needs_data_explorer_config_link_types_default    =['links']
 sphinx_needs_data_explorer_config_type_color_map_default={}
+static_directory='_static'
+
+class sphinx_needs_data_explorer_ExtensionError(ExtensionError):
+    pass
 
 def add_files(app, config):
-    if 'sphinx_needs_data_explorer_config' in app.config:
-        print("sphinx_needs_data_explorer_config",json.dumps(app.config.sphinx_needs_data_explorer_config,indent=2))
-    else:
-        print("sphinx_needs_data_explorer_config","NOT FOUND")
-    sphinx_needs_data_explorer_installed = getattr(app, "sphinx_needs_data_explorer_installed", False)
-    if sphinx.version_info[:2]>=(5,0) and not sphinx_needs_data_explorer_installed:
-        makedirs(path.join(app.outdir, '_static'), exist_ok=True)
-        for (filename, integrity) in _FILES:
-            ifile=path.join(_ROOT_DIR,'_static',filename)
-            ofile=path.join(app.outdir,'_static', filename)
-            if path.isdir(ifile):
-                if path.exists(ofile):
-                    shutil.rmtree(ofile)
-                shutil.copytree(
-                    ifile,
-                    ofile
-                )
-            elif path.isfile(ifile):
-                shutil.copyfile(
-                    ifile,
-                    ofile
-                )
-                
-        environment = Environment(loader=FileSystemLoader(path.join(_ROOT_DIR,'_static')))
+    if sphinx.version_info[:2]>=(5,0) and not getattr(app, "sphinx_needs_data_explorer_installed", False):
+        try:
+            makedirs(path.join(app.outdir,static_directory),exist_ok=True)
+            for (filename, integrity) in _FILES:
+                ifile=path.join(_ROOT_DIR,static_directory,filename)
+                ofile=path.join(app.outdir,static_directory,filename)
+                if path.isdir(ifile):
+                    if path.exists(ofile):
+                        shutil.rmtree(ofile)
+                    shutil.copytree(
+                        ifile,
+                        ofile
+                    )
+                elif path.isfile(ifile):
+                    shutil.copyfile(
+                        ifile,
+                        ofile
+                    )
+        except shutil.Error as err:
+            for src, dst, msg in err.args[0]:
+                logger.critical(f"Error copying {src} to {dst}: {msg}")
+            raise sphinx_needs_data_explorer_ExtensionError("Something went wrong in my extension")
+        except OSError as err:
+            logger.critical(f"Error: {err}")
+            raise sphinx_needs_data_explorer_ExtensionError("Something went wrong in my extension")
+        environment = Environment(loader=FileSystemLoader(path.join(_ROOT_DIR,static_directory)))
         filename="sphinx_needs_data_explorer.html"
         ifile=environment.get_template(filename)
-        ofile=path.join(app.outdir,'_static', filename)
+        ofile=path.join(app.outdir,static_directory, filename)
 
-        link_types=app.config.sphinx_needs_data_explorer_config['link_types'] if 'link_types' in app.config.sphinx_needs_data_explorer_config else sphinx_needs_data_explorer_config_link_types_default
-        type_color_map=app.config.sphinx_needs_data_explorer_config['type_color_map'] if 'type_color_map' in app.config.sphinx_needs_data_explorer_config  else sphinx_needs_data_explorer_config_type_color_map_default
-
+        link_types=['links']
+        for item in getattr(app.config,"needs_extra_links",[]):
+                if 'option' in item:
+                    link_types.append(item['option'])
+        type_color_map={}
+        for item in getattr(app.config,"needs_types",[]):
+                if ('directive' in item) and ('color' in item):
+                    type_color_map[item['directive']]=item['color']
         context = {
             "LINK_TYPES": link_types,
             "TYPE2COLOR": type_color_map,
@@ -82,21 +97,19 @@ def add_files(app, config):
     app.sphinx_needs_data_explorer_installed = True
 
 def SphinxNeedsDataExplorer_role(typ, rawtext, text, lineno, inliner, options={}, content=[]):
+    print(inliner.document.current_source)    
+    srcdir=str(inliner.document.settings.env.app.srcdir)
+    current_source=inliner.document.current_source.replace(srcdir,"")
+    nn=current_source.split('/')
+    prefix="../"*(len(nn)-2) if len(nn)>1 else  ""
     node = nodes.raw('', 
-        f"""<a href="_static/sphinx_needs_data_explorer.html" 
+        f"""<a href="{prefix}{static_directory}/sphinx_needs_data_explorer.html" 
         class="custom-reference" title="Follow this link to explore your sphinx-needs data">{text}</a>""", format='html')
     return [node], []
 
 def setup(app):
     app.connect('config-inited',add_files)
     app.add_role('sphinx_needs_data_explorer', SphinxNeedsDataExplorer_role)
-    app.add_config_value(
-        'sphinx_needs_data_explorer_config',
-        {
-            'link_types':sphinx_needs_data_explorer_config_link_types_default,
-            'type_color_map':sphinx_needs_data_explorer_config_type_color_map_default
-        }
-        ,True)
     app.add_css_file('sphinx_needs_data_explorer.css')
     return {
         "parallel_read_safe": True,

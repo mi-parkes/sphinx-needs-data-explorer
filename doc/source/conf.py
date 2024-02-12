@@ -123,3 +123,13 @@ needs_extra_links = [
         "style_end": "--o",
     }
 ]
+
+#needs_show_link_title = True
+
+sphinx_needs_data_explorer_config = {
+    "filters":[
+        "status=='open'",
+        "['15','16'] in id",
+        "title ~ /r.*[0-9]+5'$/i"
+    ]
+}

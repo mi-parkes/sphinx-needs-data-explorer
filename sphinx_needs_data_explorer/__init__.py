@@ -48,6 +48,8 @@ class sphinx_needs_data_explorer_ExtensionError(ExtensionError):
     pass
 
 def add_files(app, config):
+    if 'sphinx_needs_data_explorer_config' in app.config:
+        print("sphinx_needs_data_explorer_config",json.dumps(app.config.sphinx_needs_data_explorer_config,indent=2))
     if sphinx.version_info[:2]>=(5,0) and not getattr(app, "sphinx_needs_data_explorer_installed", False):
         try:
             makedirs(path.join(app.outdir,static_directory),exist_ok=True)
@@ -86,9 +88,15 @@ def add_files(app, config):
         for item in getattr(app.config,"needs_types",[]):
                 if ('directive' in item) and ('color' in item):
                     type_color_map[item['directive']]=item['color']
+        filters=[]
+        if 'sphinx_needs_data_explorer_config' in app.config:
+            if 'filters' in app.config['sphinx_needs_data_explorer_config']:
+                filters=app.config['sphinx_needs_data_explorer_config']['filters']
+
         context = {
             "LINK_TYPES": link_types,
             "TYPE2COLOR": type_color_map,
+            "FILTERS": filters
         }
 
         with open(ofile,"w+") as out:
@@ -111,6 +119,7 @@ def setup(app):
     app.connect('config-inited',add_files)
     app.add_role('sphinx_needs_data_explorer', SphinxNeedsDataExplorer_role)
     app.add_css_file('sphinx_needs_data_explorer.css')
+    app.add_config_value('sphinx_needs_data_explorer_config',{'filters':[] },"html")
     return {
         "parallel_read_safe": True,
         "parallel_write_safe": True,

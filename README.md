@@ -75,3 +75,12 @@ If defined, the following parameters are used for configuration:
 * [needs_extra_links](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-extra-links) - the parmeter defines the type links to use when extracting sphinx-needs linkage
 * [needs_types](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-types) - the parameter defines sphinx-needs types and their attributes like node colors
 
+You can define expressions for sphinx-needs filtering
+
+    sphinx_needs_data_explorer_config = {
+        "filters":[
+            "status=='open'",
+            "['15','16'] in id",
+            "title ~ /r.*[0-9]+5'$/i"
+        ]
+    }

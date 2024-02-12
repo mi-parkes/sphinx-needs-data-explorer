@@ -22,6 +22,7 @@ needs_build_json = True
 
 exclude_patterns = []
 exclude_patterns = ['project','mydir1']
+exclude_patterns = ['mydir1']
 
 language = 'en'
 
@@ -123,3 +124,13 @@ needs_extra_links = [
         "style_end": "--o",
     }
 ]
+
+#needs_show_link_title = True
+
+sphinx_needs_data_explorer_config = {
+    "filters":[
+        "status=='open'",
+        "['15','16'] in id",
+        "title ~ /r.*[0-9]+5'$/i"
+    ]
+}

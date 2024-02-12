@@ -391,6 +391,7 @@
             <div id="mynetwork"></div>
         </div>
         <script type="text/javascript">
+            var filters = ["status=='open'", "['15','16'] in id", "title ~ /r.*[0-9]+5'$/i"];
             const link_types = ['links', 'refines'];
             var networkContainer;
             const autocompletionDelimiters = [" ",",", "[", "("];
@@ -1906,6 +1907,16 @@
                     inputField.val(selectedText);
                     handleSelectTypeEvent();
                 });
+                if(filters!=null) {
+                    for(item of filters) {
+                        $('#select-filter').append($('<option>', {
+                            value: item,
+                            text: item
+                        }));
+                    }
+                    $('#select-filter').trigger('change.select2')
+                    filters=null;
+                }
             }
 
             function setCurrentSelectionByText(text) {

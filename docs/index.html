@@ -473,6 +473,16 @@ needs_build_json = True
 <li><p><a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-extra-links">needs_extra_links</a> - the parmeter defines the type links to use when extracting sphinx-needs linkage</p></li>
 <li><p><a class="reference external" href="https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-types">needs_types</a> - the parameter defines sphinx-needs types and their attributes like node colors</p></li>
 </ul>
+<p>You can define expressions for sphinx-needs filtering</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sphinx_needs_data_explorer_config = {
+    &quot;filters&quot;:[
+        &quot;status==&#39;open&#39;&quot;,
+        &quot;[&#39;15&#39;,&#39;16&#39;] in id&quot;,
+        &quot;title ~ /r.*[0-9]+5&#39;$/i&quot;
+    ]
+}
+</pre></div>
+</div>
 </section>
 <section id="test-it-in-action">
 <h2>Test it in action<a class="headerlink" href="#test-it-in-action" title="Link to this heading">#</a></h2>

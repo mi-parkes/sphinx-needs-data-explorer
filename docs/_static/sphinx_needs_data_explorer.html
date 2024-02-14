@@ -314,7 +314,7 @@
  -->
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
                     <li>l(layout) toggle between bottom-up and right-left network hierarchical layout directions</li>
-                    <li>ENTER - to cycle network view mode
+                    <li>v(view) - to cycle network view mode
                         <ul>
                             <li>selected sphinx_need item and all In-neighbours</li>
                             <li>selected sphinx_need item and all Out-neighbours</li>
@@ -1351,7 +1351,8 @@
                     suggestionsList.innerHTML = "";
                     $('#input').removeClass('input-active').addClass('input-inactive');
                     ecounter+=1;
-                    if(event.keyCode===13) {
+                    //if(event.keyCode===13) {
+                    if(event.keyCode==='v'.charCodeAt(0)||event.keyCode==='V'.charCodeAt(0)) {
                         event.preventDefault();
                         console.log("ENTER pressed");
                         let svalue=document.getElementById('select-need-id');
@@ -1401,6 +1402,32 @@
                     // copy current network as SVG to clipboard
                     if(event.ctrlKey && (event.keyCode===83||event.keyCode===115)) {
                         copyNetworkAsSVGToClipboard();
+                    }
+                    if(event.keyCode==='s'.charCodeAt(0)||event.keyCode==='S'.charCodeAt(0)) {
+                        var serializedString=document.URL;
+                        const stype = $("#select-type");
+                        var sfilter = $('#select-filter').val();
+
+                        if (stype.select2("data").length > 0) {
+                            const selectedOption = stype.select2('val');
+                            const params = {
+                                type:selectedOption,
+                                filter:sfilter
+                            };
+                            const queryString = new URLSearchParams(params).toString();
+                            serializedString+=`?${queryString}`;
+
+                            const urlSearchParams=new URLSearchParams(queryString);
+                            const decodedData = Object.fromEntries(urlSearchParams.entries());
+                            console.log(decodedData);
+                        }
+                        navigator.clipboard.writeText(serializedString)
+                        .then(function() {
+                            console.log('URL+params copied to clipboard successfully!');
+                        })
+                        .catch(function(error) {
+                            console.error('Unable to copy URL+params to clipboard: ', error);
+                        });
                     }
                 }
                 networkContainer = document.getElementById('mynetwork');

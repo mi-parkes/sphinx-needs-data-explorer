@@ -4,3 +4,4 @@ sphinxcontrib-plantuml==0.24
 sphinx-needs==2.0.0
 sphinx-copybutton==0.5.2
 build==1.0.3
+myst_parser==2.0.0

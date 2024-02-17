@@ -88,6 +88,7 @@ def add_files(app, config):
         for item in getattr(app.config,"needs_extra_links",[]):
                 if 'option' in item:
                     link_types.append(item['option'])
+        needs_extra_options=getattr(app.config,"needs_extra_options",[])
         type_color_map={}
         for item in getattr(app.config,"needs_types",[]):
                 if ('directive' in item) and ('color' in item):
@@ -96,11 +97,11 @@ def add_files(app, config):
         if 'sphinx_needs_data_explorer_config' in app.config:
             if 'filters' in app.config['sphinx_needs_data_explorer_config']:
                 filters=app.config['sphinx_needs_data_explorer_config']['filters']
-
         context = {
             "LINK_TYPES": link_types,
             "TYPE2COLOR": type_color_map,
-            "FILTERS": filters
+            "FILTERS": filters,
+            "EXTRA_OPTIONS":needs_extra_options
         }
 
         with open(ofile,"w+") as out:

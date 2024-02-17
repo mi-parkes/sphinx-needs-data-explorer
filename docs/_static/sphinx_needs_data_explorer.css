@@ -1,0 +1,28 @@
+/* my_custom_role.css */
+.custom-reference {
+    font-size: 18px; /* Adjust the font size as needed */
+}
+
+.custom-reference {
+    cursor: pointer;
+}
+  
+.custom-reference:hover {
+    text-decoration: none;
+    background-color: #eee;
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+  
+.custom-reference:hover :after {
+    content: attr(title);
+    display: block;
+    position: absolute;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}

@@ -2,7 +2,6 @@ function initializeLibrary() {
     console.log('explorer_button.js initialized');
     $('#explorer-button').click(function() {
         //alert('Button clicked!');
-        //<a class="navbar-brand logo" href="../index.html"></a>
         var $element = $('a.navbar-brand.logo');
         if ($element.length > 0) {
             var hrefValue = $element.attr('href');            

@@ -44,7 +44,7 @@ html_theme_options = {
 }
 
 templates_path=["_templates"]
-
+needs_extra_options=["author"]
 html_js_files = ['js/explorer_button.js']
 
 env_plantuml = os.getenv("PLANTUML")

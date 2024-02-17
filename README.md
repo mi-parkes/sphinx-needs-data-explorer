@@ -72,10 +72,11 @@ You can create hyperlink to `sphinx_needs_data_explorer` by adding the following
 
 If defined, the following parameters are used for configuration:
 
-* [needs_extra_links](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-extra-links) - the parmeter defines the type links to use when extracting sphinx-needs linkage
+* [needs_extra_options](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-extra-options) - the parameter defines extra sphinx-needs options
+* [needs_extra_links](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-extra-links) - the parameter defines the type links to use when extracting sphinx-needs linkage
 * [needs_types](https://sphinx-needs.readthedocs.io/en/latest/configuration.html#needs-types) - the parameter defines sphinx-needs types and their attributes like node colors
 
-You can define expressions for sphinx-needs filtering
+You can define filtering expressions to populate the filter drop-down list:
 
     sphinx_needs_data_explorer_config = {
         "filters":[

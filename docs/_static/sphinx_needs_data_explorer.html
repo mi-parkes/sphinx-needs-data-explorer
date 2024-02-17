@@ -391,6 +391,7 @@
             <div id="mynetwork"></div>
         </div>
         <script type="text/javascript">
+            const extra_options = ['author'];
             var filters = ["status=='open'", "['15','16'] in id", "title ~ /r.*[0-9]+5'$/i"];
             const link_types = ['links', 'refines'];
             var networkContainer;
@@ -885,6 +886,11 @@
                         "count" :0,
                         "sum":0
                     }};
+
+                    for(const option of extra_options) {
+                        if(option in needs[key])
+                            jsonData['data'][option]=needs[key][option]
+                    }
 
                     for(const link_type of link_types) {
                         if(link_type in needs[key])
@@ -1788,6 +1794,7 @@
                 processingInputFilter=false;
                 $('#mynetwork').css('opacity','1.0');
                 //$('#mynetwork').css('border','none');
+                $('#mynetwork').focus();
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces

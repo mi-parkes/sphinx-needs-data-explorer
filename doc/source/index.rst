@@ -4,7 +4,7 @@ Sphinx Needs Data Explorer
 .. include:: _README.txt
    :parser: myst_parser.sphinx_
 
-Test it in action
+Test it in Action
 -----------------
 :doc:`Demo Sphinx Project <demo>`
 

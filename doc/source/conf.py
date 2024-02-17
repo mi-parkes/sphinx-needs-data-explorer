@@ -43,6 +43,10 @@ html_theme_options = {
     "use_edit_page_button": True, 
 }
 
+templates_path=["_templates"]
+
+html_js_files = ['js/explorer_button.js']
+
 env_plantuml = os.getenv("PLANTUML")
 if env_plantuml != None:
     plantuml = env_plantuml

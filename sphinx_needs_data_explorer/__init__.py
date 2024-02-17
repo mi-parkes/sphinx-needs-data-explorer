@@ -13,11 +13,15 @@ version_info = (0,7)
 logger = logging.getLogger(__name__)
 
 _ROOT_DIR = path.abspath(path.dirname(__file__))
-_FILES = (
+_FILES = ( 
+    (
+        'sphinx_needs_data_explorer.css',
+        '',
+    ),
     (
         'my_custom_role.css',
         '',
-    ),    
+    ),
     (
         'sphinx_needs_data_explorer.html',
         'sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK',
@@ -25,19 +29,19 @@ _FILES = (
     (
         'vis-network',
         '',
-    ),    
+    ),
     (
         'select2',
         '',
-    ),    
+    ),
     (
         'jquery',
         '',
-    ),    
+    ),
     (
         'peg',
         '',
-    ),    
+    ),
 )
 
 sphinx_needs_data_explorer_config_link_types_default    =['links']

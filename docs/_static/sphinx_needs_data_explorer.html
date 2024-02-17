@@ -1344,6 +1344,15 @@
                     };
                 }
 
+                function getCurrentNodeID() {
+                    let svalue=document.getElementById('select-need-id');
+                    if(svalue.options.length>0) {
+                        text = svalue.options[svalue.selectedIndex].text;
+                        return getID(text);
+                    }
+                    return null;
+                }
+
                 function handleKeyUp(event) {
                     // console.log(event.target.value);
                     if(processingInputFilter)
@@ -1405,22 +1414,26 @@
                     }
                     if(event.keyCode==='s'.charCodeAt(0)||event.keyCode==='S'.charCodeAt(0)) {
                         var serializedString=document.URL;
-                        const stype = $("#select-type");
-                        var sfilter = $('#select-filter').val();
+                        //const stype = $("#select-type");
+                        //var sfilter = $('#select-filter').val();
+                        //if (stype.select2("data").length > 0) {
+                        const selectedOption = stype.select2('val');
+                        const params = {
+                            type:   $("#select-type").val(),
+                            filter: $('#select-filter').val(),
+                            id:     $('#select-need-id').val(),
+                            layout: layoutDirection
+                        };
+                        const queryString = new URLSearchParams(params).toString();
+                        serializedString+=`?${queryString}`;
 
-                        if (stype.select2("data").length > 0) {
-                            const selectedOption = stype.select2('val');
-                            const params = {
-                                type:selectedOption,
-                                filter:sfilter
-                            };
-                            const queryString = new URLSearchParams(params).toString();
-                            serializedString+=`?${queryString}`;
+                        const urlSearchParams=new URLSearchParams(queryString);
+                        const decodedData = Object.fromEntries(urlSearchParams.entries());
+                        console.log(decodedData);
+                        //}
+                        
+                        document.getElementById('tooltip-window').innerHTML = serializedString;
 
-                            const urlSearchParams=new URLSearchParams(queryString);
-                            const decodedData = Object.fromEntries(urlSearchParams.entries());
-                            console.log(decodedData);
-                        }
                         navigator.clipboard.writeText(serializedString)
                         .then(function() {
                             console.log('URL+params copied to clipboard successfully!');

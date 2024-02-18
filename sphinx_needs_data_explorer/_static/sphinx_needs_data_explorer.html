@@ -18,9 +18,6 @@
             <h1></h1>
         </center>
         <style type="text/css">
-            body {
-                overflow-y: scroll;
-            }
             .ack-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -257,7 +254,7 @@
     <body>
         <div id="helpModal" class="modal">
             <div class="modal-content">
-            <span class="close" onclick="closeHelpDialog()">&times;</span>
+            <span class="close" onclick="closeHelpDialog()">&#88;</span>
                 <h2>Acknowledgments</h2>
                 This Software utilizes the following copyrighted material, the use of which is hereby acknowledged.<br>                
                 <br>
@@ -320,7 +317,7 @@
                         <ul>
                             <li>bottom-up hierarchical</li>
                             <li>right-left hierarchical</li>
-                            <li>non-hierarchical layouts</li>
+                            <li>non-hierarchical</li>
                         </ul>
                     <li>v(view) - to cycle network view mode
                         <ul>
@@ -658,7 +655,25 @@
                 }
                 return msg;
             }
+
+            function setCurrentTypeSelectionByText(text) {
+                $('#select-type option').each(function () {
+                    if ($(this).text().trim() === text.trim()) {
+                        $('#select-type').val($(this).val()).trigger('change.select2');
+                        return false;
+                    }
+                });
+            }
+
             var urlToFetch=isValidUrl(needsURL)?url=needsURL:absolute(needsURL);
+
+            const queryString = window.location.search;
+            const urlSearchParams = new URLSearchParams(queryString);
+            const decodedData = Object.fromEntries(urlSearchParams.entries());
+
+            console.log('decodedData -->');
+            console.log(decodedData);
+
             console.log(urlToFetch);
             let fetchRes = fetch(urlToFetch);
             fetchRes.then(res =>  
@@ -669,6 +684,20 @@
                     suggestionsList = document.getElementById("suggestions");
                     initNetwork();
                     handleSelectTypeEvent();
+                    if('type' in decodedData && decodedData['type']!=null) {
+                        if('filter' in decodedData && decodedData['filter']!=null) {
+                            const newText=decodedData['filter']
+                            $('#input').val(decodedData['filter']).trigger('change.select2');
+                            newOption=findOptionByText($("#select-filter"),newText);
+                            if (newOption.length > 0) {
+                                //console.log("Option with text '" + newText + "' already exists.");
+                                setCurrentSelectionByText(newText);
+                            }
+                        }
+                        setCurrentTypeSelectionByText(decodedData['type']);
+                        if('id' in decodedData && decodedData['id']!=null )
+                            $('#select-need-id').val(decodedData['id']).trigger('change.select2');
+                    }
                 }
             ).catch(error => {
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
@@ -1545,10 +1574,6 @@
 
                     if(charPressed==='s'||charPressed==='S') {
                         var serializedString=document.URL;
-                        //const stype = $("#select-type");
-                        //var sfilter = $('#select-filter').val();
-                        //if (stype.select2("data").length > 0) {
-                        const selectedOption = stype.select2('val');
                         const params = {
                             type:   $("#select-type").val(),
                             filter: $('#select-filter').val(),

@@ -1420,7 +1420,7 @@
                             "stabilization": {
                                 "enabled": true, // Enable stabilization
                                 "iterations": 500, // Number of stabilization iterations
-                                "fit": true // Fit the network after stabilization
+                                "fit": false // Fit the network after stabilization
                             },
                             "minVelocity": 0.75,
                             "solver": "hierarchicalRepulsion"
@@ -1869,9 +1869,19 @@
                         }
                     });
                 }
-                network.fit({maxZoomLevel:0.4});
-                //lastZoomPosition = {x:0,y:0}
-                lastZoomPosition = network.getViewPosition();
+                
+                if(layoutDirection==='')
+                    network.once("stabilized", function() {
+                        network.fit({ maxZoomLevel: 0.4 });
+                    });
+                    /*setTimeout(function() {
+                        network.fit({maxZoomLevel:0.4});
+                        lastZoomPosition = network.getViewPosition();
+                    },500);*/
+                else {
+                    network.fit({maxZoomLevel:0.4});
+                    lastZoomPosition = network.getViewPosition();
+                }
             }
             
             $(document).ready(function() {

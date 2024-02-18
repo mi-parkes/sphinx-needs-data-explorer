@@ -18,6 +18,9 @@
             <h1></h1>
         </center>
         <style type="text/css">
+            body {
+                overflow-y: scroll;
+            }
             .ack-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -282,13 +285,13 @@
                         </tr>
                         <tr>
                             <td class="ack-td"><b>vis-network</b></td>
-                            <td class="ack-td"></td>
+                            <td class="ack-td">9.1.9</td>
                             <td class="ack-td"><a href="https://github.com/visjs/vis-network/blob/master/LICENSE-MIT"><b>MIT</b></a></td>
                             <td class="ack-td"><a href="https://github.com/visjs/vis-network">https://github.com/visjs/vis-network</a></td>
                         </tr>
                         <tr>
                             <td class="ack-td"><b>select2</b></td>
-                            <td class="ack-td"></td>
+                            <td class="ack-td">4.1.0-rc.0</td>
                             <td class="ack-td"><a href="https://github.com/select2/select2/blob/develop/LICENSE.md"><b>MIT</b></a></td>
                             <td class="ack-td"><a href="https://github.com/select2/select2">https://github.com/select2/select2</a></td>
                         </tr>
@@ -313,7 +316,12 @@
                     </ul>
  -->
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
-                    <li>l(layout) toggle between bottom-up and right-left network hierarchical layout directions</li>
+                    <li>l(layout) - to cycle network layout mode</li>
+                        <ul>
+                            <li>bottom-up hierarchical</li>
+                            <li>right-left hierarchical</li>
+                            <li>non-hierarchical layouts</li>
+                        </ul>
                     <li>v(view) - to cycle network view mode
                         <ul>
                             <li>selected sphinx_need item and all In-neighbours</li>
@@ -327,7 +335,7 @@
                 <h3>Mouse events</h3>
                 <ul>
                     <li>hover over a node shows tooltip</li>
-                    <li>a click at node shows detailed node information in window, including a link where complete information 
+                    <li>a alt-click at node shows detailed node information in popup window, including a link where complete information 
                         can be found</li>
                 </ul>
                 <h3>The following sphinx_needs attributes are available in your documentation and can be used for filtering</h3>
@@ -404,7 +412,7 @@
             var ecounter=0;
             let verbose=false;
             let MIN_ZOOM = 0.1;
-            let MAX_ZOOM = 4.0;
+            let MAX_ZOOM = 2.0;
             var viewMode=0;
             var textBoxEditingActive=false;
             var lastTextBoxValue="";
@@ -667,12 +675,12 @@
             });
 
             type2color= {{TYPE2COLOR}};
-            window.addEventListener('resize', handleResize);
 
             function handleResize() {
-                console.log('HandlingResize');
+                //console.log('HandlingResize');
                 network.redraw();
-            }                
+                network.fit({maxZoomLevel:0.4});
+            }
 
             function parse_links(need) {
                 links = [];
@@ -1128,19 +1136,14 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:false
+                                enabled:true
                                 // enabled:!textBoxEditingActive
                             }
                         };
             }
 
-            function initNetwork() {
-                var container = document.getElementById('mynetwork');
-                nodes = new vis.DataSet([]);
-                edges = new vis.DataSet([]);
-                // adding nodes and edges to the graph
-                data = {nodes: nodes, edges: edges};
-                var options = {
+            function getDefaultNetworkLayout(layoutDirection='DU') {
+                return {
                     autoResize: false,
                     locale: 'en',
                     interaction:getInteractionData(),
@@ -1184,6 +1187,7 @@
                     configure: {
                         enabled: false,
                         showButton: false,
+                        filter: ['layout','physics']
                     },
                     layout: {
                         randomSeed: 1,
@@ -1202,8 +1206,15 @@
                         }
                     }
                 };
+            }
+            function initNetwork() {
+                var container = document.getElementById('mynetwork');
+                nodes = new vis.DataSet([]);
+                edges = new vis.DataSet([]);
+                // adding nodes and edges to the graph
+                data = {nodes: nodes, edges: edges};
 
-                network = new vis.Network(container, data, options);
+                network = new vis.Network(container, data, getDefaultNetworkLayout());
                 saveOpt = { 
                     interaction: JSON.parse( JSON.stringify( network.interactionHandler.options ) ) 
                 };
@@ -1245,10 +1256,12 @@
                             drawCurrentSelection(pnode);
                             return;
                         }
-                        var id = properties.nodes[0];
-                        var clickedNode = nodes.get(id);
-                        //document.getElementById('tooltip-window').value     = clickedNode['title'];
-                        document.getElementById('tooltip-window').innerHTML = clickedNode['title-html'];
+                        if(oEvent.altKey) {
+                            var id = properties.nodes[0];
+                            var clickedNode = nodes.get(id);
+                            //document.getElementById('tooltip-window').value     = clickedNode['title'];
+                            document.getElementById('tooltip-window').innerHTML = clickedNode['title-html'];
+                        }
                     } else {
                         document.getElementById('tooltip-window').value     = '';
                         document.getElementById('tooltip-window').innerHTML = '';
@@ -1296,9 +1309,9 @@
                             scale: MAX_ZOOM,
                         });
                     }
-                    else{
-                        lastZoomPosition = network.getViewPosition()
-                    }
+
+                    lastZoomPosition = network.getViewPosition()
+
                 });
 
                 function doOnHoverNode(e) {
@@ -1359,15 +1372,108 @@
                     return null;
                 }
 
+                function getOtherNetworkLayout() {
+                    return {
+                        autoResize: false,
+                        locale: 'en',
+                        interaction:getInteractionData(),
+                        nodes: {
+                            borderWidth:2,
+                            borderWidthSelected:4,
+                            color: {
+                                border:"black"
+                            },
+                            // size : 15,
+                            //font: { align: 'center', valign: 'middle' }
+                            font: {'face': 'monospace', 'align': 'center',size: 40, color: "Black"},
+                            fixed: {
+                                    'x': false,
+                                    'y': false,
+                            },
+                            heightConstraint: {
+                                minimum: 50
+                                //maximum: 50
+                            },
+                            widthConstraint: {
+                                minimum: 150,
+                                maximum: 200
+                            }
+                        },
+                        edges: {
+                            arrows: { to: {enabled: true} },
+                            width: 0.01,
+                            hoverWidth: 5.0,
+                            "color": {
+                                "inherit": false
+                            },
+                            "smooth": {
+                                "enabled": false,
+                                "type": "horizontal"
+                            }
+                        },
+                        physics: {
+                            enabled: true,
+                            "hierarchicalRepulsion": {
+                                "centralGravity": 0,
+                                "nodeDistance": 305
+                            },
+                            "stabilization": {
+                                "enabled": true, // Enable stabilization
+                                "iterations": 500, // Number of stabilization iterations
+                                "fit": true // Fit the network after stabilization
+                            },
+                            "minVelocity": 0.75,
+                            "solver": "hierarchicalRepulsion"
+                        },
+                        configure: {
+                            enabled: false,
+                            showButton: false,
+                            filter: ['layout','physics']
+                        },
+                        layout: {
+                            randomSeed: 1,
+                            "hierarchical":false
+                        }
+                    };
+                }
+
+                function afterDrawingEventHandler() {
+                    //console.log('afterDrawingEventHandler()');
+                    network.fit({maxZoomLevel:0.4});
+                    //network.off("afterDrawing",afterDrawingEventHandler);
+                }
+
+                function stabilizationIterationsDoneEventHandler() {
+                    //console.log('stabilizationIterationsDoneEventHandler()');
+                    network.fit({maxZoomLevel:0.4});
+                    //network.off("stabilizationIterationsDone",stabilizationIterationsDoneEventHandler);
+                }
+
+                function changeLayout(setLayout=true) {
+                    network.setOptions(getOtherNetworkLayout());
+                    if(!setLayout) {
+                        network.on("afterDrawing",afterDrawingEventHandler);
+                        network.on("stabilizationIterationsDone",stabilizationIterationsDoneEventHandler);
+                        setTimeout(function() {
+                            network.off("afterDrawing",afterDrawingEventHandler);
+                            network.off("stabilizationIterationsDone",stabilizationIterationsDoneEventHandler);
+                            network.fit({maxZoomLevel:0.4});
+                        },2000);
+                    }
+                }
+
                 function handleKeyUp(event) {
                     // console.log(event.target.value);
                     if(processingInputFilter)
                         return
+
+                    const charPressed = String.fromCharCode(event.keyCode);
                     suggestionsList.innerHTML = "";
                     $('#input').removeClass('input-active').addClass('input-inactive');
+
                     ecounter+=1;
-                    //if(event.keyCode===13) {
-                    if(event.keyCode==='v'.charCodeAt(0)||event.keyCode==='V'.charCodeAt(0)) {
+
+                    if(charPressed==='v'||charPressed==='V') {
                         event.preventDefault();
                         console.log("ENTER pressed");
                         let svalue=document.getElementById('select-need-id');
@@ -1379,46 +1485,65 @@
                         }
                     }
                     // jump to node list beginning
-                    if(event.keyCode===66||event.keyCode===98) {
+                    if(charPressed==='b'||charPressed==='B')
                         handleSelectFirstNodeEvent();
-                    }
 
                     // jump to node list end
-                    if(event.keyCode===69||event.keyCode===101) {
+                    if(charPressed==='e'||charPressed==='E')
                         handleSelectLastNodeEvent();
-                    }
 
                     // previous node
-                    if(event.keyCode===80||event.keyCode===112) {
+                    if(charPressed==='p'||charPressed==='P') {
                         event.preventDefault();
-                        //console.log(`ArrowUp: keyup event.keyCode:${event.keyCode.toString()}`);
                         console.log(`prev Key Up ${ecounter}`);
                         handleSelectPrevNodeEvent();
                     }
+
                     // next node
-                    if(event.keyCode===78||event.keyCode===112) {
+                    if(charPressed==='n'||charPressed==='N') {
                         event.preventDefault();
-                        //console.log(`ArrowDown: keyup event.keyCode:${event.keyCode.toString()}`);
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
                     }
+
                     // toggle network layout direction
-                    if(event.keyCode===76||event.keyCode===108) {
-                        layoutDirection=layoutDirection!=='RL'?'RL':'DU';
-                        network.setOptions( { layout: { hierarchical: { direction:layoutDirection } } } );
-                        network.fit({maxZoomLevel:0.4});
+                    if(charPressed==='l'||charPressed==='L') {
+                        //event.preventDefault();
+                        console.log("I'm here!");
+
+                        if(layoutDirection==='') {
+                            layoutDirection='DU';
+                            network.setOptions( getDefaultNetworkLayout() );
+                            network.fit({maxZoomLevel:0.4});
+                        }
+                        else
+                        if(layoutDirection==='DU') {
+                            layoutDirection='RL';
+                            network.setOptions( getDefaultNetworkLayout('RL') );
+                            network.fit({maxZoomLevel:0.4});
+                        }
+                        else {
+                            layoutDirection='';
+                            changeLayout(true);
+                            setTimeout(function() {
+                                 changeLayout(false);
+                            },100);
+                        }
+                        return
                     }
 
                     // copy current network as JSON to clipboard
-                    if(event.ctrlKey && (event.keyCode===67||event.keyCode===99)) {
+                    if(event.ctrlKey && (charPressed==='c'||charPressed==='C')) {
                         copyNetworkToClipboard();
                     }
 
                     // copy current network as SVG to clipboard
-                    if(event.ctrlKey && (event.keyCode===83||event.keyCode===115)) {
+                    if(event.ctrlKey && (charPressed==='s'||charPressed==='S')) {
                         copyNetworkAsSVGToClipboard();
+                        return;
                     }
-                    if(event.keyCode==='s'.charCodeAt(0)||event.keyCode==='S'.charCodeAt(0)) {
+
+                    if(charPressed==='s'||charPressed==='S') {
                         var serializedString=document.URL;
                         //const stype = $("#select-type");
                         //var sfilter = $('#select-filter').val();
@@ -1450,7 +1575,9 @@
                     }
                 }
                 networkContainer = document.getElementById('mynetwork');
-                networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));                
+                //networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
+                networkContainer.addEventListener('keyup',handleKeyUp);
+                window.addEventListener('resize', handleResize);
             }
 
             function copyNetworkAsSVGToClipboard() {
@@ -1743,7 +1870,8 @@
                     });
                 }
                 network.fit({maxZoomLevel:0.4});
-                lastZoomPosition = {x:0,y:0}
+                //lastZoomPosition = {x:0,y:0}
+                lastZoomPosition = network.getViewPosition();
             }
             
             $(document).ready(function() {
@@ -1772,20 +1900,6 @@
                 });*/
                 //$('#input').attr("class","input-active");
                 $('#input').removeClass('input-inactive').addClass('input-active');
-                if(network!=null) {
-                    var newOpt = { interaction: {} };
-                    Object.keys( saveOpt.interaction ).forEach( function(k) {
-
-                    // Except number
-                    if (typeof saveOpt.interaction[k] !== 'number') {
-                        newOpt.interaction[k] = false;
-                    }
-                    });
-
-                    // Prevent any interactions
-                    // 
-                    network.setOptions( newOpt );
-                }
 
                 console.log(`$("#input").focus(function())`)
             });
@@ -1795,6 +1909,7 @@
                 $('#mynetwork').css('opacity','1.0');
                 //$('#mynetwork').css('border','none');
                 $('#mynetwork').focus();
+                //network.setOptions( saveOpt );
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1827,6 +1942,7 @@
                 }
             }
             function handleKeydown(e) {
+                //console.log('handleKeydown()');
                 //e.preventDefault();
                 if (e.key === 'Escape') {
                     suggestionsList.innerHTML = "";
@@ -1903,7 +2019,6 @@
                     modal.style.display = 'none';
                 }
             }
-
 
             function textExists(text) {
                 var exists = false;
@@ -1994,9 +2109,3 @@
         </script>
     </body>
 </html>
-
-
-<!-- 
-ADD STATUS ATTRIBUTE!!!
-Node Min,Max width
--->

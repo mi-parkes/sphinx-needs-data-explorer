@@ -52,8 +52,27 @@ class sphinx_needs_data_explorer_ExtensionError(ExtensionError):
     pass
 
 def add_files(app, config):
+    #if 'sphinx_needs_data_explorer_config' in app.config:
+    #    print("sphinx_needs_data_explorer_config",json.dumps(app.config.sphinx_needs_data_explorer_config,indent=2))
+
+    disable_header_button=False
     if 'sphinx_needs_data_explorer_config' in app.config:
-        print("sphinx_needs_data_explorer_config",json.dumps(app.config.sphinx_needs_data_explorer_config,indent=2))
+        if 'disable-header-button' in app.config['sphinx_needs_data_explorer_config']:
+            disable_header_button_opt=app.config['sphinx_needs_data_explorer_config']['disable-header-button']
+            if isinstance(disable_header_button_opt,bool):
+                disable_header_button=disable_header_button_opt
+    if not disable_header_button:
+        if ('html_theme' in app.config) and (app.config['html_theme']=='sphinx_book_theme'):
+            if not ('html_js_files' in app.config):
+                app.config['html_js_files']=[]
+            app.config['html_js_files'].append('js/explorer_button.js')
+            if not ('templates_path' in app.config):
+                app.config['templates_path']=[]
+            app.config['templates_path'].append(path.join(_ROOT_DIR,static_directory,'_templates'))
+            if not ('html_static_path' in app.config):
+                app.config['html_static_path']=[]
+            app.config['html_static_path'].append(path.join(_ROOT_DIR,static_directory,'_static'))
+
     if sphinx.version_info[:2]>=(5,0) and not getattr(app, "sphinx_needs_data_explorer_installed", False):
         try:
             makedirs(path.join(app.outdir,static_directory),exist_ok=True)

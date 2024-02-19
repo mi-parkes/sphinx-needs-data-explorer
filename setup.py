@@ -11,6 +11,9 @@ setup(
     license="MIT License",
     package_data={
         "sphinx_needs_data_explorer": [
+            "_static/_static/js/explorer_button.js",
+            "_static/_templates/article-header-buttons.html",
+            "_static/_templates/explorer-button.html",
             "_static/sphinx_needs_data_explorer.css",
             "_static/sphinx_needs_data_explorer.html",
             "_static/jquery/jquery-3.7.1.min",

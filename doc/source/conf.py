@@ -43,9 +43,13 @@ html_theme_options = {
     "use_edit_page_button": True, 
 }
 
-templates_path=["_templates"]
-needs_extra_options=["author"]
-html_js_files = ['js/explorer_button.js']
+needs_extra_options = ["author"]
+
+#templates_path      = ["_templates"]
+#html_static_path    = ['_static']
+#html_js_files       = ['js/explorer_button.js']
+
+html_css_files      = ['css/custom.css']
 
 env_plantuml = os.getenv("PLANTUML")
 if env_plantuml != None:
@@ -56,10 +60,12 @@ else:
     elif sys.platform == "darwin":
         plantuml = 'java -jar /usr/local/plantuml/plantuml.jar'
 
-plantuml_output_format = 'svg'
+env_plantuml_output_format= os.getenv("PLANTUML_OUTPUT_FORMAT")
+if env_plantuml_output_format != None:
+    plantuml_output_format=env_plantuml_output_format
+else:
+    plantuml_output_format = 'svg'
 
-html_static_path    = ['_static']
-html_css_files      = ['css/custom.css']
 suppress_warnings   = ['myst.header']
 
 def setup(app):

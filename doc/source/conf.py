@@ -1,5 +1,9 @@
 import os, sys
 from sphinx.util.console import bold, colorize
+from sphinx.util import logging
+from sphinx.errors import ExtensionError
+
+logger = logging.getLogger(__name__)
 
 project = 'Sphinx Needs Data Explorer'
 copyright = '2024, MP'
@@ -14,9 +18,14 @@ extensions = [
     'sphinx_copybutton',
     'sphinx.ext.githubpages',
     'sphinxcontrib.plantuml',
-    'myst_parser',
-    'sphinx_needs_data_explorer'
+    'myst_parser'
 ]
+
+try:
+    import sphinx_needs_data_explorer
+    extensions.append('sphinx_needs_data_explorer')
+except ImportError:
+    logger.critical(f"{'sphinx_needs_data_explorer'} extension not found")
 
 needs_build_json = True
 
@@ -46,7 +55,7 @@ html_theme_options = {
 needs_extra_options = ["author"]
 
 #templates_path      = ["_templates"]
-#html_static_path    = ['_static']
+html_static_path    = ['_static']
 #html_js_files       = ['js/explorer_button.js']
 
 html_css_files      = ['css/custom.css']
@@ -141,5 +150,6 @@ sphinx_needs_data_explorer_config = {
         "status=='open'",
         "['15','16'] in id",
         "title ~ /r.*[0-9]+5'$/i"
-    ]
+    ],
+    "disable-header-button":False
 }

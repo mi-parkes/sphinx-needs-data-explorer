@@ -52,10 +52,16 @@ class sphinx_needs_data_explorer_ExtensionError(ExtensionError):
     pass
 
 def add_files(app, config):
-    if 'sphinx_needs_data_explorer_config' in app.config:
-        print("sphinx_needs_data_explorer_config",json.dumps(app.config.sphinx_needs_data_explorer_config,indent=2))
+    #if 'sphinx_needs_data_explorer_config' in app.config:
+    #    print("sphinx_needs_data_explorer_config",json.dumps(app.config.sphinx_needs_data_explorer_config,indent=2))
 
-    if ('sphinx_needs_data_explorer_config' in app.config) and not ('disable-header-button' in app.config['sphinx_needs_data_explorer_config']):
+    disable_header_button=False
+    if 'sphinx_needs_data_explorer_config' in app.config:
+        if 'disable-header-button' in app.config['sphinx_needs_data_explorer_config']:
+            disable_header_button_opt=app.config['sphinx_needs_data_explorer_config']['disable-header-button']
+            if isinstance(disable_header_button_opt,bool):
+                disable_header_button=disable_header_button_opt
+    if not disable_header_button:
         if ('html_theme' in app.config) and (app.config['html_theme']=='sphinx_book_theme'):
             if not ('html_js_files' in app.config):
                 app.config['html_js_files']=[]

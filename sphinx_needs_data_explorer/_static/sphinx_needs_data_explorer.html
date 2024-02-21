@@ -514,6 +514,29 @@
                             (currentNode['data'][this.left['value']]==this.right['value']);
                             break;
 
+                        case "==3":
+                            ret=false;
+                            if(this.left['value'] in currentNode['data']) {
+                                if((this.right['value']==='')) {
+                                    ret=currentNode['data'][this.left['value']].length===0
+                                } else {
+                                    //console.log(currentNode['data']['id']);
+                                    ret=false;
+                                }
+                            }
+                            break;
+                        case "==4":
+                            ret=false;
+                            if(this.left['value'] in currentNode['data']) {
+                                if((this.right['value']=='')) {
+                                    ret=currentNode['data'][this.left['value']].length>0
+                                } else {
+                                    //console.log(currentNode['data']['id']);
+                                    ret=false;
+                                }
+                            }
+                            break;
+
                         case "&&":
                             ret=(
                             (this.isObject(this.left) ? this.cast(this.left).evaluate(currentNode)   : this.left['value']) && 
@@ -840,7 +863,7 @@
                     expr1 = expr1_1 / expr1_2
 
                     listElm1=q:QuotedStringx ws c:"," ws l:listElm { return q+c+l }
-                    listElm = listElm1 / QuotedStringx
+                    listElm = listElm1 / QuotedStringx / ""
 
                     expr2_1 = w:Words ws "==" ws q:QuotedString {
                         return { left:w, right: q, operand: '==2' }
@@ -848,7 +871,13 @@
                     expr2_2 = q:QuotedString ws "==" ws w:Words {
                         return { left:q, right:w, operand: '==1' }
                     }
-                    expr2 = expr2_1 / expr2_2
+                    expr2_3 = w:Words ws "==" ws a:str_array {
+                        return { left:w, right:a, operand: '==3' }
+                    }
+                    expr2_4 = w:Words ws "!=" ws a:str_array {
+                        return { left:w, right:a, operand: '==4' }
+                    }s
+                    expr2 = expr2_1 / expr2_2 / expr2_3 / expr2_4
 
                     reg_expr_pattern = [^/]
                     reg_expr_value=r:$(reg_expr_pattern+) {  
@@ -1165,7 +1194,7 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:true
+                                enabled:false
                                 // enabled:!textBoxEditingActive
                             }
                         };
@@ -2026,7 +2055,7 @@
                     for (const word of autocompletionAttributes) {
                         if (regex.test(word)) {
                             suggestions.push(word);
-                            console.log(`suggestion=${word}`)
+                            //console.log(`suggestion=${word}`)
                         }
                     }
                     suggestionsList.innerHTML = "";

@@ -370,6 +370,12 @@
                         <tr>
                             <td class="att-td">title ~ /^Level[ \t]+(?!one)/ #negative lookaheads</td>
                         </tr>
+                        <tr>
+                            <td class="att-td">type=='req' && parents==[]</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">type=='req' && children!=[]</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -516,9 +522,19 @@
 
                         case "==3":
                             ret=false;
-                            if(this.left['value'] in currentNode['data']) {
+                            var lhs=null;
+                            if(this.left['value']==='parents')
+                                lhs=parents[currentNode['data']['id']]
+                            else
+                            if(this.left['value']==='children')
+                                lhs=children[currentNode['data']['id']]
+                            else
+                                if(this.left['value'] in currentNode['data'])
+                                    lhs=currentNode['data'][this.left['value']]
+                            if(lhs!=null) {
                                 if((this.right['value']==='')) {
-                                    ret=currentNode['data'][this.left['value']].length===0
+                                    ret=lhs.length===0;
+                                    //console.log(currentNode['data']['id']);
                                 } else {
                                     //console.log(currentNode['data']['id']);
                                     ret=false;
@@ -527,9 +543,19 @@
                             break;
                         case "==4":
                             ret=false;
-                            if(this.left['value'] in currentNode['data']) {
-                                if((this.right['value']=='')) {
-                                    ret=currentNode['data'][this.left['value']].length>0
+                            var lhs=null;
+                            if(this.left['value']==='parents')
+                                lhs=parents[currentNode['data']['id']]
+                            else
+                            if(this.left['value']==='children')
+                                lhs=children[currentNode['data']['id']]
+                            else
+                                if(this.left['value'] in currentNode['data'])
+                                    lhs=currentNode['data'][this.left['value']]
+                            if(lhs!=null) {
+                                if((this.right['value']==='')) {
+                                    ret=lhs.length>0;
+                                    //console.log(currentNode['data']['id']);
                                 } else {
                                     //console.log(currentNode['data']['id']);
                                     ret=false;
@@ -876,7 +902,7 @@
                     }
                     expr2_4 = w:Words ws "!=" ws a:str_array {
                         return { left:w, right:a, operand: '==4' }
-                    }s
+                    }
                     expr2 = expr2_1 / expr2_2 / expr2_3 / expr2_4
 
                     reg_expr_pattern = [^/]
@@ -892,15 +918,11 @@
 
                     Words
                         = key:$(Letter+) {
-                                //const key=text.join("");
-                                // console.log(tmp_nodes[0]['data']);
                                 var keys=Object.keys(gnodes);
                                 if(key.length<=10) {
                                     if(keys.length==0)
                                         error("No needs data available");
-                                    if(key in gnodes[keys[0]]['data']) {
-                                        /*return "currentNode['data']['"+key+"']";*/
-                                        //console.log("location:",location());
+                                    if((key==='parents') || (key==='children') || key in gnodes[keys[0]]['data']) {
                                         return {'value':key,'location':location(),'type':'need-attr'};
                                     }
                                     else
@@ -946,6 +968,7 @@
                         "tags":         needs[key]['tags'],
                         "lineno":       'lineno' in needs[key]?needs[key]['lineno']:1,
                         //"description":  convert_text_to_html(needs[key]['description']),
+                        "description":  needs[key]['description'],
                         "description":  needs[key]['description'],
                         'id':           needs[key]['id'],
                         "depth" :0,
@@ -1118,8 +1141,9 @@
                 const textBox = document.getElementById('input');
                 const userInputText=removeNewlinesAndTrimString(textBox.value);
                 if(userInputText.length>0) {
-                    if(parser!=null)
+                    if(parser!=null) {
                         customFilterExpression=mainx(userInputText);
+                    }
                 }
                 if(userInputText.length==0 || userInputText.length>0 && customFilterExpression!=null) {
                     try {

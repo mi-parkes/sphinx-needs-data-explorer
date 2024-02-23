@@ -7,8 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
 
-__version__ = "0.7"
-version_info = (0,7)
+__version__ = "0.8"
+version_info = (0,8)
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,10 @@ _ROOT_DIR = path.abspath(path.dirname(__file__))
 _FILES = ( 
     (
         'sphinx_needs_data_explorer.css',
+        '',
+    ),
+    (
+        'sphinx_needs_data_explorer.js',
         '',
     ),
     (

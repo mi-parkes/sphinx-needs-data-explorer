@@ -442,7 +442,6 @@
             var parser;
             let grammar;
             const traceParser=false;
-
             function startTimer() {
                 startTime = performance.now();
             }
@@ -523,11 +522,21 @@
                         case "==3":
                             ret=false;
                             var lhs=null;
-                            if(this.left['value']==='parents')
-                                lhs=parents[currentNode['data']['id']]
+                            if(this.left['value']==='parents') {
+                                if('attr' in this.left) {
+                                    //console.log('parents',this.left['attr'])
+                                    lhs=parents[currentNode['data']['id']]
+                                } else
+                                    lhs=parents[currentNode['data']['id']]
+                            }
                             else
-                            if(this.left['value']==='children')
-                                lhs=children[currentNode['data']['id']]
+                            if(this.left['value']==='children') {
+                                if('attr' in this.left) {
+                                    //console.log('children',this.left['attr'])
+                                    lhs=parents[currentNode['data']['id']]
+                                } else
+                                    lhs=parents[currentNode['data']['id']]
+                            }
                             else
                                 if(this.left['value'] in currentNode['data'])
                                     lhs=currentNode['data'][this.left['value']]
@@ -919,9 +928,24 @@
                     Words
                         = key:$(Letter+) {
                                 var keys=Object.keys(gnodes);
-                                if(key.length<=10) {
+                                if(key.length<=30) {
                                     if(keys.length==0)
                                         error("No needs data available");
+
+                                    const regex = /^(parents|children)\.([A-Z_a-z]+)$/;
+                                    const match = regex.exec(key);
+                                    if(match) {
+                                        const ref = match[1];
+                                        const attr = match[2];
+                                        if(attr in gnodes[keys[0]]['data']) {
+                                            return {
+                                                'value':ref,
+                                                'location':location(),
+                                                'type':'need-attr',
+                                                'attr':attr
+                                            };
+                                        }
+                                    }
                                     if((key==='parents') || (key==='children') || key in gnodes[keys[0]]['data']) {
                                         return {'value':key,'location':location(),'type':'need-attr'};
                                     }
@@ -931,7 +955,7 @@
                                     error("Word does have more than 10 letters");
                         }
                 
-                    Letter=[A-Za-z_] //{return text.join("")}
+                    Letter=[A-Za-z_\.] //{return text.join("")}
                 `;
                 parser=peg.generate(grammar,traceParser?{trace:true}:{});
             }            
@@ -1218,7 +1242,7 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:false
+                                enabled:true
                                 // enabled:!textBoxEditingActive
                             }
                         };
@@ -1326,6 +1350,10 @@
                 network.on('click', function (properties) {
                     suggestionsList.innerHTML = "";
                     $('#input').removeClass('input-active').addClass('input-inactive');
+                    if(textBoxEditingActive) {
+                        textBoxEditingActive=false;
+                        network.setOptions({ interaction: { keyboard: true } });
+                    }
                     var oEvent = properties.event.srcEvent;
                     if(properties.nodes.length>0) {
                         if(oEvent.shiftKey) {
@@ -1396,7 +1424,13 @@
 
                 });
 
-                function doOnHoverNode(e) {
+                network.on("dragEnd",function(params){
+                    lastZoomPosition = network.getViewPosition()
+                    console.log(`dragEnd handler: MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
+                });
+
+                function handleHoverNode(e) {
+                    return;
                     if (timeoutId) {
                         clearTimeout(timeoutId);
                     }
@@ -1410,18 +1444,15 @@
                                 console.log(`Caught exception '${err.message}' while processing "tooltipElement[0].style.visibility='hidden'"`)
                             }
                         }
-                    }, 4000);
+                    },4000);
                 }
 
-                network.on("dragEnd",function(params){
-                    lastZoomPosition = network.getViewPosition()
-                    console.log(`dragEnd handler: MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
-                });
+                function handleBlurNode(event) {
+                    $('.vis-tooltip').css('display','block');
+                }
+                network.on('hoverNode',handleHoverNode);
+                network.on('blurNode',handleBlurNode);
                 
-                network.on('hoverNode', function (e) {
-                    //doOnHoverNode(e)
-                });
-
                 const canvasElement = document.getElementById('mynetwork');
                 if(canvasElement!=null) {
                     //canvasElement.setAttribute('tabindex','0');
@@ -1550,11 +1581,16 @@
                         return
 
                     const charPressed = String.fromCharCode(event.keyCode);
+                    //console.log(event.keyCode,charPressed);
+
                     suggestionsList.innerHTML = "";
                     $('#input').removeClass('input-active').addClass('input-inactive');
 
                     ecounter+=1;
-
+                    if(event.keyCode===27) {
+                        $('.vis-tooltip').css('display', 'none');
+                        return;
+                    }
                     if(charPressed==='v'||charPressed==='V') {
                         event.preventDefault();
                         console.log("ENTER pressed");
@@ -1988,7 +2024,7 @@
                 });*/
                 //$('#input').attr("class","input-active");
                 $('#input').removeClass('input-inactive').addClass('input-active');
-
+                network.setOptions({ interaction: { keyboard: false } });
                 console.log(`$("#input").focus(function())`)
             });
 

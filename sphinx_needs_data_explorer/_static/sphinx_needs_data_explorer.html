@@ -99,7 +99,7 @@
                     <li>b(beginning) of sphinx_need item list</li>
                     <li>e(end) of sphinx_need item list</li>
                     <li>ESC - hide the tooltip associated with the currently hovered-over node</li>
-                    <li>c(copy) - copy the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</li>
+                    <li>s(save) - save the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</li>
                 </ul>
                 <h3>Mouse events</h3>
                 <ul>
@@ -266,6 +266,14 @@
                     processJSON(data);
                     prepareParser();
                     suggestionsList = document.getElementById("suggestions");
+
+                    if('type' in decodedData && decodedData['type']!=null) {
+                        if('layout' in decodedData)
+                            layoutDirection=decodedData['layout']
+                        if('view' in decodedData && decodedData['view'])
+                            viewMode=parseInt(decodedData['view']);
+                    }
+
                     initNetwork();
                     handleSelectTypeEvent();
                     if('type' in decodedData && decodedData['type']!=null) {
@@ -725,7 +733,11 @@
                 // adding nodes and edges to the graph
                 data = {nodes: nodes, edges: edges};
 
-                network = new vis.Network(container, data, getDefaultNetworkLayout());
+                if(layoutDirection!=="")
+                    network = new vis.Network(container, data, getDefaultNetworkLayout(layoutDirection));
+                else
+                    network = new vis.Network(container, data, getOtherNetworkLayout());
+
                 saveOpt = { 
                     interaction: JSON.parse( JSON.stringify( network.interactionHandler.options ) ) 
                 };
@@ -1072,7 +1084,8 @@
                             type:   $("#select-type").val(),
                             filter: $('#select-filter').val(),
                             id:     $('#select-need-id').val(),
-                            layout: layoutDirection
+                            layout: layoutDirection,
+                            view: viewMode
                         };
                         const queryString = new URLSearchParams(params).toString();
                         serializedString+=`?${queryString}`;
@@ -1081,7 +1094,7 @@
                         const decodedData = Object.fromEntries(urlSearchParams.entries());
                         console.log(decodedData);
                         //}
-                        
+
                         document.getElementById('tooltip-window').innerHTML = serializedString;
 
                         navigator.clipboard.writeText(serializedString)

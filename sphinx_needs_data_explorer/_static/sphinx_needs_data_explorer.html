@@ -171,7 +171,7 @@
             </div>
             <ul id="suggestions"></ul>
             <div id="tooltip-window" class="tooltip-window"></div>
-            <div id="mynetwork"></div>
+            <div id="mynetwork" tabindex="0"></div>
         </div>
         <script type="text/javascript">
             const extra_options = {{ EXTRA_OPTIONS }};
@@ -580,6 +580,10 @@
                 if(userInputText.length>0) {
                     if(parser!=null) {
                         customFilterExpression=mainx(userInputText);
+                        if(customFilterExpression==null)
+                            $('#input').css('color','red');
+                        else
+                            $('#input').css('color','white');
                     }
                 }
                 if(userInputText.length==0 || userInputText.length>0 && customFilterExpression!=null) {
@@ -766,13 +770,19 @@
                     return;
                 });
 
-                network.on('click', function (properties) {
-                    suggestionsList.innerHTML = "";
+                function closeInput() {
+                    if($('#input').css('color')==='rgb(255,0,0)')
+                        $('#input').css('color','black');
                     $('#input').removeClass('input-active').addClass('input-inactive');
                     if(textBoxEditingActive) {
                         textBoxEditingActive=false;
                         network.setOptions({ interaction: { keyboard: true } });
                     }
+                }
+
+                network.on('click', function (properties) {
+                    suggestionsList.innerHTML = "";
+                    closeInput();
                     var oEvent = properties.event.srcEvent;
                     if(properties.nodes.length>0) {
                         if(oEvent.shiftKey) {
@@ -871,17 +881,6 @@
                 }
                 network.on('hoverNode',handleHoverNode);
                 network.on('blurNode',handleBlurNode);
-
-                const canvasElement = document.getElementById('mynetwork');
-                if(canvasElement!=null) {
-                    //canvasElement.setAttribute('tabindex','0');
-                    /// canvasElement.focus();
-                    //console.log('canvasElement OK');
-                    //canvasElement.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-                    //canvasElement.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-                    //// canvasElement.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 13 }));
-                    //network.keyboard.enabled = true;
-                }
 
                 function debounce(func, delay) {
                     let timeoutId;
@@ -1012,7 +1011,6 @@
                     }
                     if(charPressed==='v'||charPressed==='V') {
                         event.preventDefault();
-                        console.log("ENTER pressed");
                         let svalue=document.getElementById('select-need-id');
                         if(svalue.options.length>0) {
                             text = svalue.options[svalue.selectedIndex].text;
@@ -1453,7 +1451,6 @@
                 $('#mynetwork').css('opacity','1.0');
                 //$('#mynetwork').css('border','none');
                 $('#mynetwork').focus();
-                //network.setOptions( saveOpt );
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1462,11 +1459,6 @@
                 //$(this).off('keydown',handleKeydown);
                 if(network!=null) {
                     network.setOptions( saveOpt );
-                }
-                const canvasElement = document.getElementById('mynetwork');
-                if(canvasElement!=null) {
-                    //canvasElement.setAttribute('tabindex','0');
-                    //canvasElement.focus();
                 }
             });
 
@@ -1486,17 +1478,16 @@
                 }
             }
             function handleKeydown(e) {
-                //console.log('handleKeydown()');
+                console.log('handleKeydown()',e.key,e.keyCode);
                 //e.preventDefault();
                 if (e.key === 'Escape') {
                     suggestionsList.innerHTML = "";
-                    //$('#input').addClass("input-inactive").removeClass("input-active");
-                    //$('#input').attr("class","input-inactive");
-                    $('#input').removeClass('input-active').addClass('input-inactive');
-                    if(canvasElement!=null)
-                        canvasElement.onclick();
+                    e.preventDefault();
+                    $('.vis-network').focus();
+                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                 } else
                 if (e.key === 'Enter') {
+                    console.log("'Enter' pressed");
                     suggestionsList.innerHTML = "";
                     var newText = $('#input').val().trim();
                     var selectedValue = $('#select-filter').val();
@@ -1524,8 +1515,10 @@
                         handleSelectTypeEvent();
                     }
                     initSelectFilter();
-                    //$('#input').attr("class","input-inactive");
-                    $('#input').removeClass('input-active').addClass('input-inactive');
+                    e.preventDefault();
+                    $('.vis-network').focus();
+                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    return;
                 }  else {
                     const phrase = $('#input').val();
                     const suggestions = [];

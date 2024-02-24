@@ -81,7 +81,7 @@
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
                         <li>+/- zoom-in/zoom out</li>
                     </ul>
-
+                    <li>F1 - help</li>
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
                     <li>l(layout) - to cycle network layout mode</li>
                         <ul>
@@ -628,12 +628,14 @@
             }
 
             function openHelpDialog() {
+                network.setOptions({ interaction: { keyboard: false } });
                 document.getElementById('helpModal').style.display = 'block';
             }
 
             // Close the help dialog
             function closeHelpDialog() {
                 document.getElementById('helpModal').style.display = 'none';
+                network.setOptions({ interaction: { keyboard: true } });
             }
 
             function resetNetwork() {
@@ -1552,22 +1554,34 @@
                     }
                 }
             }
-
+            
             $('#input').on('keydown',handleKeydown);
 
-            window.onclick = function(event) {
-                const modal = document.getElementById('helpModal');
-                if (event.target === modal) {
-                    modal.style.display = 'none';
+            $(document).keydown(function(event) {
+                if (event.keyCode === 112 || event.key === 'F1') {
+                    network.setOptions({ interaction: { keyboard: false } });
+                    $('#helpModal').css('display', 'block').scrollTop(0);
+                    event.preventDefault();
+                    return;
                 }
-            }
+                if (event.key === 'Escape' || event.keyCode === 27) {
+                    event.preventDefault();
+                    if ($('#helpModal').is(':visible')) {
+                        $('#helpModal').hide();
+                        setTimeout(function() {
+                            network.setOptions({ interaction: { keyboard: true } });
+                        }, 1000);
+                    }
+                    return;
+                }
+            });
 
             function textExists(text) {
                 var exists = false;
                 $('#select-filter option').each(function () {
                     if ($(this).text().trim() === text.trim()) {
-                    exists = true;
-                    return false;
+                        exists = true;
+                        return false;
                     }
                 });
                 return exists;

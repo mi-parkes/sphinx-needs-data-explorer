@@ -76,17 +76,19 @@
 }
 
 .bigdrop {
-    width: 800px !important;
+    width: 900px !important;
     margin-top: +20px;
-    margin-left: -600px;
+    left: 50px !important;
     font-size: 22px;
+    position: fixed;
 }
 
 .bigdropFilter {
-    width: 500px !important;
+    width: 900px !important;
     margin-top: +20px;
-    margin-left: -100px;
+    left: 50px !important;
     font-size: 22px;
+    position: fixed;
 }
 
 .select2-container--default .select2-results>.select2-results__options {
@@ -193,7 +195,7 @@
 }
 
 #select-filter {
-    flex: 1 10%;
+    flex: 1 7%;
     font-size: 22px;
     border-radius: 4px;
 }
@@ -201,7 +203,8 @@
 .input-inactive {
     position: relative;
     flex: 1 14%;
-    max-width: 15% important;
+    min-width: 7% important;
+    max-width: 14% important;
     font-size: 22px;
     border-radius: 4px;
     color: white;
@@ -216,19 +219,24 @@
 }
 
 .input-active {
-    display: flex;
+    /* display: flex; */
     color: white;
     background-color: rgb(90, 101, 128);
     /* max-width: 300px !important;
     width: 300px !important;
     min-width:300px; */
-    width: 40% important;
+    width: 96% !important;
     /* min-width:80%;
     position: absolute; */
     /*margin-top: +95px; */
     /* margin-left: 10px; */
-    font-size: 22px;
+    /* font-size: 22px; */
     transition: all 0.5s ease-in-out;
+    /* width: 900px !important; */
+    /* margin-top: +100px !important; */
+    left: 10px !important;
+    font-size: 22px;
+    position: fixed;
 }
 
 #reset,
@@ -253,12 +261,13 @@
     background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
-    z-index: 2;
+    /* z-index: 2; */
     /* Set z-index higher than the Vis.js network */
     overflow-y: auto;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 9999;
 }
 
 .modal-content {

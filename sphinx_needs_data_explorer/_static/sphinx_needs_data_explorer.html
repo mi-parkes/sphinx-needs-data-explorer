@@ -1480,6 +1480,11 @@
             function handleKeydown(e) {
                 console.log('handleKeydown()',e.key,e.keyCode);
                 //e.preventDefault();
+                if (event.ctrlKey && event.key === 'c') {
+                    e.preventDefault();
+                    console.log('Ctrl+C pressed (copy)');
+                    $('#input').val($('#select-filter').val());
+                } else
                 if (e.key === 'Escape') {
                     suggestionsList.innerHTML = "";
                     e.preventDefault();
@@ -1490,31 +1495,34 @@
                     console.log("'Enter' pressed");
                     suggestionsList.innerHTML = "";
                     var newText = $('#input').val().trim();
-                    var selectedValue = $('#select-filter').val();
-                    var selectedOption = $('#select-filter').select2('data')[0];
-                    //printOption(selectedOption);
-                    const option = findOptionByText($("#select-filter"),"Select");
-                    //printOption(option);
-                    newOption=findOptionByText($("#select-filter"),newText);
-                    if (newOption.length > 0) {
-                        //console.log("Option with text '" + newText + "' already exists.");
-                        setCurrentSelectionByText(newText);
-                    } else {
-                        console.log("Option with text '" + newText + "' does not exist.");
-                        if(newOption.length>0) {
-                            //$('#select-filter option[value=`selectedValue`]').text(newText);
+                    if(newText!=='') {
+                        var selectedValue = $('#select-filter').val();
+                        var selectedOption = $('#select-filter').select2('data')[0];
+                        //printOption(selectedOption);
+                        const option = findOptionByText($("#select-filter"),"Select");
+                        //printOption(option);
+                        newOption=findOptionByText($("#select-filter"),newText);
+                        if (newOption.length > 0) {
+                            //console.log("Option with text '" + newText + "' already exists.");
                             setCurrentSelectionByText(newText);
-                            $('#select-filter option').filter(function () {
-                                 return $(this).text() === 'Select';
-                            }).remove();
-                            $('#select-filter').trigger('change.select2');
                         } else {
-                            userInput=newText;
-                            task();
+                            console.log("Option with text '" + newText + "' does not exist.");
+                            if(newOption.length>0) {
+                                //$('#select-filter option[value=`selectedValue`]').text(newText);
+                                setCurrentSelectionByText(newText);
+                                $('#select-filter option').filter(function () {
+                                    return $(this).text() === 'Select';
+                                }).remove();
+                                $('#select-filter').trigger('change.select2');
+                            } else {
+                                userInput=newText;
+                                task();
+                            }
+                            handleSelectTypeEvent();
                         }
+                        initSelectFilter();
+                    } else
                         handleSelectTypeEvent();
-                    }
-                    initSelectFilter();
                     e.preventDefault();
                     $('.vis-network').focus();
                     $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
@@ -1614,8 +1622,10 @@
                     const selectedOption = e.params.data;
                     const selectedValue = selectedOption.id; // Access option ID if needed
                     const selectedText = selectedOption.text;
+
                     var inputField = $('#input');
                     inputField.val(selectedText);
+                    console.log('select2:select',selectedText)
                     handleSelectTypeEvent();
                 });
                 if(filters!=null) {

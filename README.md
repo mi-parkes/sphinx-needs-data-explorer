@@ -49,7 +49,7 @@ Alternatively (Linux)
     pip install -r doc/requirements.txt
     
     python3 -m build --wheel
-    pip install dist/sphinx_needs_data_explorer-0.7.0-py3-none-any.whl
+    pip install dist/sphinx_needs_data_explorer-0.8.0-py3-none-any.whl
 
 ## Activation
 

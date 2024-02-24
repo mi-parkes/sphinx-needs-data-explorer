@@ -82,6 +82,7 @@ You can define filtering expressions to populate the filter drop-down list:
         "filters":[
             "status=='open'",
             "['15','16'] in id",
-            "title ~ /r.*[0-9]+5'$/i"
+            "title ~ /r.*[0-9]+5'$/i",
+            "type=='spec' && parents!=[] && title ~ /5'$/"
         ]
     }

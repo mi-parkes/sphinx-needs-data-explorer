@@ -76,16 +76,16 @@
 }
 
 .bigdrop {
-    width: 1000px !important;
+    width: 800px !important;
     margin-top: +20px;
     margin-left: -600px;
     font-size: 22px;
 }
 
 .bigdropFilter {
-    width: 1000px !important;
+    width: 500px !important;
     margin-top: +20px;
-    margin-left: -400px;
+    margin-left: -100px;
     font-size: 22px;
 }
 

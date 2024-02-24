@@ -2,10 +2,11 @@
 SHELL=/bin/bash
 
 help:
-	echo "$(MAKE) install    # Rebuild and reinstall sphinx_needs_data_explorer"
-	echo "$(MAKE) html       # Build sphinx_needs_data_explorer documentation"
-	echo "$(MAKE) webserver  # Run webserver hosting sphinx_needs_data_explorer documentation in docker container"
-	echo "$(MAKE) show       # View the documentation for sphinx_needs_data_explorer, which is hosted on a server running nginx, in a web browser"
+	echo "$(MAKE) install    	# Rebuild and reinstall sphinx_needs_data_explorer"
+	echo "$(MAKE) html       	# Build sphinx_needs_data_explorer documentation"
+	echo "$(MAKE) webserver  	# Run webserver hosting sphinx_needs_data_explorer documentation in docker container"
+	echo "$(MAKE) show       	# View the documentation for sphinx_needs_data_explorer, which is hosted on a server running nginx, in a web browser"
+	echo "$(MAKE) show-session	# View stored sesion"
 
 $(VERBOSE).SILENT:
 	echo
@@ -34,3 +35,6 @@ webserver:
 
 show:
 	open http://localhost:$(WEBSERVERPORT)
+
+show-session:
+	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=req&filter=status%3D%3D%27implemented%27&id=R_00005+-+Title+of+%27R_00005%27&layout=&view=2"

@@ -140,14 +140,25 @@ needs_extra_links = [
         "style_part": "#00AA00",
         "style_start": "-",
         "style_end": "--o",
-    }
+    },
+    {
+      "option": "triggers",
+      "incoming": "is triggered by",
+      "outgoing": "triggers",
+      "copy": False,
+      "allow_dead_links": True,
+      "style": "#00AA00",
+      "style_part": "#00AA00",
+      "style_start": "-",
+      "style_end": "--o",
+   }
 ]
 
 #needs_show_link_title = True
 
 sphinx_needs_data_explorer_config = {
     "filters":[
-        "status=='open'",
+        "status=='implemented'",
         "['15','16'] in id",
         "title ~ /r.*[0-9]+5'$/i"
     ],

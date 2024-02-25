@@ -28,6 +28,24 @@
     white-space: nowrap;
 }
 
+.dataTables_wrapper {
+    font-family: tahoma;
+    font-size: 18px;
+    position: relative;
+    clear: both;
+    zoom: 1;
+}
+
+div.dataTables_length select {
+    font-size: 18px;
+}
+
+.table.dataTable  {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 18px;
+    width:80%;
+}
+
 .ack-table {
     width: 100%;
     border-collapse: collapse;

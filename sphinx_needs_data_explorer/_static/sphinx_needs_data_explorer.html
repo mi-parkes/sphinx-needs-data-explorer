@@ -22,8 +22,14 @@
         <link rel="stylesheet" type="text/css" href="sphinx-needs/layouts.css" />
 
         <script src="sphinx-needs/libs/html/datatables.min.js"></script>
+        <script src="sphinx-needs/libs/html/Buttons-1.5.1/js/dataTables.buttons.min.js"></script>
+        <script src="sphinx-needs/libs/html/pdfmake-0.1.32/pdfmake.min.js"></script>
+        <script src="sphinx-needs/libs/html/Buttons-1.5.1/js/buttons.colVis.min.js"></script>
         <script src="sphinx-needs/libs/html/datatables_loader.js"></script>
         <script src="sphinx-needs/libs/html/sphinx_needs_collapse.js"></script>
+
+        <script src="sphinx-needs/libs/html/Buttons-1.5.1/js/buttons.colVis.min.js"></script>
+        <script src="sphinx-needs/libs/html/Buttons-1.5.1/js/buttons.html5.min.js"></script>
 
         <center>
             <h1></h1>
@@ -720,7 +726,48 @@
                 }
 
                 $('#needtable-requirements-0-table_node').DataTable().destroy();
+/*
+                new DataTable('#needtable-requirements-0-table_node', {
+                    columnDefs: [
+                        {
+                            targets: -1,
+                            visible: false
+                        }
+                    ],
+                    layout: {
+                        topStart: {
+                            buttons: [
+                                {
+                                    extend: 'colvis',
+                                    postfixButtons: ['colvisRestore']
+                                }
+                            ]
+                        }
+                    }
+                });
+*/
                 $("#needtable-requirements-0-table_node").DataTable( {
+                    dom: 'Bfrtip',
+                    buttons: [
+/*
+                    {
+                            extend: 'copy',
+                            text: 'Copy',
+                            header: false,          // Disable export header tabla
+                            exportOptions: {
+                                columns: [0,1]      // Select columns to be exported
+                            },
+                            title: null             // Disable title on exported data
+                        },
+*/
+                        'colvis',
+                        'copy',
+                        'csv',
+                        'excel',
+                        'pdf',
+                        'print'
+                    ],
+                    stateSave: true,
                     searching: false,
                     data: data,
                     columns: [

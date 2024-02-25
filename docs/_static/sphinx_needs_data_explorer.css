@@ -1,19 +1,20 @@
 /* my_custom_role.css */
 .custom-reference {
-    font-size: 18px; /* Adjust the font size as needed */
+    font-size: 18px;
+    /* Adjust the font size as needed */
 }
 
 .custom-reference {
     cursor: pointer;
 }
-  
+
 .custom-reference:hover {
     text-decoration: none;
     background-color: #eee;
     padding: 2px 5px;
     border-radius: 3px;
 }
-  
+
 .custom-reference:hover :after {
     content: attr(title);
     display: block;
@@ -25,4 +26,278 @@
     left: 50%;
     transform: translate(-50%, -50%);
     white-space: nowrap;
+}
+
+.dataTables_wrapper {
+    font-family: tahoma;
+    font-size: 18px;
+    position: relative;
+    clear: both;
+    zoom: 1;
+}
+
+div.dataTables_length select {
+    font-size: 18px;
+}
+
+.table.dataTable  {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 18px;
+    width:80%;
+}
+
+.ack-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ack-th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+
+}
+
+.ack-th,
+.ack-td .at-th,
+.at-td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+.att-td {
+    /* font-family: Consolas, Menlo, Courier, "Lucida Console", Monaco, monospace; */
+    font-family: 'Source Code Pro', monospace;
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+/* Define column widths in percentage */
+.at-th:nth-child(-n+3),
+.at-td:nth-(-n+3) {
+    width: 10%;
+}
+
+.at-th:nth-child(4),
+.at-td:nth-child(4) {
+    width: 50%;
+}
+
+.typedrop {
+    font-size: 22px;
+}
+
+.bigdrop {
+    width: 900px !important;
+    margin-top: +20px;
+    left: 50px !important;
+    font-size: 22px;
+    position: fixed;
+}
+
+.bigdropFilter {
+    width: 900px !important;
+    margin-top: +20px;
+    left: 50px !important;
+    font-size: 22px;
+    position: fixed;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+    max-height: 500px !important;
+}
+
+.select2-selection__placeholder {
+    font-size: 22px;
+}
+
+.select2-search__field {
+    font-size: 22px;
+}
+
+.select2-selection__rendered {
+    font-size: 22px;
+}
+
+#tooltip-window {
+    width: auto;
+    margin: 15px 5px;
+    margin-right: 20px;
+}
+
+#mynetwork {
+    /* position: relative; */
+    width: auto;
+    height: 86%;
+    margin: 15px 5px;
+    /* justify-content: space-between; */
+    margin-right: 20px;
+    background-color: #ffffff;
+    /* border: 1px solid lightgray; */
+    /* position: relative; */
+    /* float: left; */
+}
+
+.ib {
+    display: inline-block;
+    /* border: 1px solid #ccc; */
+}
+
+.row {
+    display: flex;
+    width: auto;
+    /* flex-direction: row; */
+    /* grid-column-gap: 10px; */
+    margin: 5px 5px;
+    height: 50px;
+    /* justify-content: space-between; */
+    margin-right: 20px;
+    border-radius: 4px;
+    column-gap: 0px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(45, 43, 43);
+}
+
+.row>div,
+.row>select,
+.row>input,
+.row>span {
+    font-size: 22px;
+    margin: 5px 5px;
+    height: 30px;
+    border: none;
+}
+
+.row>button {
+    font-size: 22px;
+    margin: 5px 5px;
+    height: 30px;
+    border: none;
+}
+
+#display-needs-count {
+    display: flex;
+    flex: 1 20%;
+    border-radius: 4px;
+    color: white;
+    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-width: 200px;
+    white-space: nowrap;
+    background-color: rgb(23, 70, 210);
+}
+
+#select-type {
+    flex: 1 5%;
+    border-radius: 4px;
+    color: white;
+    background-color: rgb(23, 70, 210);
+}
+
+#select-need-id {
+    flex: 1 25%;
+    max-width: 25%;
+    font-size: 22px;
+    border-radius: 4px;
+    color: white;
+    background-color: rgb(23, 70, 210);
+}
+
+#select-filter {
+    flex: 1 7%;
+    font-size: 22px;
+    border-radius: 4px;
+}
+
+.input-inactive {
+    position: relative;
+    flex: 1 14%;
+    min-width: 7% important;
+    max-width: 14% important;
+    font-size: 22px;
+    border-radius: 4px;
+    color: white;
+    /* padding: 10px; */
+    /* white-space: nowrap; */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgb(23, 70, 210);
+}
+
+.input-active {
+    /* display: flex; */
+    color: white;
+    background-color: rgb(90, 101, 128);
+    /* max-width: 300px !important;
+    width: 300px !important;
+    min-width:300px; */
+    width: 96% !important;
+    /* min-width:80%;
+    position: absolute; */
+    /*margin-top: +95px; */
+    /* margin-left: 10px; */
+    /* font-size: 22px; */
+    transition: all 0.5s ease-in-out;
+    /* width: 900px !important; */
+    /* margin-top: +100px !important; */
+    left: 10px !important;
+    font-size: 22px;
+    position: fixed;
+}
+
+#explorerModeButton,
+#helpButton {
+    flex: 1 5%;
+    border-radius: 4px;
+    color: white;
+    background-color: rgb(23, 70, 210);
+}
+
+.modal {
+    display: none;
+    /* position: fixed; */
+    padding: 0;
+    margin: 0;
+    /* position: absolute; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    /* z-index: 2; */
+    /* Set z-index higher than the Vis.js network */
+    overflow-y: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.modal-content {
+    background-color: rgb(230, 228, 228);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
 }

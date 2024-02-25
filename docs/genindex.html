@@ -53,6 +53,7 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="_static/js/explorer_button.js"></script>
     <script src="_static/assets/jsonview.bundle.js"></script>
     <script src="_static/assets/jsonview_loader.js"></script>
     <script src="_static/sphinx-needs/libs/html/datatables.min.js"></script>
@@ -280,6 +281,14 @@ document.write(`
 document.write(`
   <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button id="explorer-button" class="btn btn-sm navbar-btn explorer-button explorer-button__button" title="Sphinx Needs Data Explorer" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-e" style="color: #5C5A61;"></i>
   </button>
 `);
 </script>

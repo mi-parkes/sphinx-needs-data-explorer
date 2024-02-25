@@ -455,7 +455,7 @@ source .venv/bin/activate
 pip install -r doc/requirements.txt
 
 python3 -m build --wheel
-pip install dist/sphinx_needs_data_explorer-0.7.0-py3-none-any.whl
+pip install dist/sphinx_needs_data_explorer*.whl
 </pre></div>
 </div>
 </section>
@@ -489,7 +489,8 @@ needs_build_json = True
     &quot;filters&quot;:[
         &quot;status==&#39;open&#39;&quot;,
         &quot;[&#39;15&#39;,&#39;16&#39;] in id&quot;,
-        &quot;title ~ /r.*[0-9]+5&#39;$/i&quot;
+        &quot;title ~ /r.*[0-9]+5&#39;$/i&quot;,
+        &quot;type==&#39;spec&#39; &amp;&amp; parents!=[] &amp;&amp; title ~ /5&#39;$/&quot;
     ]
 }
 </pre></div>

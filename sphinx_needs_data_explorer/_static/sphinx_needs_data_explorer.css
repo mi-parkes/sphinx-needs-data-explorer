@@ -239,8 +239,8 @@
     position: fixed;
 }
 
-#reset,
-#help {
+#explorerModeButton,
+#helpButton {
     flex: 1 5%;
     border-radius: 4px;
     color: white;

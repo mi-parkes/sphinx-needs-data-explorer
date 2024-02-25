@@ -67,7 +67,7 @@
                             <td class="ack-td">3.7.1</td>
                             <td class="ack-td"><a href="https://github.com/jquery/jquery/blob/main/LICENSE.txt"><b>MIT</b></a></td>
                             <td class="ack-td"><a href="https://github.com/jquery/jquery">https://github.com/jquery/jquery</a></td>
-                        </tr>            
+                        </tr>
                     </tbody>
                 </table>
                 <br>
@@ -75,13 +75,13 @@
             <h2>Help Information</h2>
                 <h3>Keyboard shortcuts</h3>
                 <ul>
-
                     <li>visjs network keyboard shortcuts</li>
                     <ul>
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
                         <li>+/- zoom-in/zoom out</li>
                     </ul>
                     <li>F1 - help</li>
+                    <li>r(eset) network display</li>
                     <li>n(next), p(previous) to navigate through sphinx_need item list</li>
                     <li>l(layout) - to cycle network layout mode</li>
                         <ul>
@@ -166,8 +166,8 @@
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
                 </select>
-                <button id="reset" onclick="resetNetwork()">Reset</button>
-                <button id="help" onclick="openHelpDialog()">Help</button>
+                <button id="explorerModeButton" onclick="exploreMode()">Network</button>
+                <button id="helpButton" onclick="openHelpDialog()">Help</button>
             </div>
             <ul id="suggestions"></ul>
             <div id="tooltip-window" class="tooltip-window"></div>
@@ -214,7 +214,8 @@
             var parser;
             let grammar;
             const traceParser=false;
-
+            var documents=[];
+            var mode=0;
             var absolute = function(rel) { 
                 var link = document.createElement("a"); 
                 link.href = rel; 
@@ -389,6 +390,8 @@
                 parents_edges={};
                 gnodes={};
                 let typeSet = new Set(['any']);
+                let documentSet = new Set(['any']);
+
                 for(const key in needs) {
                     if(verbose)
                         console.log(key,needs[key].docname);
@@ -397,6 +400,7 @@
                     parents[key]=[];
                     parents_edges[key]=[];
                     typeSet.add(needs[key]['type']);
+                    documentSet.add(needs[key]['docname']);
                     var jsonData={'data':{
                         "type"  :       needs[key]['type'],
                         "title" :       needs[key]['title'],
@@ -429,8 +433,6 @@
                     //jsonData["size"]= { width: 30, height: 30 } }
                     jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\nstatus=${needs[key]['status']}\ntitle=${needs[key]['title']}`
                     jsonData["title-html"]=`<b>type</b>=${needs[key]['type']}<br>`
-                    //
-                    // gnodes[each]["title-html"]=
                     jsonData["title-html"]=`
                     <table class="ack-table">
                         <thead>
@@ -499,6 +501,11 @@
                         opt.innerHTML = elm;
                         stype.appendChild(opt);
                 }
+                for(elm of documentSet)
+                    documents.push(elm);
+                documents=documents.sort();
+                //for(elm of documents)
+                //    console.log(elm);
                 computeNodeDepth();
                 computeNodeSumOfSubnodes();
                 return;
@@ -642,9 +649,16 @@
                 network.setOptions({ interaction: { keyboard: true } });
             }
 
-            function resetNetwork() {
-                network.fit({maxZoomLevel:0.4});
-                //network.redraw();
+            function exploreMode() {
+                mode=(mode+1)%3;
+                if(mode==0)
+                    $("#explorerModeButton").text("Networks");
+                else
+                if(mode==1)
+                    $("#explorerModeButton").text("Tables");
+                else
+                if(mode==2)
+                    $("#explorerModeButton").text("Files");
             }
 
             function clearFilter() {
@@ -994,22 +1008,21 @@
                 }
 
                 function handleKeyUp(event) {
-                    // console.log(event.target.value);
                     if(processingInputFilter)
                         return
-
-                    const charPressed = String.fromCharCode(event.keyCode);
-                    //console.log(event.keyCode,charPressed);
-
                     suggestionsList.innerHTML = "";
                     $('#input').removeClass('input-active').addClass('input-inactive');
-
                     ecounter+=1;
-                    if(event.keyCode===27) {
+                    if (event.key === 'Escape' || event.keyCode === 27) {
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
-                    if(charPressed==='v'||charPressed==='V') {
+                    // reset network display
+                    if(event.key==='r'||event.key==='R') {
+                        event.preventDefault();
+                        network.fit({maxZoomLevel:0.4});
+                    }
+                    if(event.key==='v'||event.key==='V') {
                         event.preventDefault();
                         let svalue=document.getElementById('select-need-id');
                         if(svalue.options.length>0) {
@@ -1020,32 +1033,30 @@
                         }
                     }
                     // jump to node list beginning
-                    if(charPressed==='b'||charPressed==='B')
+                    if(event.key==='b'||event.key==='B')
                         handleSelectFirstNodeEvent();
 
                     // jump to node list end
-                    if(charPressed==='e'||charPressed==='E')
+                    if(event.key==='e'||event.key==='E')
                         handleSelectLastNodeEvent();
 
                     // previous node
-                    if(charPressed==='p'||charPressed==='P') {
+                    if(event.key==='p'||event.key==='P') {
                         event.preventDefault();
                         console.log(`prev Key Up ${ecounter}`);
                         handleSelectPrevNodeEvent();
                     }
 
                     // next node
-                    if(charPressed==='n'||charPressed==='N') {
+                    if(event.key==='n'||event.key==='N') {
                         event.preventDefault();
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
                     }
 
                     // toggle network layout direction
-                    if(charPressed==='l'||charPressed==='L') {
-                        //event.preventDefault();
-                        console.log("I'm here!");
-
+                    if(event.key==='l'||event.key==='L') {
+                        event.preventDefault();
                         if(layoutDirection==='') {
                             layoutDirection='DU';
                             network.setOptions( getDefaultNetworkLayout() );
@@ -1068,17 +1079,17 @@
                     }
 
                     // copy current network as JSON to clipboard
-                    if(event.ctrlKey && (charPressed==='c'||charPressed==='C')) {
+                    if(event.ctrlKey && (event.key==='c'||event.key==='C')) {
                         copyNetworkToClipboard();
                     }
 
                     // copy current network as SVG to clipboard
-                    if(event.ctrlKey && (charPressed==='s'||charPressed==='S')) {
+                    if(event.ctrlKey && (event.key==='s'||event.key==='S')) {
                         copyNetworkAsSVGToClipboard();
                         return;
                     }
 
-                    if(charPressed==='s'||charPressed==='S') {
+                    if(event.key==='s'||event.key==='S') {
                         var serializedString=document.URL;
                         const params = {
                             type:   $("#select-type").val(),
@@ -1093,7 +1104,6 @@
                         const urlSearchParams=new URLSearchParams(queryString);
                         const decodedData = Object.fromEntries(urlSearchParams.entries());
                         console.log(decodedData);
-                        //}
 
                         document.getElementById('tooltip-window').innerHTML = serializedString;
 

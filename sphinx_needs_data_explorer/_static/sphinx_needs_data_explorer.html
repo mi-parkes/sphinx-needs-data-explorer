@@ -14,6 +14,17 @@
         <link href="sphinx_needs_data_explorer.css" rel="stylesheet"/>
         <script src="sphinx_needs_data_explorer.js"
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <link rel="stylesheet" type="text/css" href="sphinx-needs/libs/html/datatables.min.css" />
+        <link rel="stylesheet" type="text/css" href="sphinx-needs/common.css" />
+        <link rel="stylesheet" type="text/css" href="sphinx-needs/styles.css" />
+        <link rel="stylesheet" type="text/css" href="sphinx-needs/modern.css" />
+        <link rel="stylesheet" type="text/css" href="sphinx-needs/layouts.css" />
+
+        <script src="sphinx-needs/libs/html/datatables.min.js"></script>
+        <script src="sphinx-needs/libs/html/datatables_loader.js"></script>
+        <script src="sphinx-needs/libs/html/sphinx_needs_collapse.js"></script>
+
         <center>
             <h1></h1>
         </center>
@@ -171,7 +182,33 @@
             </div>
             <ul id="suggestions"></ul>
             <div id="tooltip-window" class="tooltip-window"></div>
-            <div id="mynetwork" tabindex="0"></div>
+            <div id="mynetwork" tabindex="0">
+            </div>
+                <!-- class="NEEDS_DATATABLES rtd-exclude-wy-table no-sphinx-material-strip docutils data align-default dataTable no-footer" -->
+                <div id="dataTable">
+                    <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node">
+                        <colgroup>
+                        <col style="width: 13%" />
+                        <col style="width: 38%" />
+                        <col style="width: 13%" />
+                        <col style="width: 13%" />
+                        <!-- <col style="width: 13%" /> -->
+                        <col style="width: 13%" />
+                        </colgroup>
+                        <thead>
+                        <tr class="row-odd"><th class="head"><p>ID</p></th>
+                        <th class="head"><p>Title</p></th>
+                        <th class="head"><p>Status</p></th>
+                        <th class="head"><p>Type</p></th>
+                        <!-- <th class="head"><p>Outgoing</p></th> -->
+                        <th class="head"><p>Tags</p></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        </table>
+                    </div>
+                <!-- end -->
         </div>
         <script type="text/javascript">
             const extra_options = {{ EXTRA_OPTIONS }};
@@ -651,14 +688,51 @@
 
             function exploreMode() {
                 mode=(mode+1)%3;
-                if(mode==0)
+                if(mode==0) {
                     $("#explorerModeButton").text("Networks");
+                    $("#dataTable").css('display','none');
+                    $("#mynetwork").css('display','block');
+                    initNetwork();
+                    handleSelectNodeEvent();
+                }
                 else
-                if(mode==1)
+                if(mode==1) {
                     $("#explorerModeButton").text("Tables");
+                    network.destroy();
+                    network=null;
+                    $("#mynetwork").css('display','none');
+                    const table = $("#dataTable");
+                    console.log(table.css("display"));
+                    if (table.css("display") === "none") {
+                        table.show();
+                    }
+                    const dataArray = Object.values(gnodes).map(row => row.data);
+
+                    // https://datatables.net/manual/data/
+                    // https://datatables.net/manual/tech-notes/3
+                    // https://stackoverflow.com/questions/26416735/initializing-a-jquery-datatable-with-a-local-array-of-arrays-as-datasource
+
+                    $('#needtable-requirements-0-table_node').DataTable().destroy();
+                    $("#needtable-requirements-0-table_node").DataTable( {
+                        searching: false,
+                        data: dataArray,
+                        columns: [
+                            { data: 'id' },
+                            { data: 'title' },
+                            { data: 'status' },
+                            { data: 'type' },
+                            // { data: ['data']['links'] },
+                            { data: 'tags' }
+                        ]
+                    });
+                    table.css('display','block');
+                }
                 else
-                if(mode==2)
+                if(mode==2) {
                     $("#explorerModeButton").text("Files");
+                    $('#needtable-requirements-0-table_node').DataTable().destroy();
+                    $("#dataTable").css('display','none');
+                }
             }
 
             function clearFilter() {

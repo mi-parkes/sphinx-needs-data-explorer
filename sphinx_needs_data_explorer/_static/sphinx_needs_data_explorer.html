@@ -185,7 +185,7 @@
             <div id="mynetwork" tabindex="0">
             </div>
                 <!-- class="NEEDS_DATATABLES rtd-exclude-wy-table no-sphinx-material-strip docutils data align-default dataTable no-footer" -->
-                <div id="dataTable">
+                <div id="dataTable" style="display:none">
                     <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node">
                         <colgroup>
                         <col style="width: 13%" />
@@ -489,7 +489,8 @@
                             <td class="at-td" title="${jsonData["data"]["title"]}">${jsonData["data"]["title"]}</td>
                             <td class="at-td">
                                 <a href="../${jsonData["data"]["docname"]}.html#${jsonData["id"]}"
-                                title="${jsonData["data"]["docname"]}.html}">${jsonData["data"]["docname"]}.html#${jsonData["id"]}</a></td>
+                                title="${jsonData["data"]["docname"]}.html}">${jsonData["data"]["docname"]}.html#${jsonData["id"]}</a>
+                            </td>
                         </tr>
                     </tbody>
                     </table>
@@ -652,6 +653,9 @@
                 } else {
                     console.log('tmp_nodes empty!');
                 }
+                if(mode==1) {
+                    updateTable(tmp_nodes);
+                }
                 for (let each of tmp_nodes) {
                     var opt = document.createElement('option');
                     opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
@@ -686,6 +690,37 @@
                 network.setOptions({ interaction: { keyboard: true } });
             }
 
+            function updateTable(tmp_nodes) {
+                //const dataArray = Object.values(gnodes).map(row => row.data);
+
+                // https://datatables.net/manual/data/
+                // https://datatables.net/manual/tech-notes/3
+                // https://stackoverflow.com/questions/26416735/initializing-a-jquery-datatable-with-a-local-array-of-arrays-as-datasource
+                var data=[];
+                for(const elm of tmp_nodes) {
+                    data.push({ ...gnodes[elm]['data']});
+                }
+                for(const elm of data) {
+                    elm['id']=`
+                    <a href="../${elm["docname"]}.html#${elm['id']}"
+                    title="${elm["docname"]}.html}">${elm['id']}</a>`
+                }
+
+                $('#needtable-requirements-0-table_node').DataTable().destroy();
+                $("#needtable-requirements-0-table_node").DataTable( {
+                    searching: false,
+                    data: data,
+                    columns: [
+                        { data: 'id' },
+                        { data: 'title' },
+                        { data: 'status' },
+                        { data: 'type' },
+                        // { data: ['data']['links'] },
+                        { data: 'tags' }
+                    ]
+                });
+            }
+
             function exploreMode() {
                 mode=(mode+1)%3;
                 if(mode==0) {
@@ -693,7 +728,7 @@
                     $("#dataTable").css('display','none');
                     $("#mynetwork").css('display','block');
                     initNetwork();
-                    handleSelectNodeEvent();
+                    handleSelectTypeEvent();
                 }
                 else
                 if(mode==1) {
@@ -703,28 +738,7 @@
                     $("#mynetwork").css('display','none');
                     const table = $("#dataTable");
                     console.log(table.css("display"));
-                    if (table.css("display") === "none") {
-                        table.show();
-                    }
-                    const dataArray = Object.values(gnodes).map(row => row.data);
-
-                    // https://datatables.net/manual/data/
-                    // https://datatables.net/manual/tech-notes/3
-                    // https://stackoverflow.com/questions/26416735/initializing-a-jquery-datatable-with-a-local-array-of-arrays-as-datasource
-
-                    $('#needtable-requirements-0-table_node').DataTable().destroy();
-                    $("#needtable-requirements-0-table_node").DataTable( {
-                        searching: false,
-                        data: dataArray,
-                        columns: [
-                            { data: 'id' },
-                            { data: 'title' },
-                            { data: 'status' },
-                            { data: 'type' },
-                            // { data: ['data']['links'] },
-                            { data: 'tags' }
-                        ]
-                    });
+                    handleSelectTypeEvent();
                     table.css('display','block');
                 }
                 else
@@ -1353,6 +1367,8 @@
             }
 
             function drawFilteredGraph(rootNodeLabel) {
+                if(mode!==0)
+                    return;
                 const visited = [];
                 var stack = [];
                 if(rootNodeLabel in gnodes)
@@ -1532,9 +1548,14 @@
 
             $("#input").blur(function() {
                 processingInputFilter=false;
-                $('#mynetwork').css('opacity','1.0');
-                //$('#mynetwork').css('border','none');
-                $('#mynetwork').focus();
+                if(mode===0){
+                    $('#mynetwork').css('opacity','1.0');
+                    //$('#mynetwork').css('border','none');
+                    $('#mynetwork').focus();
+                } else
+                if(mode==1) {
+                    $('#dataTable').focus();                    
+                }
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1571,9 +1592,11 @@
                 } else
                 if (e.key === 'Escape') {
                     suggestionsList.innerHTML = "";
-                    e.preventDefault();
-                    $('.vis-network').focus();
-                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    if(mode==0) {
+                        e.preventDefault();
+                        $('.vis-network').focus();
+                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    }
                 } else
                 if (e.key === 'Enter') {
                     console.log("'Enter' pressed");
@@ -1608,8 +1631,13 @@
                     } else
                         handleSelectTypeEvent();
                     e.preventDefault();
-                    $('.vis-network').focus();
-                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    if(mode==1) {
+                        $('#dataTable').focus();
+                    } else
+                    if(mode==0) {
+                        $('.vis-network').focus();
+                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    }
                     return;
                 }  else {
                     const phrase = $('#input').val();

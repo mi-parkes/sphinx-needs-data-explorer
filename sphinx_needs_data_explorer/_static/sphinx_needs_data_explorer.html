@@ -209,6 +209,22 @@
                         </table>
                     </div>
                 <!-- end -->
+                <!-- class="NEEDS_DATATABLES rtd-exclude-wy-table no-sphinx-material-strip docutils data align-default dataTable no-footer" -->
+                <div id="dataTable2" style="display:none">
+                    <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node2">
+                        <colgroup>
+                        <col style="width: 90%" />
+                        </colgroup>
+                        <thead>
+                        <tr class="row-odd">
+                            <th class="head"><p>DocName</p></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- end -->
         </div>
         <script type="text/javascript">
             const extra_options = {{ EXTRA_OPTIONS }};
@@ -251,7 +267,6 @@
             var parser;
             let grammar;
             const traceParser=false;
-            var documents=[];
             var mode=0;
             var absolute = function(rel) { 
                 var link = document.createElement("a"); 
@@ -427,7 +442,6 @@
                 parents_edges={};
                 gnodes={};
                 let typeSet = new Set(['any']);
-                let documentSet = new Set(['any']);
 
                 for(const key in needs) {
                     if(verbose)
@@ -437,7 +451,6 @@
                     parents[key]=[];
                     parents_edges[key]=[];
                     typeSet.add(needs[key]['type']);
-                    documentSet.add(needs[key]['docname']);
                     var jsonData={'data':{
                         "type"  :       needs[key]['type'],
                         "title" :       needs[key]['title'],
@@ -539,9 +552,6 @@
                         opt.innerHTML = elm;
                         stype.appendChild(opt);
                 }
-                for(elm of documentSet)
-                    documents.push(elm);
-                documents=documents.sort();
                 //for(elm of documents)
                 //    console.log(elm);
                 computeNodeDepth();
@@ -653,9 +663,12 @@
                 } else {
                     console.log('tmp_nodes empty!');
                 }
-                if(mode==1) {
+                if(mode==1)
                     updateTable(tmp_nodes);
-                }
+                else
+                if(mode==2)
+                    updateTable2(tmp_nodes);
+
                 for (let each of tmp_nodes) {
                     var opt = document.createElement('option');
                     opt.text   = `${each} - ${gnodes[each]["data"]["title"]}`;
@@ -721,9 +734,27 @@
                 });
             }
 
+            function updateTable2(tmp_nodes) {
+                var data=[];
+                let documentSet = new Set([]);
+                for(const elm of tmp_nodes)
+                    documentSet.add(gnodes[elm]['data']['docname']);
+                for(elm of documentSet)
+                    data.push([elm]);
+                //data=data.sort();
+                for(var i=0;i<data.length;i++)
+                    data[i][0] = `<a href="../${data[i][0]}.html" title="${data[i][0]}.html}">${data[i][0]}</a>`
+                $('#needtable-requirements-0-table_node2').DataTable().destroy();
+                $("#needtable-requirements-0-table_node2").DataTable({
+                    searching: false,
+                    data:data,
+                });
+            }
+
             function exploreMode() {
                 mode=(mode+1)%3;
                 if(mode==0) {
+                    $("#dataTable2").css('display','none');
                     $("#explorerModeButton").text("Networks");
                     $("#dataTable").css('display','none');
                     $("#mynetwork").css('display','block');
@@ -744,8 +775,12 @@
                 else
                 if(mode==2) {
                     $("#explorerModeButton").text("Files");
-                    $('#needtable-requirements-0-table_node').DataTable().destroy();
+                    $('#needtable-requirements-0-table_node2').DataTable().destroy();
                     $("#dataTable").css('display','none');
+                    const table = $("#dataTable2");
+                    console.log(table.css("display"));
+                    handleSelectTypeEvent();
+                    table.css('display','block');
                 }
             }
 
@@ -1553,9 +1588,11 @@
                     //$('#mynetwork').css('border','none');
                     $('#mynetwork').focus();
                 } else
-                if(mode==1) {
-                    $('#dataTable').focus();                    
-                }
+                if(mode==1)
+                    $('#dataTable').focus();
+                else
+                if(mode==2)
+                    $('#dataTable2').focus();
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1592,11 +1629,16 @@
                 } else
                 if (e.key === 'Escape') {
                     suggestionsList.innerHTML = "";
+                    e.preventDefault();
                     if(mode==0) {
-                        e.preventDefault();
                         $('.vis-network').focus();
                         $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
+                    } else
+                    if(mode==1)
+                        $('#dataTable').focus();
+                    else
+                    if(mode==2)
+                        $('#dataTable2').focus();
                 } else
                 if (e.key === 'Enter') {
                     console.log("'Enter' pressed");
@@ -1631,13 +1673,16 @@
                     } else
                         handleSelectTypeEvent();
                     e.preventDefault();
-                    if(mode==1) {
-                        $('#dataTable').focus();
-                    } else
                     if(mode==0) {
                         $('.vis-network').focus();
                         $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                     }
+                    else
+                    if(mode==1)
+                        $('#dataTable').focus();
+                    else
+                    if(mode==2)
+                        $('#dataTable2').focus();
                     return;
                 }  else {
                     const phrase = $('#input').val();

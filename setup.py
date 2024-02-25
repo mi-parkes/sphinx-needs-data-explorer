@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='sphinx-needs-data-explorer',
-    version='0.7.0',
+    version='0.8.0',
     packages=find_packages(),
     author='Michael Parkes',
     author_email='mparkes@post.cz',
@@ -15,6 +15,7 @@ setup(
             "_static/_templates/article-header-buttons.html",
             "_static/_templates/explorer-button.html",
             "_static/sphinx_needs_data_explorer.css",
+            "_static/sphinx_needs_data_explorer.js",
             "_static/sphinx_needs_data_explorer.html",
             "_static/jquery/jquery-3.7.1.min",
             "_static/jquery/LICENSE.txt",

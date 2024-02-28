@@ -762,7 +762,7 @@
                 // { name:'IDX', data: 'id', visible: false },
 
                 var mcolumns=[]
-                const defaultColumns=['id','status','type','title'];
+                const defaultColumns=['id','title','status','type'];
                 if(Object.keys(data[0]).length>0) {
                     for(const key of defaultColumns) {
                         mcolumns.push({ title:key, data:key, visible: true })

@@ -174,20 +174,30 @@
         </div>
         <div>
             <div class="row">
-                <div id="display-needs-count">
+                <div id="display-needs-count" title="This number shows how many sphinx-needs items match the active filter(s)">
                     Filter matches '0' IDs
                 </div>
-                <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
+                <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" 
+                    class="select2 select2-container select2-container--bootstrap select2-container--focus"
+                    title="Select which Sphinx-Needs type you want view">
                 </select>
-                <input title="customFilter" type="text" id="input" class="input-inactive">
-                <select title="selectFilter" id="select-filter" class="select2 select2-container select2-container--bootstrap select2-container--focus">
+                <input type="text" id="input"
+                    title="Here you can specify filter expression. See Help for examples." 
+                    class="input-inactive">
+                <select title="selectFilter" id="select-filter" 
+                    title="You can select from already defined or define new or delete existing filter"
+                    class="select2 select2-container select2-container--bootstrap select2-container--focus"
+                    >
                     <option value="">Select</option>
                 </select>
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
                 </select>
-                <button id="explorerModeButton" onclick="exploreMode()">Network</button>
-                <button id="helpButton" onclick="openHelpDialog()">Help</button>
+                <button id="explorerModeButton" onclick="exploreMode()" 
+                    title="View Perpsective [Network, Table, File]">Network</button>
+                <button id="helpButton" onclick="openHelpDialog()" 
+                    title="View how to use Sphinx-Needs-Data-Explorer">Help
+                </button>
             </div>
             <ul id="suggestions"></ul>
             <div id="tooltip-window" class="tooltip-window"></div>
@@ -250,12 +260,13 @@
                     <col style="width: 13%" />
                     </colgroup>
                     <thead>
-                    <tr class="row-odd"><th class="head"><p>ID</p></th>
-                    <th class="head"><p>Title</p></th>
-                    <th class="head"><p>Status</p></th>
-                    <th class="head"><p>Type</p></th>
-                    <!-- <th class="head"><p>Outgoing</p></th> -->
-                    <th class="head"><p>Tags</p></th>
+                    <tr class="row-odd">
+                        <th class="head"><p>ID</p></th>
+                        <th class="head"><p>Title</p></th>
+                        <th class="head"><p>Status</p></th>
+                        <th class="head"><p>Type</p></th>
+                        <!-- <th class="head"><p>Outgoing</p></th> -->
+                        <th class="head"><p>Tags</p></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -716,6 +727,22 @@
                 network.setOptions({ interaction: { keyboard: true } });
             }
 
+            function transformAndJoin(data,gnodes) {
+                const transformedData = [];
+                for (const key of data) {
+                    const docname = gnodes[key]['data']?.["docname"];
+                    if (docname) {
+                        const transformedValue = `
+                            <a href="../${docname}.html#${key}"
+                            title="${docname}.html">${key}</a>`;
+                        transformedData.push(transformedValue);
+                    } else {
+                        //transformedData.push("");
+                    }
+                }
+                return transformedData;
+            }
+
             function updateTable(tmp_nodes) {
                 //const dataArray = Object.values(gnodes).map(row => row.data);
 
@@ -730,6 +757,36 @@
                     elm['id']=`
                     <a href="../${elm["docname"]}.html#${elm['id']}"
                     title="${elm["docname"]}.html}">${elm['id']}</a>`
+                }
+
+                // { name:'IDX', data: 'id', visible: false },
+
+                var mcolumns=[]
+                const defaultColumns=['id','status','type','title'];
+                if(Object.keys(data[0]).length>0) {
+                    for(const key of defaultColumns) {
+                        mcolumns.push({ title:key, data:key, visible: true })
+                    }
+                    //for(const link_type of link_types) {
+                    for(const link_type of ['links']) {
+                        if(link_type in data[0])
+                            mcolumns.push({ title:link_type, data:link_type,
+                                render: function ( data, type, row ) {
+                                    return (data)?transformAndJoin(data,gnodes).join(', '):'';
+                                }
+                            })
+                    }
+
+                    /*
+                    for(const key in data[0]) {
+                        if(typeof data[0][key] === 'string') {
+                            if(!['id','status','type','title'].includes(key))
+                                mcolumns.push({ title:key, data:key, visible: true })
+                            else {
+                                //mcolumns.push({ title:key, data:key, visible: false })
+                            }
+                        }
+                    }*/
                 }
 
                 $('#needtable-requirements-0-table_node').DataTable().destroy();
@@ -752,6 +809,11 @@
                         }
                     }
                 });
+                        <th class="head"><p>ID</p></th>
+                        <th class="head"><p>Title</p></th>
+                        <th class="head"><p>Status</p></th>
+                        <th class="head"><p>Type</p></th>
+
 */
                 $("#needtable-requirements-0-table_node").DataTable( {
                     dom: 'lBfrtip',
@@ -784,15 +846,32 @@
                     stateSave: true,
                     searching: true,
                     data: data,
-                    columns: [
-                        { data: 'id' },
-                        { data: 'title' },
-                        { data: 'status' },
-                        { data: 'type' },
-                        // { data: ['data']['links'] },
-                        { data: 'tags' }
-                    ]
+                    columns:mcolumns,
+                    // columns: [
+                    //     { name:'IDX', data: 'id', visible: false },
+                    //     { data: 'title' },
+                    //     { data: 'status' },
+                    //     { data: 'type' },
+                    //     // { data: ['data']['links'] },
+                    //     { data: 'tags' },
+                    //     // { targets: [0], visible: false }
+                    // ],
+                    // columnDefs: [
+                    //     {
+                    //         targets: [0],
+                    //         visible: true,
+                    //         searchable: true,
+                    //         orderable: true
+                    //     },
+                    //     {
+                    //         targets: [1,2,3,4],
+                    //         visible: false,
+                    //         searchable: false,
+                    //         orderable: false
+                    //     }
+                    // ]
                 });
+                //$("#needtable-requirements-0-table_node").DataTable().column( 0 ).visible( false )
             }
 
             function updateTable2(tmp_nodes) {
@@ -841,34 +920,36 @@
             }
 
             function exploreMode() {
-                mode=(mode+1)%3;
-                if(mode==0) {
-                    $("#dataTable2").css('display','none');
-                    $("#explorerModeButton").text("Networks");
-                    $('#mynetwork #dataTable2').remove();
-                    window.addEventListener('resize', handleResize);
-                    initNetwork();
-                    handleSelectTypeEvent();
-                }
-                else
-                if(mode==1) {
-                    $("#explorerModeButton").text("Tables");
-                    network.destroy();
-                    network=null;
-                    var table = $(dataTable1);
-                    table.css('display','block');
-                    table.appendTo('#mynetwork');
-                    handleSelectTypeEvent();
-                }
-                else
-                if(mode==2) {
-                    $("#explorerModeButton").text("Files");
-                    $('#mynetwork #dataTable').remove();
-                    var table = $(dataTable2);
-                    table.css('display','block');
-                    table.appendTo('#mynetwork');
-                    handleSelectTypeEvent();
-                }
+                setTimeout(function() {
+                    mode=(mode+1)%3;
+                    if(mode==0) {
+                        $("#dataTable2").css('display','none');
+                        $("#explorerModeButton").text("Network");
+                        $('#mynetwork #dataTable2').remove();
+                        window.addEventListener('resize', handleResize);
+                        initNetwork();
+                        handleSelectTypeEvent();
+                    }
+                    else
+                    if(mode==1) {
+                        $("#explorerModeButton").text("Table");
+                        network.destroy();
+                        network=null;
+                        var table = $(dataTable1);
+                        table.css('display','block');
+                        table.appendTo('#mynetwork');
+                        handleSelectTypeEvent();
+                    }
+                    else
+                    if(mode==2) {
+                        $("#explorerModeButton").text("File");
+                        $('#mynetwork #dataTable').remove();
+                        var table = $(dataTable2);
+                        table.css('display','block');
+                        table.appendTo('#mynetwork');
+                        handleSelectTypeEvent();
+                    }
+                },1);
             }
 
             function clearFilter() {

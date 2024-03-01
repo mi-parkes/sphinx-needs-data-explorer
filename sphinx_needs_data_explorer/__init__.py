@@ -124,7 +124,8 @@ def add_files(app, config):
             "LINK_TYPES": link_types,
             "TYPE2COLOR": type_color_map,
             "FILTERS": filters,
-            "EXTRA_OPTIONS":needs_extra_options
+            "EXTRA_OPTIONS":needs_extra_options,
+            "VERSION":__version__
         }
 
         with open(ofile,"w+") as out:

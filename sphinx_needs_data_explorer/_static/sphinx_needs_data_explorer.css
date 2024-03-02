@@ -194,6 +194,7 @@ div.dataTables_length select {
     min-width: 200px;
     white-space: nowrap;
     background-color: rgb(23, 70, 210);
+    font-size: 18px;
 }
 
 #select-type {

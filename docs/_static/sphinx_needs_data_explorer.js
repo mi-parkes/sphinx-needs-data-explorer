@@ -51,34 +51,37 @@ class Node {
         var ret=false;
         // console.log(`" --> ${this.operand}"`);
         switch (this.operand) {
+            //  '..' in attr
             case "in_1":
                 ret=(this.right['value'] in currentNode['data']) && 
                     currentNode['data'][this.right['value']].includes(this.left['value']);
                 // console.log(`${this.left} in ${this.right} = ${ret}`);
-                break;
-
+                break;                
+            // attr in ['..','..']
             case "in_3":
                 ret=(this.left['value'] in currentNode['data']) && 
                     this.right['value'].split(",").includes(currentNode['data'][this.left['value']]);
                 break;
+            // ['..','..'] in attr
             case "in_4":
                 ret=(this.right['value'] in currentNode['data']) && 
                     this.left['value'].split(",").some(v=> currentNode['data'][this.right['value']].includes(v))
                 break;
-    
+            // '..' == attr 
             case "==1":
                 ret=(this.right['value'] in currentNode['data']) && 
                 (currentNode['data'][this.right['value']]==this.left['value']);
                 break;
+            // attr == '..'
             case "==2":
                 ret=(this.left['value'] in currentNode['data']) && 
                 (currentNode['data'][this.left['value']]==this.right['value']);
                 break;
-
+            // attr == []
             case "==3":
                 ret=false;
                 var lhs=null;
-                if(this.left['value']==='parents') {
+                if(this.left['value']==='outgoing') {
                     if('attr' in this.left) {
                         //console.log('parents',this.left['attr'])
                         lhs=parents[currentNode['data']['id']]
@@ -86,12 +89,12 @@ class Node {
                         lhs=parents[currentNode['data']['id']]
                 }
                 else
-                if(this.left['value']==='children') {
+                if(this.left['value']==='incoming') {
                     if('attr' in this.left) {
                         //console.log('children',this.left['attr'])
-                        lhs=parents[currentNode['data']['id']]
+                        lhs=children[currentNode['data']['id']]
                     } else
-                        lhs=parents[currentNode['data']['id']]
+                        lhs=children[currentNode['data']['id']]
                 }
                 else
                     if(this.left['value'] in currentNode['data'])
@@ -106,13 +109,14 @@ class Node {
                     }
                 }
                 break;
+            // attr != []
             case "==4":
                 ret=false;
                 var lhs=null;
-                if(this.left['value']==='parents')
+                if(this.left['value']==='outgoing')
                     lhs=parents[currentNode['data']['id']]
                 else
-                if(this.left['value']==='children')
+                if(this.left['value']==='incoming')
                     lhs=children[currentNode['data']['id']]
                 else
                     if(this.left['value'] in currentNode['data'])
@@ -127,7 +131,11 @@ class Node {
                     }
                 }
                 break;
-
+            // attr != '..'
+            case "==5":
+                ret=(this.left['value'] in currentNode['data']) && 
+                (currentNode['data'][this.left['value']]!==this.right['value']);
+                break;
             case "&&":
                 ret=(
                 (this.isObject(this.left) ? this.cast(this.left).evaluate(currentNode)   : this.left['value']) && 
@@ -256,7 +264,7 @@ function prepareParser() {
 
         expr2_1 = w:Words ws "==" ws q:QuotedString {
             return { left:w, right: q, operand: '==2' }
-        }        
+        }
         expr2_2 = q:QuotedString ws "==" ws w:Words {
             return { left:q, right:w, operand: '==1' }
         }
@@ -266,7 +274,11 @@ function prepareParser() {
         expr2_4 = w:Words ws "!=" ws a:str_array {
             return { left:w, right:a, operand: '==4' }
         }
-        expr2 = expr2_1 / expr2_2 / expr2_3 / expr2_4
+        expr2_5 = w:Words ws "!=" ws q:QuotedString {
+            return { left:w, right: q, operand: '==5' }
+        }
+
+        expr2 = expr2_1 / expr2_2 / expr2_3 / expr2_4 / expr2_5
 
         reg_expr_pattern = [^/]
         reg_expr_value=r:$(reg_expr_pattern+) {  
@@ -286,7 +298,7 @@ function prepareParser() {
                         if(keys.length==0)
                             error("No needs data available");
 
-                        const regex = /^(parents|children)\.([A-Z_a-z]+)$/;
+                        const regex = /^(incoming|outgoing)\.([A-Z_a-z]+)$/;
                         const match = regex.exec(key);
                         if(match) {
                             const ref = match[1];
@@ -300,7 +312,7 @@ function prepareParser() {
                                 };
                             }
                         }
-                        if((key==='parents') || (key==='children') || key in gnodes[keys[0]]['data']) {
+                        if((key==='outgoing') || (key==='incoming') || key in gnodes[keys[0]]['data']) {
                             return {'value':key,'location':location(),'type':'need-attr'};
                         }
                         else

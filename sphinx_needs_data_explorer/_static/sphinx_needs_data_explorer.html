@@ -184,10 +184,10 @@
                             <td class="att-td">title ~ /^Level[ \t]+(?!one)/ #negative lookaheads</td>
                         </tr>
                         <tr>
-                            <td class="att-td">type=='test' && parents==[]</td>
+                            <td class="att-td">type=='test' && outgoing==[]</td>
                         </tr>
                         <tr>
-                            <td class="att-td">type=='req' && children!=[]</td>
+                            <td class="att-td">type != 'req' && incoming==[]</td>
                         </tr>
                     </tbody>
                 </table>
@@ -545,6 +545,19 @@
                             autocompletionAttributes.push(`${att}`);
                         }
                     }
+                    // synthetic attributes
+                    att='outgoing'
+                    $("#help-attributes").append(`<tr>
+                            <td class="att-td">${att}</td>
+                            <td class="att-td">${typeof parents[firstKey]}</td>
+                            </tr>`.replace(/^[\s]+/gm,""))
+                    autocompletionAttributes.push(`${att}`);
+                    att='incoming'
+                    $("#help-attributes").append(`<tr>
+                            <td class="att-td">${att}</td>
+                            <td class="att-td">${typeof children[firstKey]}</td>
+                            </tr>`.replace(/^[\s]+/gm,""))
+                    autocompletionAttributes.push(`${att}`);
                 }
 
                 for(const key in needs) {
@@ -740,8 +753,8 @@
                 for(const elm of tmp_nodes) {
                     data.push({...gnodes[elm]['data']});
                     const id=data[data.length-1]['id'];
-                    data[data.length-1]['id']=`<a href="../${elm["docname"]}.html#${id}"
-                    title="${elm["docname"]}.html}">${id}</a>`
+                    data[data.length-1]['id']=`<a href="../${gnodes[elm]['data']['docname']}.html#${id}"
+                    title="${gnodes[elm]['data']['docname']}.html">${id}</a>`
                     data[data.length-1]['outgoing']=parents[id];
                     data[data.length-1]['incoming']=children[id];
                 }
@@ -1244,7 +1257,7 @@
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
-                    if (event.key === 'ArrowLeft') {
+                    if (event.key === 'ArrowLeft' && network!==null) {
                         event.preventDefault();
                         console.log("ArrowLeft");
                         const currentPosition = network.getViewPosition();
@@ -1252,7 +1265,7 @@
                         const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y + offset.y};
                         network.moveTo({position: newPosition});
                         return;
-                    } else if (event.key === 'ArrowRight') {
+                    } else if (event.key === 'ArrowRight' && network!==null) {
                         event.preventDefault();
                         console.log("ArrowRight");
                         const currentPosition = network.getViewPosition();
@@ -1260,7 +1273,7 @@
                         const newPosition = {x: currentPosition.x - offset.x, y: currentPosition.y + offset.y};
                         network.moveTo({position: newPosition});
                         return;
-                    } else if (event.key === 'ArrowUp') {
+                    } else if (event.key === 'ArrowUp' && network!==null) {
                         event.preventDefault();
                         console.log("ArrowUp");
                         //setTimeout(function() {
@@ -1270,7 +1283,7 @@
                         network.moveTo({position: newPosition});
                         //},2000);
                         return;
-                    } else if (event.key === 'ArrowDown') {
+                    } else if (event.key === 'ArrowDown' && network!==null) {
                         event.preventDefault();
                         console.log("ArrowDown");
                         const currentPosition = network.getViewPosition();

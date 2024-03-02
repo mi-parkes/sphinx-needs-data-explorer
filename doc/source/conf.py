@@ -161,7 +161,9 @@ sphinx_needs_data_explorer_config = {
         "status=='implemented'",
         "['15','16'] in id",
         "title ~ /r.*[0-9]+5'$/i",
-        "type=='spec' && parents!=[] && title ~ /5'$/"
+        "type != 'req' && incoming==[]",
+        "type=='spec' && outgoing!=[] && title ~ /5'$/"
     ],
+    # you can explicitly disable adding explorer button in your 'sphinx_book_theme'
     "disable-header-button":False
 }

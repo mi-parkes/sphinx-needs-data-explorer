@@ -354,6 +354,8 @@
                         if('id' in decodedData && decodedData['id']!=null )
                             $('#select-need-id').val(decodedData['id']).trigger('change.select2');
                     }
+                    $('.vis-network').focus();
+                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                 }
             ).catch(error => {
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
@@ -856,15 +858,16 @@
             }
 
             function exploreMode() {
-                setTimeout(function() {
+                //setTimeout(function() {
                     mode=(mode+1)%3;
                     if(mode==0) {
                         $('#needtable').DataTable().destroy();
                         $('#mynetwork #needtable').remove();
                         $("#explorerModeButton").text("Network");
-                        window.addEventListener('resize', handleResize);
                         initNetwork();
                         handleSelectTypeEvent();
+                        $('.vis-network').focus();
+                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                     }
                     else
                     if(mode==1) {
@@ -878,7 +881,7 @@
                         $("#explorerModeButton").text("File");
                         handleSelectTypeEvent();
                     }
-                },1);
+                //},1);
             }
 
             function clearFilter() {
@@ -895,7 +898,7 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:true
+                                enabled:false
                                 // enabled:!textBoxEditingActive
                             }
                         };
@@ -1242,6 +1245,7 @@
                         event.preventDefault();
                         if(network!=null)
                             network.fit({maxZoomLevel:0.4});
+                        return;
                     }
                     if(event.key==='v'||event.key==='V') {
                         event.preventDefault();
@@ -1266,6 +1270,7 @@
                         event.preventDefault();
                         console.log(`prev Key Up ${ecounter}`);
                         handleSelectPrevNodeEvent();
+                        return;
                     }
 
                     // next node
@@ -1273,6 +1278,7 @@
                         event.preventDefault();
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
+                        return;
                     }
 
                     // toggle network layout direction
@@ -1686,6 +1692,11 @@
                 $('#mynetwork').css('opacity','1.0');
                 //$('#mynetwork').css('border','none');
                 $('#mynetwork').focus();
+
+                $('.vis-network').focus();
+                $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                //$('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1814,6 +1825,7 @@
             }
             
             $('#input').on('keydown',handleKeydown);
+            $(window).resize(handleResize);
 
             $(document).keydown(function(event) {
                 if (event.keyCode === 112 || event.key === 'F1') {

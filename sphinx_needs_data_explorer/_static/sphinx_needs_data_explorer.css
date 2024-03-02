@@ -226,7 +226,7 @@ div.dataTables_length select {
     max-width: 14% important;
     font-size: 22px;
     border-radius: 4px;
-    color: white;
+    color:  rgb(23, 70, 210);
     /* padding: 10px; */
     /* white-space: nowrap; */
     white-space: nowrap;
@@ -234,7 +234,7 @@ div.dataTables_length select {
     overflow: hidden;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: rgb(23, 70, 210);
+    background-color: white;
 }
 
 .input-active {

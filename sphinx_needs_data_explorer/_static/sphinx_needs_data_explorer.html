@@ -119,7 +119,7 @@
                     <li>visjs network keyboard shortcuts</li>
                     <ul>
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
-                        <li>+/- zoom-in/zoom out</li>
+                        <!-- <li>+/- zoom-in/zoom out</li> -->
                     </ul>
                     <li>F1 - help</li>
                     <li>r(eset) network display</li>
@@ -863,6 +863,7 @@
                 //setTimeout(function() {
                     mode=(mode+1)%3;
                     if(mode==0) {
+                        $('#select-need-id').prop('disabled',false);
                         $('#needtable').DataTable().destroy();
                         $('#mynetwork #needtable').remove();
                         $("#explorerModeButton").text("Network");
@@ -873,6 +874,7 @@
                     }
                     else
                     if(mode==1) {
+                        $('#select-need-id').prop('disabled',true);
                         $("#explorerModeButton").text("Table");
                         network.destroy();
                         network=null;
@@ -1240,6 +1242,41 @@
                     ecounter+=1;
                     if (event.key === 'Escape' || event.keyCode === 27) {
                         $('.vis-tooltip').css('display', 'none');
+                        return;
+                    }
+                    if (event.key === 'ArrowLeft') {
+                        event.preventDefault();
+                        console.log("ArrowLeft");
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:(event.shiftKey)?100:50, y: 0};
+                        const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y + offset.y};
+                        network.moveTo({position: newPosition});
+                        return;
+                    } else if (event.key === 'ArrowRight') {
+                        event.preventDefault();
+                        console.log("ArrowRight");
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:(event.shiftKey)?100:50, y: 0};
+                        const newPosition = {x: currentPosition.x - offset.x, y: currentPosition.y + offset.y};
+                        network.moveTo({position: newPosition});
+                        return;
+                    } else if (event.key === 'ArrowUp') {
+                        event.preventDefault();
+                        console.log("ArrowUp");
+                        //setTimeout(function() {
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:0, y:(event.shiftKey)?100:50}; // Adjust x and y for desired movement (pixels)
+                        const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y + offset.y};
+                        network.moveTo({position: newPosition});
+                        //},2000);
+                        return;
+                    } else if (event.key === 'ArrowDown') {
+                        event.preventDefault();
+                        console.log("ArrowDown");
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:0,y:(event.shiftKey)?100:50}; // Adjust x and y for desired movement (pixels)
+                        const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y - offset.y};
+                        network.moveTo({position: newPosition});
                         return;
                     }
                     // reset network display

@@ -269,46 +269,15 @@
             var mode=0;
 
             // <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node">
+            //const tableTemplate=`<table id="example" tabindex="0" style="width:100%'"></table>`;
             
-            const dataTable1=`<div id="dataTable" style="display:none">
-                <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node">
-                    <colgroup>
-                    <col style="width: 13%" />
-                    <col style="width: 38%" />
-                    <col style="width: 13%" />
-                    <col style="width: 13%" />
-                    <!-- <col style="width: 13%" /> -->
-                    <col style="width: 13%" />
-                    </colgroup>
-                    <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>ID</p></th>
-                        <th class="head"><p>Title</p></th>
-                        <th class="head"><p>Status</p></th>
-                        <th class="head"><p>Type</p></th>
-                        <!-- <th class="head"><p>Outgoing</p></th> -->
-                        <th class="head"><p>Tags</p></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
+            const dataTableTemplate=`
+                <table class="NEEDS_DATATABLES 
+                    colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" 
+                    id="needtable"
+                    tabindex="0" style="width:100%'">
                 </table>
-            </div>`;
-
-            const dataTable2=`<div id="dataTable2" style="display:none">
-                <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node2">
-                    <colgroup>
-                    <col style="width: 90%" />
-                    </colgroup>
-                    <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>DocName</p></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>`;
+            `;
 
             var absolute = function(rel) { 
                 var link = document.createElement("a"); 
@@ -708,7 +677,7 @@
                     console.log('tmp_nodes empty!');
                 }
                 if(mode==1)
-                    updateTable(tmp_nodes);
+                    updateTable1(tmp_nodes);
                 else
                 if(mode==2)
                     updateTable2(tmp_nodes);
@@ -764,40 +733,27 @@
                 return transformedData;
             }
 
-            function updateTable(tmp_nodes) {
-                //const dataArray = Object.values(gnodes).map(row => row.data);
-
-                // https://datatables.net/manual/data/
-                // https://datatables.net/manual/tech-notes/3
-                // https://stackoverflow.com/questions/26416735/initializing-a-jquery-datatable-with-a-local-array-of-arrays-as-datasource
+            function updateTable1(tmp_nodes) {
                 var data=[];
-                for(const elm of tmp_nodes) {
-                    data.push({ ...gnodes[elm]['data']});
-                }
-                for(const elm of data) {
-                    elm['id']=`
-                    <a href="../${elm["docname"]}.html#${elm['id']}"
+                tmp_nodes.forEach(elm => {data.push({...gnodes[elm]['data'] });});
+                data.forEach(elm => {
+                    elm['id']=`<a href="../${elm["docname"]}.html#${elm['id']}"
                     title="${elm["docname"]}.html}">${elm['id']}</a>`
-                }
-
-                // { name:'IDX', data: 'id', visible: false },
-
+                });
                 var mcolumns=[]
                 const defaultColumns=['id','title','status','type'];
                 if(Object.keys(data[0]).length>0) {
                     for(const key of defaultColumns) {
                         mcolumns.push({ title:key, data:key, visible: true })
                     }
-                    //for(const link_type of link_types) {
-                    for(const link_type of ['links']) {
+                    for(const link_type of link_types) {
                         if(link_type in data[0])
-                            mcolumns.push({ title:link_type, data:link_type,
+                            mcolumns.push({ title:link_type, data:link_type, visible: false,
                                 render: function ( data, type, row ) {
                                     return (data)?transformAndJoin(data,gnodes).join(', '):'';
                                 }
                             })
                     }
-
                     /*
                     for(const key in data[0]) {
                         if(typeof data[0][key] === 'string') {
@@ -809,34 +765,63 @@
                         }
                     }*/
                 }
-
-                $('#needtable-requirements-0-table_node').DataTable().destroy();
-/*
-                new DataTable('#needtable-requirements-0-table_node', {
-                    columnDefs: [
-                        {
-                            targets: -1,
-                            visible: false
-                        }
+                $('#needtable').DataTable().destroy();
+                $(`#mynetwork #needtable`).remove();
+                var table = $(dataTableTemplate);
+                table.appendTo('#mynetwork');
+                table = $('#needtable').DataTable({
+                    dom: 'lBfrtip',
+                    lengthChange: true,
+                    lengthMenu: [
+                        [10, 15, 50, -1],
+                        ["10", "15", "50", "All"]
                     ],
-                    layout: {
-                        topStart: {
-                            buttons: [
-                                {
-                                    extend: 'colvis',
-                                    postfixButtons: ['colvisRestore']
-                                }
-                            ]
-                        }
+                    pageLength: 15,
+                    // scrollY: "300px",
+                    scrollCollapse: true,
+                    buttons: [
+                        'colvis',
+                        'copy',
+                        'csv',
+                        'excel',
+                        'pdf',
+                        'print'
+                    ],
+                    stateSave: true,
+                    searching: false,
+                    data: data,
+                    columns: mcolumns,
+                    select: 'single'
+                });
+                $('.dataTable').focus();
+                $('#needtable tbody').on('click', 'tr', function () {
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                    } else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
                     }
                 });
-                        <th class="head"><p>ID</p></th>
-                        <th class="head"><p>Title</p></th>
-                        <th class="head"><p>Status</p></th>
-                        <th class="head"><p>Type</p></th>
+            }
 
-*/
-                $("#needtable-requirements-0-table_node").DataTable( {
+            function updateTable2(tmp_nodes) {
+                var data=[];
+                let documentSet = new Set([]);
+                tmp_nodes.forEach(elm => {documentSet.add(gnodes[elm]['data']['docname'])});
+                for(elm of documentSet)
+                    data.push({'docname':`<a href="../${elm}.html" title="${elm}.html}">${elm}</a>`});
+                var mcolumns=[]
+                const defaultColumns=['docname'];
+                if(Object.keys(data[0]).length>0) {
+                    for(const key of defaultColumns) {
+                        mcolumns.push({ title:key, data:key, visible: true })
+                    }
+                }
+                $('#needtable').DataTable().destroy();
+                $('#mynetwork #needtable').remove();
+                var table = $(dataTableTemplate);
+                table.appendTo('#mynetwork');
+                table = $('#needtable').DataTable({
                     dom: 'lBfrtip',
                     lengthChange: true,
                     lengthMenu: [ 
@@ -846,17 +831,6 @@
                     // scrollY: "300px",
                     scrollCollapse: true,
                     buttons: [
-/*
-                    {
-                            extend: 'copy',
-                            text: 'Copy',
-                            header: false,          // Disable export header tabla
-                            exportOptions: {
-                                columns: [0,1]      // Select columns to be exported
-                            },
-                            title: null             // Disable title on exported data
-                        },
-*/
                         'colvis',
                         'copy',
                         'csv',
@@ -867,76 +841,17 @@
                     stateSave: true,
                     searching: true,
                     data: data,
-                    columns:mcolumns,
-                    // columns: [
-                    //     { name:'IDX', data: 'id', visible: false },
-                    //     { data: 'title' },
-                    //     { data: 'status' },
-                    //     { data: 'type' },
-                    //     // { data: ['data']['links'] },
-                    //     { data: 'tags' },
-                    //     // { targets: [0], visible: false }
-                    // ],
-                    // columnDefs: [
-                    //     {
-                    //         targets: [0],
-                    //         visible: true,
-                    //         searchable: true,
-                    //         orderable: true
-                    //     },
-                    //     {
-                    //         targets: [1,2,3,4],
-                    //         visible: false,
-                    //         searchable: false,
-                    //         orderable: false
-                    //     }
-                    // ]
+                    columns: mcolumns,
+                    select: 'single'
                 });
-                //$("#needtable-requirements-0-table_node").DataTable().column( 0 ).visible( false )
-            }
-
-            function updateTable2(tmp_nodes) {
-                var data=[];
-                let documentSet = new Set([]);
-                for(const elm of tmp_nodes)
-                    documentSet.add(gnodes[elm]['data']['docname']);
-                for(elm of documentSet)
-                    data.push([elm]);
-                //data=data.sort();
-                for(var i=0;i<data.length;i++)
-                    data[i][0] = `<a href="../${data[i][0]}.html" title="${data[i][0]}.html}">${data[i][0]}</a>`
-                $('#needtable-requirements-0-table_node2').DataTable().destroy();
-                $("#needtable-requirements-0-table_node2").DataTable({
-                    dom: 'lBfrtip',
-                    lengthChange: true,
-                    lengthMenu: [ 
-                        [ 10, 15, 50, -1 ],
-                        [ "10", "20", "50", "All"]
-                    ],
-                    // scrollY: "300px",
-                    scrollCollapse: true,
-                    buttons: [
-/*
-                    {
-                            extend: 'copy',
-                            text: 'Copy',
-                            header: false,          // Disable export header tabla
-                            exportOptions: {
-                                columns: [0,1]      // Select columns to be exported
-                            },
-                            title: null             // Disable title on exported data
-                        },
-*/
-                        'colvis',
-                        'copy',
-                        'csv',
-                        'excel',
-                        'pdf',
-                        'print'
-                    ],
-                    stateSave: true,
-                    searching: true,
-                    data: data
+                $('.dataTable').focus();
+                $('#needtable tbody').on('click', 'tr', function () {
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                    } else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
                 });
             }
 
@@ -944,9 +859,9 @@
                 setTimeout(function() {
                     mode=(mode+1)%3;
                     if(mode==0) {
-                        $("#dataTable2").css('display','none');
+                        $('#needtable').DataTable().destroy();
+                        $('#mynetwork #needtable').remove();
                         $("#explorerModeButton").text("Network");
-                        $('#mynetwork #dataTable2').remove();
                         window.addEventListener('resize', handleResize);
                         initNetwork();
                         handleSelectTypeEvent();
@@ -956,18 +871,11 @@
                         $("#explorerModeButton").text("Table");
                         network.destroy();
                         network=null;
-                        var table = $(dataTable1);
-                        table.css('display','block');
-                        table.appendTo('#mynetwork');
                         handleSelectTypeEvent();
                     }
                     else
                     if(mode==2) {
                         $("#explorerModeButton").text("File");
-                        $('#mynetwork #dataTable').remove();
-                        var table = $(dataTable2);
-                        table.css('display','block');
-                        table.appendTo('#mynetwork');
                         handleSelectTypeEvent();
                     }
                 },1);

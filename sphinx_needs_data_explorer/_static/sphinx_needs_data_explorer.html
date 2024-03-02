@@ -148,7 +148,7 @@
                     <li>a alt-click at node shows detailed node information in popup window, including a link where complete information 
                         can be found</li>
                 </ul>
-                <h3>Sphinx-Needs attributes that can be used for data filtering:</h3>
+                <h3>Sphinx-Needs attributes found in this project that can be used for data filtering:</h3>
                 <table class="ack-table">
                     <thead>
                       <tr>
@@ -737,18 +737,20 @@
 
             function updateTable1(tmp_nodes) {
                 var data=[];
-                tmp_nodes.forEach(elm => {data.push({...gnodes[elm]['data'] });});
-                data.forEach(elm => {
-                    elm['id']=`<a href="../${elm["docname"]}.html#${elm['id']}"
-                    title="${elm["docname"]}.html}">${elm['id']}</a>`
-                });
+                for(const elm of tmp_nodes) {
+                    data.push({...gnodes[elm]['data']});
+                    const id=data[data.length-1]['id'];
+                    data[data.length-1]['id']=`<a href="../${elm["docname"]}.html#${id}"
+                    title="${elm["docname"]}.html}">${id}</a>`
+                    data[data.length-1]['outgoing']=parents[id];
+                    data[data.length-1]['incoming']=children[id];
+                }
                 var mcolumns=[]
                 const defaultColumns=['id','title','status','type'];
                 if(Object.keys(data[0]).length>0) {
-                    for(const key of defaultColumns) {
+                    for(const key of defaultColumns)
                         mcolumns.push({ title:key, data:key, visible: true })
-                    }
-                    for(const link_type of link_types) {
+                    for(const link_type of link_types.concat(['outgoing','incoming'])) {
                         if(link_type in data[0])
                             mcolumns.push({ title:link_type, data:link_type, visible: false,
                                 render: function ( data, type, row ) {

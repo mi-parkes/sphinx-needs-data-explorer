@@ -39,6 +39,27 @@
         <div id="helpModal" class="modal">
             <div class="modal-content">
             <span class="close" onclick="closeHelpDialog()">&#88;</span>
+                <h2>About this Software</h2>
+                <table class="ack-table">
+                    <thead>
+                        <tr>
+                            <th class="ack-th">Name</th>
+                            <th class="ack-th">Version</th>
+                            <th class="ack-th">License</th>
+                            <th class="ack-th">Github</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="ack-td"><b>sphinx_needs_data_explorer</b></td>
+                            <td class="ack-td">{{VERSION}}</td>
+                            <td class="ack-td"><a href="https://raw.githubusercontent.com/mi-parkes/sphinx-needs-data-explorer/main/LICENSE"><b>MIT</b></a></td>
+                            <td class="ack-td"><a href="https://github.com/mi-parkes/sphinx-needs-data-explorer">https://github.com/mi-parkes/sphinx-needs-data-explorer</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+                <hr>
                 <h2>Acknowledgments</h2>
                 This Software utilizes the following copyrighted material, the use of which is hereby acknowledged.<br>                
                 <br>
@@ -84,7 +105,7 @@
                         </tr>
                         <tr>
                             <td class="ack-td"><b>DataTables</b></td>
-                            <td class="ack-td"></td>
+                            <td class="ack-td">1.10.16</td>
                             <td class="ack-td"><a href="https://raw.githubusercontent.com/DataTables/DataTablesSrc/master/license.txt"><b>MIT</b></a></td>
                             <td class="ack-td"><a href="https://github.com/DataTables/DataTablesSrc">https://github.com/DataTables/DataTablesSrc</a></td>
                         </tr>
@@ -98,7 +119,7 @@
                     <li>visjs network keyboard shortcuts</li>
                     <ul>
                         <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
-                        <li>+/- zoom-in/zoom out</li>
+                        <!-- <li>+/- zoom-in/zoom out</li> -->
                     </ul>
                     <li>F1 - help</li>
                     <li>r(eset) network display</li>
@@ -127,7 +148,7 @@
                     <li>a alt-click at node shows detailed node information in popup window, including a link where complete information 
                         can be found</li>
                 </ul>
-                <h3>The following sphinx_needs attributes are available in your documentation and can be used for filtering</h3>
+                <h3>Sphinx-Needs attributes found in this project that can be used for data filtering:</h3>
                 <table class="ack-table">
                     <thead>
                       <tr>
@@ -163,10 +184,10 @@
                             <td class="att-td">title ~ /^Level[ \t]+(?!one)/ #negative lookaheads</td>
                         </tr>
                         <tr>
-                            <td class="att-td">type=='test' && parents==[]</td>
+                            <td class="att-td">type=='test' && outgoing==[]</td>
                         </tr>
                         <tr>
-                            <td class="att-td">type=='req' && children!=[]</td>
+                            <td class="att-td">type != 'req' && incoming==[]</td>
                         </tr>
                     </tbody>
                 </table>
@@ -174,20 +195,30 @@
         </div>
         <div>
             <div class="row">
-                <div id="display-needs-count">
+                <div id="display-needs-count" title="This number shows how many sphinx-needs items match the active filter(s)">
                     Filter matches '0' IDs
                 </div>
-                <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
+                <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" 
+                    class="select2 select2-container select2-container--bootstrap select2-container--focus"
+                    title="Select which Sphinx-Needs type you want view">
                 </select>
-                <input title="customFilter" type="text" id="input" class="input-inactive">
-                <select title="selectFilter" id="select-filter" class="select2 select2-container select2-container--bootstrap select2-container--focus">
+                <input type="text" id="input"
+                    title="Here you can specify filter expression. See Help for examples." 
+                    class="input-inactive">
+                <select title="selectFilter" id="select-filter" 
+                    title="You can select from already defined or define new or delete existing filter"
+                    class="select2 select2-container select2-container--bootstrap select2-container--focus"
+                    >
                     <option value="">Select</option>
                 </select>
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
                 </select>
-                <button id="explorerModeButton" onclick="exploreMode()">Network</button>
-                <button id="helpButton" onclick="openHelpDialog()">Help</button>
+                <button id="explorerModeButton" onclick="exploreMode()" 
+                    title="View Perpsective [Network, Table, File]">Network</button>
+                <button id="helpButton" onclick="openHelpDialog()" 
+                    title="View how to use Sphinx-Needs-Data-Explorer">Help
+                </button>
             </div>
             <ul id="suggestions"></ul>
             <div id="tooltip-window" class="tooltip-window"></div>
@@ -238,45 +269,15 @@
             var mode=0;
 
             // <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node">
+            //const tableTemplate=`<table id="example" tabindex="0" style="width:100%'"></table>`;
             
-            const dataTable1=`<div id="dataTable" style="display:none">
-                <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node">
-                    <colgroup>
-                    <col style="width: 13%" />
-                    <col style="width: 38%" />
-                    <col style="width: 13%" />
-                    <col style="width: 13%" />
-                    <!-- <col style="width: 13%" /> -->
-                    <col style="width: 13%" />
-                    </colgroup>
-                    <thead>
-                    <tr class="row-odd"><th class="head"><p>ID</p></th>
-                    <th class="head"><p>Title</p></th>
-                    <th class="head"><p>Status</p></th>
-                    <th class="head"><p>Type</p></th>
-                    <!-- <th class="head"><p>Outgoing</p></th> -->
-                    <th class="head"><p>Tags</p></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
+            const dataTableTemplate=`
+                <table class="NEEDS_DATATABLES 
+                    colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" 
+                    id="needtable"
+                    tabindex="0" style="width:100%'">
                 </table>
-            </div>`;
-
-            const dataTable2=`<div id="dataTable2" style="display:none">
-                <table class="NEEDS_DATATABLES colwidths-given rtd-exclude-wy-table no-sphinx-material-strip table" id="needtable-requirements-0-table_node2">
-                    <colgroup>
-                    <col style="width: 90%" />
-                    </colgroup>
-                    <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>DocName</p></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>`;
+            `;
 
             var absolute = function(rel) { 
                 var link = document.createElement("a"); 
@@ -353,6 +354,8 @@
                         if('id' in decodedData && decodedData['id']!=null )
                             $('#select-need-id').val(decodedData['id']).trigger('change.select2');
                     }
+                    $('.vis-network').focus();
+                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                 }
             ).catch(error => {
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
@@ -533,15 +536,31 @@
                     const firstKey = Object.keys(gnodes)[0];
                     autocompletionAttributes=[];
                     for(const att of Object.keys(gnodes[firstKey]['data']).sort()){
+                        var type=typeof gnodes[firstKey]['data'][att];
+                        if(type==='object')
+                            type=Array.isArray(gnodes[firstKey]['data'][att])?'array':'object';
                         if(!['depth','sum','count'].includes(att))  {
                             //$("#help-attributes").append(`<li>'${att}':${typeof gnodes[firstKey]['data'][att]}</li>`);
                             $("#help-attributes").append(`<tr>
                             <td class="att-td">${att}</td>
-                            <td class="att-td">${typeof gnodes[firstKey]['data'][att]}</td>
+                            <td class="att-td">${type}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
                             autocompletionAttributes.push(`${att}`);
                         }
                     }
+                    // synthetic attributes
+                    att='outgoing'
+                    $("#help-attributes").append(`<tr>
+                            <td class="att-td">${att}</td>
+                            <td class="att-td">${typeof parents[firstKey]}</td>
+                            </tr>`.replace(/^[\s]+/gm,""))
+                    autocompletionAttributes.push(`${att}`);
+                    att='incoming'
+                    $("#help-attributes").append(`<tr>
+                            <td class="att-td">${att}</td>
+                            <td class="att-td">${typeof children[firstKey]}</td>
+                            </tr>`.replace(/^[\s]+/gm,""))
+                    autocompletionAttributes.push(`${att}`);
                 }
 
                 for(const key in needs) {
@@ -676,7 +695,7 @@
                     console.log('tmp_nodes empty!');
                 }
                 if(mode==1)
-                    updateTable(tmp_nodes);
+                    updateTable1(tmp_nodes);
                 else
                 if(mode==2)
                     updateTable2(tmp_nodes);
@@ -716,44 +735,121 @@
                 network.setOptions({ interaction: { keyboard: true } });
             }
 
-            function updateTable(tmp_nodes) {
-                //const dataArray = Object.values(gnodes).map(row => row.data);
+            function transformAndJoin(data,gnodes) {
+                const transformedData = [];
+                for (const key of data) {
+                    const docname = gnodes[key]['data']?.["docname"];
+                    if (docname) {
+                        const transformedValue = `
+                            <a href="../${docname}.html#${key}"
+                            title="${docname}.html">${key}</a>`;
+                        transformedData.push(transformedValue);
+                    } else {
+                        //transformedData.push("");
+                    }
+                }
+                return transformedData;
+            }
 
-                // https://datatables.net/manual/data/
-                // https://datatables.net/manual/tech-notes/3
-                // https://stackoverflow.com/questions/26416735/initializing-a-jquery-datatable-with-a-local-array-of-arrays-as-datasource
+            function updateTable1(tmp_nodes) {
                 var data=[];
                 for(const elm of tmp_nodes) {
-                    data.push({ ...gnodes[elm]['data']});
-                }
-                for(const elm of data) {
-                    elm['id']=`
-                    <a href="../${elm["docname"]}.html#${elm['id']}"
-                    title="${elm["docname"]}.html}">${elm['id']}</a>`
+                    data.push({...gnodes[elm]['data']});
+                    const id=data[data.length-1]['id'];
+                    data[data.length-1]['id']=`<a href="../${gnodes[elm]['data']['docname']}.html#${id}"
+                    title="${gnodes[elm]['data']['docname']}.html">${id}</a>`
+                    data[data.length-1]['outgoing']=parents[id];
+                    data[data.length-1]['incoming']=children[id];
                 }
 
-                $('#needtable-requirements-0-table_node').DataTable().destroy();
-/*
-                new DataTable('#needtable-requirements-0-table_node', {
-                    columnDefs: [
-                        {
-                            targets: -1,
-                            visible: false
-                        }
-                    ],
-                    layout: {
-                        topStart: {
-                            buttons: [
-                                {
-                                    extend: 'colvis',
-                                    postfixButtons: ['colvisRestore']
+                var mcolumns=[]
+                const defaultColumns=['id','title','status','type'];
+                if(tmp_nodes.length>0 && Object.keys(data[0]).length>0) {
+                    for(const key of defaultColumns)
+                        mcolumns.push({ title:key, data:key, visible: true })
+                    for(const link_type of link_types.concat(['outgoing','incoming'])) {
+                        if(link_type in data[0])
+                            mcolumns.push({ title:link_type, data:link_type, visible: false,
+                                render: function ( data, type, row ) {
+                                    return (data)?transformAndJoin(data,gnodes).join(', '):'';
                                 }
-                            ]
+                            })
+                    }
+                    for(const key in data[0]) {
+                        if(typeof data[0][key] === 'string' && !defaultColumns.includes(key))
+                            mcolumns.push({ title:key, data:key, visible: false })
+                    }
+                    for(const key in data[0]) {
+                        var type=typeof data[0][key];
+                        if(type==='object')
+                            type=Array.isArray(data[0][key])?'array':'object';
+                        if(type === 'array') {
+                            if(!link_types.concat(['outgoing','incoming']).includes(key))
+                                mcolumns.push({ title:key, data:key, visible: false,
+                                    render: function ( data, type, row ) {
+                                        return (data)?data.join(', '):'';
+                                    }
+                                })
                         }
                     }
+                }
+                $('#needtable').DataTable().destroy();
+                $(`#mynetwork #needtable`).remove();
+                var table = $(dataTableTemplate);
+                table.appendTo('#mynetwork');
+                table = $('#needtable').DataTable({
+                    dom: 'lBfrtip',
+                    lengthChange: true,
+                    lengthMenu: [
+                        [10, 15, 50, -1],
+                        ["10", "15", "50", "All"]
+                    ],
+                    pageLength: 15,
+                    // scrollY: "300px",
+                    scrollCollapse: true,
+                    buttons: [
+                        'colvis',
+                        'copy',
+                        'csv',
+                        'excel',
+                        'pdf',
+                        'print'
+                    ],
+                    stateSave: true,
+                    searching: false,
+                    data: data,
+                    columns: mcolumns,
+                    select: 'single'
                 });
-*/
-                $("#needtable-requirements-0-table_node").DataTable( {
+                $('.dataTable').focus();
+                $('#needtable tbody').on('click', 'tr', function () {
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                    } else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
+                });
+            }
+
+            function updateTable2(tmp_nodes) {
+                var data=[];
+                let documentSet = new Set([]);
+                tmp_nodes.forEach(elm => {documentSet.add(gnodes[elm]['data']['docname'])});
+                for(elm of documentSet)
+                    data.push({'docname':`<a href="../${elm}.html" title="${elm}.html}">${elm}</a>`});
+                var mcolumns=[]
+                const defaultColumns=['docname'];
+                if(tmp_nodes.length>0 && Object.keys(data[0]).length>0) {
+                    for(const key of defaultColumns) {
+                        mcolumns.push({ title:key, data:key, visible: true })
+                    }
+                }
+                $('#needtable').DataTable().destroy();
+                $('#mynetwork #needtable').remove();
+                var table = $(dataTableTemplate);
+                table.appendTo('#mynetwork');
+                table = $('#needtable').DataTable({
                     dom: 'lBfrtip',
                     lengthChange: true,
                     lengthMenu: [ 
@@ -763,17 +859,6 @@
                     // scrollY: "300px",
                     scrollCollapse: true,
                     buttons: [
-/*
-                    {
-                            extend: 'copy',
-                            text: 'Copy',
-                            header: false,          // Disable export header tabla
-                            exportOptions: {
-                                columns: [0,1]      // Select columns to be exported
-                            },
-                            title: null             // Disable title on exported data
-                        },
-*/
                         'colvis',
                         'copy',
                         'csv',
@@ -784,91 +869,47 @@
                     stateSave: true,
                     searching: true,
                     data: data,
-                    columns: [
-                        { data: 'id' },
-                        { data: 'title' },
-                        { data: 'status' },
-                        { data: 'type' },
-                        // { data: ['data']['links'] },
-                        { data: 'tags' }
-                    ]
+                    columns: mcolumns,
+                    select: 'single'
                 });
-            }
-
-            function updateTable2(tmp_nodes) {
-                var data=[];
-                let documentSet = new Set([]);
-                for(const elm of tmp_nodes)
-                    documentSet.add(gnodes[elm]['data']['docname']);
-                for(elm of documentSet)
-                    data.push([elm]);
-                //data=data.sort();
-                for(var i=0;i<data.length;i++)
-                    data[i][0] = `<a href="../${data[i][0]}.html" title="${data[i][0]}.html}">${data[i][0]}</a>`
-                $('#needtable-requirements-0-table_node2').DataTable().destroy();
-                $("#needtable-requirements-0-table_node2").DataTable({
-                    dom: 'lBfrtip',
-                    lengthChange: true,
-                    lengthMenu: [ 
-                        [ 10, 15, 50, -1 ],
-                        [ "10", "20", "50", "All"]
-                    ],
-                    // scrollY: "300px",
-                    scrollCollapse: true,
-                    buttons: [
-/*
-                    {
-                            extend: 'copy',
-                            text: 'Copy',
-                            header: false,          // Disable export header tabla
-                            exportOptions: {
-                                columns: [0,1]      // Select columns to be exported
-                            },
-                            title: null             // Disable title on exported data
-                        },
-*/
-                        'colvis',
-                        'copy',
-                        'csv',
-                        'excel',
-                        'pdf',
-                        'print'
-                    ],
-                    stateSave: true,
-                    searching: true,
-                    data: data
+                $('.dataTable').focus();
+                $('#needtable tbody').on('click', 'tr', function () {
+                    if ($(this).hasClass('selected')) {
+                        $(this).removeClass('selected');
+                    } else {
+                        table.$('tr.selected').removeClass('selected');
+                        $(this).addClass('selected');
+                    }
                 });
             }
 
             function exploreMode() {
-                mode=(mode+1)%3;
-                if(mode==0) {
-                    $("#dataTable2").css('display','none');
-                    $("#explorerModeButton").text("Networks");
-                    $('#mynetwork #dataTable2').remove();
-                    window.addEventListener('resize', handleResize);
-                    initNetwork();
-                    handleSelectTypeEvent();
-                }
-                else
-                if(mode==1) {
-                    $("#explorerModeButton").text("Tables");
-                    network.destroy();
-                    network=null;
-                    var table = $(dataTable1);
-                    table.css('display','block');
-                    table.appendTo('#mynetwork');
-                    handleSelectTypeEvent();
-                }
-                else
-                if(mode==2) {
-                    $("#explorerModeButton").text("Files");
-                    $('#mynetwork #dataTable').remove();
-                    var table = $(dataTable2);
-                    table.css('display','block');
-                    table.appendTo('#mynetwork');
-                    handleSelectTypeEvent();
-                }
+                //setTimeout(function() {
+                    mode=(mode+1)%3;
+                    if(mode==0) {
+                        $('#select-need-id').prop('disabled',false);
+                        $('#needtable').DataTable().destroy();
+                        $('#mynetwork #needtable').remove();
+                        $("#explorerModeButton").text("Network");
+                        initNetwork();
+                        handleSelectTypeEvent();
+                        $('.vis-network').focus();
+                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    }
+                    else
+                    if(mode==1) {
+                        $('#select-need-id').prop('disabled',true);
+                        $("#explorerModeButton").text("Table");
+                        network.destroy();
+                        network=null;
+                        handleSelectTypeEvent();
+                    }
+                    else
+                    if(mode==2) {
+                        $("#explorerModeButton").text("File");
+                        handleSelectTypeEvent();
+                    }
+                //},1);
             }
 
             function clearFilter() {
@@ -885,7 +926,7 @@
                             zoomView:true,
                             dragView:true,
                             keyboard:{
-                                enabled:true
+                                enabled:false
                                 // enabled:!textBoxEditingActive
                             }
                         };
@@ -1227,11 +1268,47 @@
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
+                    if (event.key === 'ArrowLeft' && network!==null) {
+                        event.preventDefault();
+                        console.log("ArrowLeft");
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:(event.shiftKey)?100:50, y: 0};
+                        const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y + offset.y};
+                        network.moveTo({position: newPosition});
+                        return;
+                    } else if (event.key === 'ArrowRight' && network!==null) {
+                        event.preventDefault();
+                        console.log("ArrowRight");
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:(event.shiftKey)?100:50, y: 0};
+                        const newPosition = {x: currentPosition.x - offset.x, y: currentPosition.y + offset.y};
+                        network.moveTo({position: newPosition});
+                        return;
+                    } else if (event.key === 'ArrowUp' && network!==null) {
+                        event.preventDefault();
+                        console.log("ArrowUp");
+                        //setTimeout(function() {
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:0, y:(event.shiftKey)?100:50}; // Adjust x and y for desired movement (pixels)
+                        const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y + offset.y};
+                        network.moveTo({position: newPosition});
+                        //},2000);
+                        return;
+                    } else if (event.key === 'ArrowDown' && network!==null) {
+                        event.preventDefault();
+                        console.log("ArrowDown");
+                        const currentPosition = network.getViewPosition();
+                        const offset = {x:0,y:(event.shiftKey)?100:50}; // Adjust x and y for desired movement (pixels)
+                        const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y - offset.y};
+                        network.moveTo({position: newPosition});
+                        return;
+                    }
                     // reset network display
                     if(event.key==='r'||event.key==='R') {
                         event.preventDefault();
                         if(network!=null)
                             network.fit({maxZoomLevel:0.4});
+                        return;
                     }
                     if(event.key==='v'||event.key==='V') {
                         event.preventDefault();
@@ -1256,6 +1333,7 @@
                         event.preventDefault();
                         console.log(`prev Key Up ${ecounter}`);
                         handleSelectPrevNodeEvent();
+                        return;
                     }
 
                     // next node
@@ -1263,6 +1341,7 @@
                         event.preventDefault();
                         console.log(`next Key Up ${ecounter}`);
                         handleSelectNextNodeEvent();
+                        return;
                     }
 
                     // toggle network layout direction
@@ -1676,6 +1755,11 @@
                 $('#mynetwork').css('opacity','1.0');
                 //$('#mynetwork').css('border','none');
                 $('#mynetwork').focus();
+
+                $('.vis-network').focus();
+                $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                //$('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1754,9 +1838,9 @@
                                 userInput=newText;
                                 task();
                             }
-                            handleSelectTypeEvent();
                         }
                         initSelectFilter();
+                        handleSelectTypeEvent();
                     } else
                         handleSelectTypeEvent();
                     e.preventDefault();
@@ -1804,6 +1888,7 @@
             }
             
             $('#input').on('keydown',handleKeydown);
+            $(window).resize(handleResize);
 
             $(document).keydown(function(event) {
                 if (event.keyCode === 112 || event.key === 'F1') {

@@ -214,11 +214,11 @@ function prepareParser() {
         start = expr
         ws = ws:[ \t]* { return ws.join("").length>0?" ":""}
         newline = [ \\t\\n\\r]* { return { left: "", right: "", operand: "EOL" } }
-        QuotedString = "'" text:[A-Za-z0-9_/\\-]+ "'" { 
+        QuotedString = "'" text:[A-Za-z0-9_/\\-]* "'" { 
             return {'value':text.join(""),'location':location(),'type':'qs'};
         }
 
-        QuotedStringx = "'" text:[A-Za-z0-9_/\\-]+ "'" { return text.join(""); }
+        QuotedStringx = "'" text:[A-Za-z0-9_/\\-] "'" { return text.join(""); }
 
         LOperator = "&&" / "||"
 

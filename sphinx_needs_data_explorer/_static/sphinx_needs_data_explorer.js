@@ -106,6 +106,7 @@ class Node {
                     } else {
                         //console.log(currentNode['data']['id']);
                         ret=false;
+                        //ret=lhs===this.right['value']
                     }
                 }
                 break;
@@ -218,7 +219,7 @@ function prepareParser() {
             return {'value':text.join(""),'location':location(),'type':'qs'};
         }
 
-        QuotedStringx = "'" text:[A-Za-z0-9_/\\-] "'" { return text.join(""); }
+        QuotedStringx = "'" text:[A-Za-z0-9_/\\-]+ "'" { return text.join(""); }
 
         LOperator = "&&" / "||"
 
@@ -259,8 +260,9 @@ function prepareParser() {
         
         expr1 = expr1_1 / expr1_2
 
-        listElm1=q:QuotedStringx ws c:"," ws l:listElm { return q+c+l }
-        listElm = listElm1 / QuotedStringx / ""
+        listElm1=q:QuotedStringx ws c:"," ws l:listElm0 { return q+c+l }
+        listElm0 = listElm1 / QuotedStringx
+        listElm = listElm0 / ""
 
         expr2_1 = w:Words ws "==" ws q:QuotedString {
             return { left:w, right: q, operand: '==2' }

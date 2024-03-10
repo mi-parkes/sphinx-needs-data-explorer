@@ -1,3 +1,6 @@
+body {
+    font-size: 1em;
+}
 /* my_custom_role.css */
 .custom-reference {
     font-size: 18px;
@@ -70,7 +73,8 @@ div.dataTables_length select {
 
 .att-td {
     /* font-family: Consolas, Menlo, Courier, "Lucida Console", Monaco, monospace; */
-    font-family: 'Source Code Pro', monospace;
+    font-family: "Monaco", "Menlo", Times, serif;
+    font-size: 0.9em;
     border: 1px solid #dddddd;
     padding: 8px;
     text-align: left;
@@ -301,4 +305,20 @@ div.dataTables_length select {
     top: 10px;
     right: 10px;
     cursor: pointer;
+}
+
+kbd {
+    display: inline-block; /* Ensures consistent behavior across browsers */
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    width: 36%;
+    vertical-align: middle;
+    justify-content: center;
+    text-align: center;
+}
+.kbd-td {
+    max-width: 100px;
 }

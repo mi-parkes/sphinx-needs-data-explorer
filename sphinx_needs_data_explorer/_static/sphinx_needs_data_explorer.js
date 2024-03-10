@@ -328,7 +328,24 @@ function prepareParser() {
     parser=peg.generate(grammar,traceParser?{trace:true}:{});
 }
 
-function mainx(input) {
+function parse_input(parser,gnodes,input) {
+    var msg;
+    try {
+        console.log(`Parsing input !${input}!`);
+        msg = parser.parse(input,{gnodes});
+        console.log(`Success parsing input: ${input} parsed as ${Node.create(msg).expand()}`);
+    } catch (error) {
+        console.log(`Failure parsing input=${msg} ${error}`);
+        msg=null;
+    }
+    return msg;
+}
+
+function custom_filter(key,currentNode,expr) {
+    return Node.create(expr).evaluate(currentNode);
+}
+
+function test1(parser,gnodes) {
     var msg;
     const i=0;
     var testInput = [
@@ -355,29 +372,15 @@ function mainx(input) {
         "docname=='architecture/architecture-needs'",
         "status in ['open','closed']"
     ];
-    //const liveInput=false;
-    const liveInput=true;
-    if(liveInput) {
+    testInput.forEach(function (input, i) {
         try {
             console.log(`Parsing input ${i}:!${input}!`);
-            msg = parser.parse(input);
+            msg=parse_input(parser,gnodes,input);
             console.log(`Success parsing input: ${input} parsed as ${Node.create(msg).expand()}`);
         } catch (error) {
             console.log(`Failure parsing input=${msg} ${error}`);
             msg=null;
         }
-    } else {
-        testInput.forEach(function (input, i) {
-            try {
-                console.log(`Parsing input ${i}:!${input}!`);
-                msg = parser.parse(input);
-                console.log(`Success parsing input: ${input} parsed as ${Node.create(msg).expand()}`);
-            } catch (error) {
-                console.log(`Failure parsing input=${msg} ${error}`);
-                msg=null;
-            }
-        });
-        msg=null;
-    }
+    });
     return msg;
 }

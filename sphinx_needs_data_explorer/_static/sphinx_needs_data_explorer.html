@@ -1364,7 +1364,7 @@
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
-                    if (event.key === '>') {
+                    if (event.key === '>' && event.shiftKey) {
                         if(viewModeMaxDepth<10 && network!==null) {
                             viewModeMaxDepth+=1;
                             //let svalue=document.getElementById('select-need-id');
@@ -1373,7 +1373,7 @@
                             handleSelectNodeEvent();
                         }
                     } else
-                    if (event.key === '<') {
+                    if (event.key === '<' && event.shiftKey) {
                         if(viewModeMaxDepth>0 && network!==null) {
                             viewModeMaxDepth-=1;
                             document.getElementById('display-needs-count').innerHTML = `Filter matches '${$('#select-need-id').children('option').length}' IDs, NDV(${viewModeMaxDepth})`;

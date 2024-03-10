@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 project = 'Sphinx Needs Data Explorer'
 copyright = '2024, MP'
 author  = 'MP'
-release = '0.7'
-version = '0.7'
+release = '0.8.6'
+version = '0.8.6'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -167,3 +167,13 @@ sphinx_needs_data_explorer_config = {
     # you can explicitly disable adding explorer button in your 'sphinx_book_theme'
     "disable-header-button":False
 }
+
+import importlib.util
+module_path = os.getenv("UPDATE_CONF_PY")
+if module_path != None:
+    if os.path.exists(module_path):
+        module_name = os.path.splitext(os.path.basename(module_path))[0]
+        spec = importlib.util.spec_from_file_location(module_name,module_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        globals().update(vars(module))

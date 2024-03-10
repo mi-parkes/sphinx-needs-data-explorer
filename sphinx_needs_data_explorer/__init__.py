@@ -7,8 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
 
-__version__ = "0.8"
-version_info = (0,8)
+__version__ = "0.8.6"
+version_info = (0,8,6)
 
 logger = logging.getLogger(__name__)
 

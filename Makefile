@@ -2,11 +2,16 @@
 SHELL=/bin/bash
 
 help:
-	echo "$(MAKE) install    	# Rebuild and reinstall sphinx_needs_data_explorer"
-	echo "$(MAKE) html       	# Build sphinx_needs_data_explorer documentation"
-	echo "$(MAKE) webserver  	# Run webserver hosting sphinx_needs_data_explorer documentation in docker container"
-	echo "$(MAKE) show       	# View the documentation for sphinx_needs_data_explorer, which is hosted on a server running nginx, in a web browser"
-	echo "$(MAKE) show-session	# View stored sesion"
+	echo "$(MAKE) install         # Rebuild and reinstall sphinx_needs_data_explorer"
+	echo "$(MAKE) installx        # Reinstall sphinx_needs_data_explorer in active virtual environment"
+	echo "$(MAKE) html            # Build sphinx_needs_data_explorer documentation"
+	echo "$(MAKE) webserver       # Run webserver hosting sphinx_needs_data_explorer documentation in docker container"
+	echo "$(MAKE) show            # View the documentation for sphinx_needs_data_explorer, which is hosted on a server running nginx, in a web browser"
+	echo "$(MAKE) show-session    # View stored sesion"
+
+helpx:
+	echo "$(MAKE) prep-release    # Prepare release data"
+	echo "$(MAKE) upload-package  # Uplaod package to PYPI"
 
 $(VERBOSE).SILENT:
 	echo
@@ -20,6 +25,21 @@ install: doc/.venv
 	source doc/.venv/bin/activate
 	rm -rf build dist doc/build
 	python -m build  --sdist --wheel
+	pip uninstall sphinx-needs-data-explorer -y
+	pip install dist/sphinx_needs_data_explorer*.whl
+
+prep-release: doc/.venv
+	source doc/.venv/bin/activate
+	python -m pip install --upgrade twine
+	rm -rf build dist doc/build
+	python -m build  --sdist
+	tar -tf dist/*
+
+upload-package:
+	source doc/.venv/bin/activate
+	python -m twine upload  dist/* --verbose
+
+installx:
 	pip uninstall sphinx-needs-data-explorer -y
 	pip install dist/sphinx_needs_data_explorer*.whl
 
@@ -38,3 +58,6 @@ show:
 
 show-session:
 	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=req&filter=status%3D%3D%27implemented%27&id=R_00005+-+Title+of+%27R_00005%27&layout=&view=2"
+
+-include ../tests.mak
+

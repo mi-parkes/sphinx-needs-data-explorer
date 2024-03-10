@@ -1,12 +1,15 @@
 from setuptools import setup, find_packages
 
+with open('README_pypi.md', 'r', encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name='sphinx-needs-data-explorer',
-    version='0.8.0',
+    version='0.8.6',
     packages=find_packages(),
     author='Michael Parkes',
     author_email='mparkes@post.cz',
-    description='sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data',
+    description='Sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data',
     url='https://github.com/mi-parkes/sphinx-needs-data-explorer',
     license="MIT License",
     package_data={
@@ -32,6 +35,9 @@ setup(
             "_static/vis-network/LICENSE-MIT"
         ]
     },
+    include_package_data=True,
     python_requires=">=3.10",
     install_requires=["Sphinx>=5.3.0"],
+    long_description=long_description,
+    long_description_content_type='text/markdown'
 )

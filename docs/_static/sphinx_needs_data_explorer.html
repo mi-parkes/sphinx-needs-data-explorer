@@ -52,7 +52,7 @@
                     <tbody>
                         <tr>
                             <td class="ack-td"><b>sphinx_needs_data_explorer</b></td>
-                            <td class="ack-td">0.8</td>
+                            <td class="ack-td">0.8.7</td>
                             <td class="ack-td"><a href="https://raw.githubusercontent.com/mi-parkes/sphinx-needs-data-explorer/main/LICENSE"><b>MIT</b></a></td>
                             <td class="ack-td"><a href="https://github.com/mi-parkes/sphinx-needs-data-explorer">https://github.com/mi-parkes/sphinx-needs-data-explorer</a></td>
                         </tr>
@@ -311,7 +311,7 @@
             let MIN_ZOOM = 0.1;
             let MAX_ZOOM = 2.0;
             var viewMode=0;
-            var viewModeMaxDepth=1;
+            var viewModeMaxDepth=3;
             var textBoxEditingActive=false;
             var lastTextBoxValue="";
             var saveOpt;
@@ -432,7 +432,7 @@
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
             });
 
-            type2color= {'req': '#DEFFDC', 'spec': '#FFFF99', 'impl': '#ffcccc', 'test': '#87CEFA', 'need': '#668cff'};
+            type2color= {'req': 'Coral', 'spec': '#FFFF99', 'impl': '#ffcccc', 'test': '#87CEFA', 'feat': 'LightGreen', 'need': 'LightBlue'};
 
             function handleResize() {
                 //console.log('HandlingResize');
@@ -1364,7 +1364,8 @@
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
-                    if (event.key === '>') {
+                    if (event.key === '>' && event.shiftKey) {
+                        event.preventDefault();
                         if(viewModeMaxDepth<10 && network!==null) {
                             viewModeMaxDepth+=1;
                             //let svalue=document.getElementById('select-need-id');
@@ -1373,7 +1374,8 @@
                             handleSelectNodeEvent();
                         }
                     } else
-                    if (event.key === '<') {
+                    if (event.key === '<' && event.shiftKey) {
+                        event.preventDefault();
                         if(viewModeMaxDepth>0 && network!==null) {
                             viewModeMaxDepth-=1;
                             document.getElementById('display-needs-count').innerHTML = `Filter matches '${$('#select-need-id').children('option').length}' IDs, NDV(${viewModeMaxDepth})`;

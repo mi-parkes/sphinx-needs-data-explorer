@@ -311,7 +311,7 @@
             let MIN_ZOOM = 0.1;
             let MAX_ZOOM = 2.0;
             var viewMode=0;
-            var viewModeMaxDepth=1;
+            var viewModeMaxDepth=3;
             var textBoxEditingActive=false;
             var lastTextBoxValue="";
             var saveOpt;
@@ -1365,6 +1365,7 @@
                         return;
                     }
                     if (event.key === '>' && event.shiftKey) {
+                        event.preventDefault();
                         if(viewModeMaxDepth<10 && network!==null) {
                             viewModeMaxDepth+=1;
                             //let svalue=document.getElementById('select-need-id');
@@ -1374,6 +1375,7 @@
                         }
                     } else
                     if (event.key === '<' && event.shiftKey) {
+                        event.preventDefault();
                         if(viewModeMaxDepth>0 && network!==null) {
                             viewModeMaxDepth-=1;
                             document.getElementById('display-needs-count').innerHTML = `Filter matches '${$('#select-need-id').children('option').length}' IDs, NDV(${viewModeMaxDepth})`;

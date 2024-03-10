@@ -54,6 +54,10 @@ You can predefine filtering expressions during documentation generation or inter
 
 ![](doc/source/_static/images/data-filtering.jpg)
 
+You can use attribute lookup table while writing your filters.
+
+![](doc/source/_static/images/scr6.jpg)
+
 <br>
 
 ### Exploring In-Neighbours, Out-Neighbours or both

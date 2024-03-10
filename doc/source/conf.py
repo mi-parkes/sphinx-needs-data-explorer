@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 project = 'Sphinx Needs Data Explorer'
 copyright = '2024, MP'
 author  = 'MP'
-release = '0.8.6'
-version = '0.8.6'
+release = '0.8.7'
+version = '0.8.7'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -117,16 +117,18 @@ def copy_and_modify_readme_md(app, docname, source):
 
 needs_statuses = [
     dict(name="open", description="Nothing done yet"),
-    dict(name="in progress", description="Someone is working on it"),
-    dict(name="implemented", description="Work is done and implemented"),
+    dict(name="working", description="Someone is working on it"),
+    dict(name="implemented", description="Work is implemented"),
+    dict(name="done", description="Work is done"),
 ]
 
 needs_types = [
-    dict(directive="req",  title="Requirement",      prefix="R_", color="#DEFFDC", style="node"),
+    dict(directive="req",  title="Requirement",      prefix="R_", color="Coral", style="node"),
     dict(directive="spec", title="Specification",    prefix="S_", color="#FFFF99", style="node"),
     dict(directive="impl", title="Implementation",   prefix="I_", color="#ffcccc", style="node"),
     dict(directive="test", title="Test Case",        prefix="T_", color="#87CEFA", style="node"),
-    dict(directive="need", title="Need",             prefix="N_", color="#668cff", style="node")
+    dict(directive="feat", title="Feature",          prefix="F_", color="LightGreen", style="node"),
+    dict(directive="need", title="Need",             prefix="N_", color="LightBlue", style="node")
 ]
 
 needs_extra_links = [

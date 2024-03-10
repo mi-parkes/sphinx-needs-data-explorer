@@ -113,41 +113,142 @@
                 </table>
                 <br>
                 <hr>
+                <!-- https://codepen.io/gschier/pen/VKgyaY -->
             <h2>Help Information</h2>
                 <h3>Keyboard shortcuts</h3>
-                <ul>
-                    <li>visjs network keyboard shortcuts</li>
-                    <ul>
-                        <li>arrow-up, arrow-down, arrow-left, arrow-right to move network on screen</li>
-                        <!-- <li>+/- zoom-in/zoom out</li> -->
-                    </ul>
-                    <li>F1 - help</li>
-                    <li>r(eset) network display</li>
-                    <li>n(next), p(previous) to navigate through sphinx_need item list</li>
-                    <li>l(layout) - to cycle network layout mode</li>
-                        <ul>
-                            <li>bottom-up hierarchical</li>
-                            <li>right-left hierarchical</li>
-                            <li>non-hierarchical</li>
-                        </ul>
-                    <li>v(view) - to cycle network view mode
-                        <ul>
-                            <li>selected sphinx_need item and all In-neighbours</li>
-                            <li>selected sphinx_need item and all Out-neighbours</li>
-                            <li>selected sphinx_need item and all InOut-neighbours</li>
-                          </ul>
-                    </li>
-                    <li>b(beginning) of sphinx_need item list</li>
-                    <li>e(end) of sphinx_need item list</li>
-                    <li>ESC - hide the tooltip associated with the currently hovered-over node</li>
-                    <li>s(tore) - store the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</li>
-                </ul>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="kbd-td"><kbd>F1</kbd></td>
+                            <td>Help</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>&uarr;</kbd></td>
+                            <td>Move network up</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>&darr;</kbd></td>
+                            <td>Move network down</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>&larr;</kbd></td>
+                            <td>Move network left</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>&rarr;</kbd></td>
+                            <td>Move network right</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>R</kbd></td>
+                            <td>Reset network display (position and scale)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>P</kbd></td>
+                            <td>Navigate to the previous sphinx_need item</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>N</kbd></td>
+                            <td>Navigate to the next sphinx_need item</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>L</kbd></td>
+                            <td>Cycle network layout mode</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>V</kbd></td>
+                            <td>Cycle network neighbour view mode</td>
+                        </tr>
+
+                        <tr>
+                            <td class="kbd-td"><kbd>&lt;</kbd></td>
+                            <td>Decrease neighborhood depth view of the current node</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>&gt;</kbd></td>
+                            <td>Increase neighborhood depth view of the current node</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>B</kbd></td>
+                            <td>Beginning of sphinx_need item list</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>E</kbd></td>
+                            <td>End of sphinx_need item list</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>ESC</kbd></td>
+                            <td >Hide the tooltip associated with the currently hovered-over node</td>
+                        </tr>
+                        <tr>
+                            <td class="kbd-td"><kbd>S</kbd></td>
+                            <td>store the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <br>
                 <h3>Mouse events</h3>
                 <ul>
-                    <li>hovering over a node displays tooltip with basic node information</li>
-                    <li>a alt-click at node shows detailed node information in popup window, including a link where complete information 
+                    <li>Hovering over a node displays tooltip with basic node information</li>
+                    <li>Alt+click at node shows detailed node information in popup window, including a link where complete information 
                         can be found</li>
                 </ul>
+                <br>
+                <h3>Data Filtering Examples</h3>
+                Note: the explorer uses a simplified Python syntax for expressing data filtering criteria.
+                <br>
+                <br>
+                <table class="ack-table">
+                    <tbody>
+                        <tr>
+                            <td class="att-td">'S_\' in id</td>
+                            <td>Find items that contains 'S_' in its id</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">'arch' in docname</td>
+                            <td>Find items defined in specific file that<br>contains keyword 'arch' (case sensitive)</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">'architecture/architecture-needs'==docname</td>
+                            <td>Find items defined in specific file</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">status in ['open','closed']</td>
+                            <td>Find open or closed items</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">(status=='open' && (type in ['req'])) || ('arch' in docname)</td>
+                            <td>A complex expression that incorporates techniques from the previous examples.</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">tags!=[] && title ~ /techn/i #case insensitive match</td>
+                            <td>RegEx case insensitive match</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">title ~ /^Level[ \t]+(?=one)/</td>
+                            <td>RegEx positive lookaheads</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">title ~ /^Level[ \t]+(?!one)/</td>
+                            <td>RegEx negative lookaheads</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">type=='test' && outgoing==[]</td>
+                            <td>Find test which are not linked yet</td>
+                        </tr>
+                        <tr>
+                            <td class="att-td">type != 'test' && incoming==[]</td>
+                            <td>Find items with no incoming links</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
                 <h3>Sphinx-Needs attributes found in this project that can be used for data filtering:</h3>
                 <table class="ack-table">
                     <thead>
@@ -159,43 +260,11 @@
                     <tbody id="help-attributes">
                     </tbody>
                 </table>
-                <h3>Examples of filtering</h3>
-                <table class="ack-table">
-                    <tbody>
-                        <tr>
-                            <td class="att-td">'S_\' in id</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">'arch' in docname</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">'architecture/architecture-needs'==docname</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">status in ['open','closed']</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">(status=='open' && (type in ['req'])) || ('arch' in docname)</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">title ~ /^Level[ \t]+(?=one)/ #positive lookaheads</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">title ~ /^Level[ \t]+(?!one)/ #negative lookaheads</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">type=='test' && outgoing==[]</td>
-                        </tr>
-                        <tr>
-                            <td class="att-td">type != 'req' && incoming==[]</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
         <div>
             <div class="row">
-                <div id="display-needs-count" title="This number shows how many sphinx-needs items match the active filter(s)">
+                <div id="display-needs-count" title="This number shows how many sphinx-needs items match the active filter(s). NDV stands for Neighborhood Depth View">
                     Filter matches '0' IDs
                 </div>
                 <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" 
@@ -227,6 +296,7 @@
         </div>
         <script type="text/javascript">
             const extra_options = ['author'];
+            var inUpdateTable=0;
             var filters = ["status=='implemented'", "['15','16'] in id", "title ~ /r.*[0-9]+5'$/i", "type != 'req' && incoming==[]", "type=='spec' && outgoing!=[] && title ~ /5'$/"];
             const link_types = ['links', 'refines', 'triggers'];
             var networkContainer;
@@ -241,6 +311,7 @@
             let MIN_ZOOM = 0.1;
             let MAX_ZOOM = 2.0;
             var viewMode=0;
+            var viewModeMaxDepth=1;
             var textBoxEditingActive=false;
             var lastTextBoxValue="";
             var saveOpt;
@@ -536,13 +607,16 @@
                     const firstKey = Object.keys(gnodes)[0];
                     autocompletionAttributes=[];
                     for(const att of Object.keys(gnodes[firstKey]['data']).sort()){
+                        var type=typeof gnodes[firstKey]['data'][att];
+                        if(type==='object')
+                            type=Array.isArray(gnodes[firstKey]['data'][att])?'array':'object';
                         if(!['depth','sum','count'].includes(att))  {
                             //$("#help-attributes").append(`<li>'${att}':${typeof gnodes[firstKey]['data'][att]}</li>`);
                             $("#help-attributes").append(`<tr>
                             <td class="att-td">${att}</td>
-                            <td class="att-td">${typeof gnodes[firstKey]['data'][att]}</td>
+                            <td class="att-td">${type}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
-                            autocompletionAttributes.push(`${att}`);
+                            autocompletionAttributes.push(`${att} (${type})`);
                         }
                     }
                     // synthetic attributes
@@ -551,13 +625,13 @@
                             <td class="att-td">${att}</td>
                             <td class="att-td">${typeof parents[firstKey]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
-                    autocompletionAttributes.push(`${att}`);
+                    autocompletionAttributes.push(`${att} (array)`);
                     att='incoming'
                     $("#help-attributes").append(`<tr>
                             <td class="att-td">${att}</td>
                             <td class="att-td">${typeof children[firstKey]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
-                    autocompletionAttributes.push(`${att}`);
+                    autocompletionAttributes.push(`${att} (array)`);
                 }
 
                 for(const key in needs) {
@@ -662,7 +736,7 @@
                 const userInputText=removeNewlinesAndTrimString(textBox.value);
                 if(userInputText.length>0) {
                     if(parser!=null) {
-                        customFilterExpression=mainx(userInputText);
+                        customFilterExpression=parse_input(parser,gnodes,userInputText);
                         if(customFilterExpression==null)
                             $('#input').css('color','red');
                         else
@@ -675,7 +749,8 @@
                             if(type==='any' || gnodes[each]['data']['type']===type) {
                                 if( (customFilterExpression===null) || 
                                     (customFilterExpression!==null && 
-                                    customFilter(each,gnodes[each],customFilterExpression))) {
+                                    custom_filter(each,gnodes[each],customFilterExpression)
+                                    )) {
                                     tmp_nodes.push(each);
                                 }
                             }
@@ -692,7 +767,9 @@
                     console.log('tmp_nodes empty!');
                 }
                 if(mode==1)
-                    updateTable1(tmp_nodes);
+                    setTimeout(function() {
+                        updateTable1(tmp_nodes);
+                            },1);
                 else
                 if(mode==2)
                     updateTable2(tmp_nodes);
@@ -708,7 +785,7 @@
                 // }
                 //document.getElementById('display-needs-count').innerHTML = `Found '${+counter.toString()}' instances of type ->`;
                 /// document.getElementById('display-needs-count').innerHTML = `Filter matches '${+counter.toString()}' IDs`;
-                document.getElementById('display-needs-count').innerHTML = `Filter matches '${tmp_nodes.length}' IDs`;
+                document.getElementById('display-needs-count').innerHTML = `Filter matches '${tmp_nodes.length}' IDs, NDV(${viewModeMaxDepth})`;
                 handleSelectNodeEvent();
             }
 
@@ -749,127 +826,157 @@
             }
 
             function updateTable1(tmp_nodes) {
-                var data=[];
-                for(const elm of tmp_nodes) {
-                    data.push({...gnodes[elm]['data']});
-                    const id=data[data.length-1]['id'];
-                    data[data.length-1]['id']=`<a href="../${gnodes[elm]['data']['docname']}.html#${id}"
-                    title="${gnodes[elm]['data']['docname']}.html">${id}</a>`
-                    data[data.length-1]['outgoing']=parents[id];
-                    data[data.length-1]['incoming']=children[id];
+                if(inUpdateTable>0) {
+                    console.log('inUpdateTable>0!!!');
+                    return;
                 }
-                var mcolumns=[]
-                const defaultColumns=['id','title','status','type'];
-                if(Object.keys(data[0]).length>0) {
-                    for(const key of defaultColumns)
-                        mcolumns.push({ title:key, data:key, visible: true })
-                    for(const link_type of link_types.concat(['outgoing','incoming'])) {
-                        if(link_type in data[0])
-                            mcolumns.push({ title:link_type, data:link_type, visible: false,
-                                render: function ( data, type, row ) {
-                                    return (data)?transformAndJoin(data,gnodes).join(', '):'';
-                                }
-                            })
+                inUpdateTable+=1;
+                if(tmp_nodes!=null && tmp_nodes.length>0) {
+                    console.log(`updateTable1 tmp_nodes.length=${tmp_nodes.length}`);
+                    var data=[];
+                    for(const elm of tmp_nodes) {
+                        data.push({...gnodes[elm]['data']});
+                        const id=data[data.length-1]['id'];
+                        data[data.length-1]['id']=`<a href="../${gnodes[elm]['data']['docname']}.html#${id}"
+                        title="${gnodes[elm]['data']['docname']}.html">${id}</a>`
+                        data[data.length-1]['outgoing']=parents[id];
+                        data[data.length-1]['incoming']=children[id];
                     }
-                    /*
-                    for(const key in data[0]) {
-                        if(typeof data[0][key] === 'string') {
-                            if(!['id','status','type','title'].includes(key))
-                                mcolumns.push({ title:key, data:key, visible: true })
-                            else {
-                                //mcolumns.push({ title:key, data:key, visible: false })
+
+                    var mcolumns=[]
+                    const defaultColumns=['id','title','status','type'];
+                    if(Object.keys(data[0]).length>0) {
+                        for(const key of defaultColumns)
+                            mcolumns.push({ title:key, data:key, visible: true })
+                        for(const link_type of link_types.concat(['outgoing','incoming'])) {
+                            if(link_type in data[0])
+                                mcolumns.push({ title:link_type, data:link_type, visible: false,
+                                    render: function ( data, type, row ) {
+                                        return (data)?transformAndJoin(data,gnodes).join(', '):'';
+                                    }
+                                })
+                        }
+                        for(const key in data[0]) {
+                            if(typeof data[0][key] === 'string' && !defaultColumns.includes(key))
+                                mcolumns.push({ title:key, data:key, visible: false })
+                        }
+                        for(const key in data[0]) {
+                            var type=typeof data[0][key];
+                            if(type==='object')
+                                type=Array.isArray(data[0][key])?'array':'object';
+                            if(type === 'array') {
+                                if(!link_types.concat(['outgoing','incoming']).includes(key))
+                                    mcolumns.push({ title:key, data:key, visible: false,
+                                        render: function ( data, type, row ) {
+                                            return (data)?data.join(', '):'';
+                                        }
+                                    })
                             }
                         }
-                    }*/
-                }
-                $('#needtable').DataTable().destroy();
-                $(`#mynetwork #needtable`).remove();
-                var table = $(dataTableTemplate);
-                table.appendTo('#mynetwork');
-                table = $('#needtable').DataTable({
-                    dom: 'lBfrtip',
-                    lengthChange: true,
-                    lengthMenu: [
-                        [10, 15, 50, -1],
-                        ["10", "15", "50", "All"]
-                    ],
-                    pageLength: 15,
-                    // scrollY: "300px",
-                    scrollCollapse: true,
-                    buttons: [
-                        'colvis',
-                        'copy',
-                        'csv',
-                        'excel',
-                        'pdf',
-                        'print'
-                    ],
-                    stateSave: true,
-                    searching: false,
-                    data: data,
-                    columns: mcolumns,
-                    select: 'single'
-                });
-                $('.dataTable').focus();
-                $('#needtable tbody').on('click', 'tr', function () {
-                    if ($(this).hasClass('selected')) {
-                        $(this).removeClass('selected');
-                    } else {
-                        table.$('tr.selected').removeClass('selected');
-                        $(this).addClass('selected');
                     }
-                });
+                    $('#needtable').DataTable().destroy();
+                    $(`#mynetwork #needtable`).remove();
+
+                    var table = $(dataTableTemplate);
+                    table.appendTo('#mynetwork');
+                    table = $('#needtable').DataTable({
+                        dom: 'lBfrtip',
+                        lengthChange: true,
+                        lengthMenu: [
+                            [10, 15, 50, -1],
+                            ["10", "15", "50", "All"]
+                        ],
+                        pageLength: 15,
+                        // scrollY: "300px",
+                        scrollCollapse: true,
+                        buttons: [
+                            'colvis',
+                            'copy',
+                            'csv',
+                            'excel',
+                            'pdf',
+                            'print'
+                        ],
+                        stateSave: true,
+                        searching: false,
+                        data: data,
+                        columns: mcolumns,
+                        select: 'single'
+                    });
+                    $('.dataTable').focus();
+                    $('#needtable tbody').on('click', 'tr', function () {
+                        if ($(this).hasClass('selected')) {
+                            $(this).removeClass('selected');
+                        } else {
+                            table.$('tr.selected').removeClass('selected');
+                            $(this).addClass('selected');
+                        }
+                    });
+                } else {
+                    if ($('#needtable').length>0) {
+                        $('#needtable').DataTable().destroy();
+                        $('#mynetwork #needtable').remove();
+                    }
+                }
+                inUpdateTable-=1;
             }
 
             function updateTable2(tmp_nodes) {
-                var data=[];
-                let documentSet = new Set([]);
-                tmp_nodes.forEach(elm => {documentSet.add(gnodes[elm]['data']['docname'])});
-                for(elm of documentSet)
-                    data.push({'docname':`<a href="../${elm}.html" title="${elm}.html}">${elm}</a>`});
-                var mcolumns=[]
-                const defaultColumns=['docname'];
-                if(Object.keys(data[0]).length>0) {
-                    for(const key of defaultColumns) {
-                        mcolumns.push({ title:key, data:key, visible: true })
+                if(tmp_nodes!=null && tmp_nodes.length>0) {
+                    var data=[];
+                    let documentSet = new Set([]);
+                    tmp_nodes.forEach(elm => {documentSet.add(gnodes[elm]['data']['docname'])});
+                    for(elm of documentSet)
+                        data.push({'docname':`<a href="../${elm}.html" title="${elm}.html}">${elm}</a>`});
+                    var mcolumns=[]
+                    const defaultColumns=['docname'];
+                    if(tmp_nodes.length>0 && Object.keys(data[0]).length>0) {
+                        for(const key of defaultColumns) {
+                            mcolumns.push({ title:key, data:key, visible: true })
+                        }
+                    }
+                    $('#needtable').DataTable().destroy();
+                    $('#mynetwork #needtable').remove();
+                    var table = $(dataTableTemplate);
+                    table.appendTo('#mynetwork');
+                    table = $('#needtable').DataTable({
+                        dom: 'lBfrtip',
+                        lengthChange: true,
+                        lengthMenu: [
+                            [ 10, 15, 50, -1 ],
+                            [ "10", "20", "50", "All"]
+                        ],
+                        // scrollY: "300px",
+                        scrollCollapse: true,
+                        buttons: [
+                            'colvis',
+                            'copy',
+                            'csv',
+                            'excel',
+                            'pdf',
+                            'print'
+                        ],
+                        stateSave: true,
+                        searching: true,
+                        data: data,
+                        columns: mcolumns,
+                        select: 'single'
+                    });
+                    $('.dataTable').focus();
+                    $('#needtable tbody').on('click', 'tr', function () {
+                        if ($(this).hasClass('selected')) {
+                            $(this).removeClass('selected');
+                        } else {
+                            table.$('tr.selected').removeClass('selected');
+                            $(this).addClass('selected');
+                        }
+                    });
+                } else {
+                    if ($('#needtable').length>0) {
+                        $('#needtable').DataTable().destroy();
+                        $('#mynetwork #needtable').remove();
                     }
                 }
-                $('#needtable').DataTable().destroy();
-                $('#mynetwork #needtable').remove();
-                var table = $(dataTableTemplate);
-                table.appendTo('#mynetwork');
-                table = $('#needtable').DataTable({
-                    dom: 'lBfrtip',
-                    lengthChange: true,
-                    lengthMenu: [ 
-                        [ 10, 15, 50, -1 ],
-                        [ "10", "20", "50", "All"]
-                    ],
-                    // scrollY: "300px",
-                    scrollCollapse: true,
-                    buttons: [
-                        'colvis',
-                        'copy',
-                        'csv',
-                        'excel',
-                        'pdf',
-                        'print'
-                    ],
-                    stateSave: true,
-                    searching: true,
-                    data: data,
-                    columns: mcolumns,
-                    select: 'single'
-                });
-                $('.dataTable').focus();
-                $('#needtable tbody').on('click', 'tr', function () {
-                    if ($(this).hasClass('selected')) {
-                        $(this).removeClass('selected');
-                    } else {
-                        table.$('tr.selected').removeClass('selected');
-                        $(this).addClass('selected');
-                    }
-                });
             }
 
             function exploreMode() {
@@ -1257,6 +1364,22 @@
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
+                    if (event.key === '>') {
+                        if(viewModeMaxDepth<10 && network!==null) {
+                            viewModeMaxDepth+=1;
+                            //let svalue=document.getElementById('select-need-id');
+                            //if(svalue.options.length>0 && svalue.selectedIndex!=0) {
+                            document.getElementById('display-needs-count').innerHTML = `Filter matches '${$('#select-need-id').children('option').length}' IDs, NDV(${viewModeMaxDepth})`;
+                            handleSelectNodeEvent();
+                        }
+                    } else
+                    if (event.key === '<') {
+                        if(viewModeMaxDepth>0 && network!==null) {
+                            viewModeMaxDepth-=1;
+                            document.getElementById('display-needs-count').innerHTML = `Filter matches '${$('#select-need-id').children('option').length}' IDs, NDV(${viewModeMaxDepth})`;
+                            handleSelectNodeEvent();
+                        }
+                    } else
                     if (event.key === 'ArrowLeft' && network!==null) {
                         event.preventDefault();
                         console.log("ArrowLeft");
@@ -1564,7 +1687,9 @@
                 const visited = [];
                 var stack = [];
                 if(rootNodeLabel in gnodes)
-                    stack=[gnodes[rootNodeLabel]];
+                    stack=[{node:gnodes[rootNodeLabel],depth:0}];
+                    //stack=[gnodes[rootNodeLabel]];
+
                 tmp_nodes=[];
                 let tmp_edges=[];
                 var numChildren=-1;
@@ -1574,78 +1699,91 @@
                     if(viewMode===0) {
                         while(stack.length) {
                             const currentNode = stack.pop();
-                            if(visited.includes(currentNode.label))
+                            if(visited.includes(currentNode['node'].label))
                                 continue;
                             if(currentNode.label!=rootNodeLabel)
-                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                                incType(typeFrequency,gnodes[currentNode['node'].label]['data']['type'])
                             numChildren+=1;
-                            visited.push(currentNode.label);
-                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            visited.push(currentNode['node'].label);
+                            var clonedObject = { ...currentNode['node'], ...{'hidden':false,'expanded':true} };
                             tmp_nodes.push(clonedObject);
-                            for(const node of children[currentNode.label]) {
-                                stack.push(gnodes[node]);
+                            for(const node of children[currentNode['node'].label]) {
+                                if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
+                                    stack.push({node:gnodes[node],depth:currentNode['depth']+1});
                                 // if(!viewMode) {
                                 //     for(const n of parents[node])
                                 //         stack.push(gnodes[n]);
                                 // }
                             }
-                            tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
+                            tmp_edges=tmp_edges.concat(children_edges[currentNode['node'].label]);
                         }
                     }
                     if(viewMode===1) {
                         while(stack.length) {
                             const currentNode = stack.pop();
-                            if(visited.includes(currentNode.label))
+                            if(visited.includes(currentNode['node'].label))
                                 continue;
-                            if(currentNode.label!=rootNodeLabel)
-                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            if(currentNode['node'].label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode['node'].label]['data']['type'])
                             numParents+=1;
-                            visited.push(currentNode.label);
-                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            visited.push(currentNode['node'].label);
+                            var clonedObject = { ...currentNode['node'], ...{'hidden':false,'expanded':true} };
                             tmp_nodes.push(clonedObject);
-                            for(const node of parents[currentNode.label])
-                                stack.push(gnodes[node]);
-                            tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                            for(const node of parents[currentNode['node'].label]) {
+                                //stack.push(gnodes[node]);
+                                if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
+                                    stack.push({node:gnodes[node],depth:currentNode['depth']+1});
+                            }
+                            tmp_edges=tmp_edges.concat(parents_edges[currentNode['node'].label]);
                         }
                     }
                     if(viewMode===2) {
+                        // viewModeMaxDepth
                         while(stack.length) {
                             const currentNode = stack.pop();
-                            if(visited.includes(currentNode.label))
+                            if(visited.includes(currentNode['node'].label))
                                 continue;
                             if(currentNode.label!=rootNodeLabel)
-                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                                incType(typeFrequency,gnodes[currentNode['node'].label]['data']['type'])
                             numChildren+=1;
-                            visited.push(currentNode.label);
-                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            visited.push(currentNode['node'].label);
+                            var clonedObject = { ...currentNode['node'], ...{'hidden':false,'expanded':true} };
                             tmp_nodes.push(clonedObject);
-                            for(const node of children[currentNode.label]) {
-                                stack.push(gnodes[node]);
+                            for(const node of children[currentNode['node'].label]) {
+                                //stack.push(gnodes[node]);
+                                if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
+                                    stack.push({node:gnodes[node],depth:currentNode['depth']+1});
                                 // if(!viewMode) {
                                 //     for(const n of parents[node])
                                 //         stack.push(gnodes[n]);
                                 // }
                             }
-                            tmp_edges=tmp_edges.concat(children_edges[currentNode.label]);
+                            tmp_edges=tmp_edges.concat(children_edges[currentNode['node'].label]);
                         }
 
-                        for(const node of parents[rootNodeLabel])
-                            stack.push(gnodes[node]);
+                        for(const node of parents[rootNodeLabel]) {
+                            //stack.push(gnodes[node]);
+                            //if(viewModeMaxDepth>0)
+                            stack.push({node:gnodes[node],depth:1});
+                        }
                         tmp_edges=tmp_edges.concat(parents_edges[rootNodeLabel]);
                         numParents=0;
                         while(stack.length) {
                             const currentNode = stack.pop();
-                            if(visited.includes(currentNode.label))
+                            if(visited.includes(currentNode['node'].label))
                                 continue;
-                            if(currentNode.label!=rootNodeLabel)
-                                incType(typeFrequency,gnodes[currentNode.label]['data']['type'])
+                            if(currentNode['node'].label!=rootNodeLabel)
+                                incType(typeFrequency,gnodes[currentNode['node'].label]['data']['type'])
                             numParents+=1;
-                            visited.push(currentNode.label);
-                            var clonedObject = { ...currentNode, ...{'hidden':false,'expanded':true} };
+                            visited.push(currentNode['node'].label);
+                            var clonedObject = { ...currentNode['node'], ...{'hidden':false,'expanded':true} };
                             tmp_nodes.push(clonedObject);
-                            for(const node of parents[currentNode.label])
-                                stack.push(gnodes[node]);
-                            tmp_edges=tmp_edges.concat(parents_edges[currentNode.label]);
+                            for(const node of parents[currentNode['node'].label]) {
+                                //stack.push(gnodes[node]);
+                                if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
+                                    stack.push({node:gnodes[node],depth:currentNode['depth']+1});
+                            }
+                            tmp_edges=tmp_edges.concat(parents_edges[currentNode['node'].label]);
                         }
                     }
                 }
@@ -1740,6 +1878,7 @@
             });
 
             $("#input").blur(function() {
+                /*
                 processingInputFilter=false;
                 $('#mynetwork').css('opacity','1.0');
                 //$('#mynetwork').css('border','none');
@@ -1748,7 +1887,7 @@
                 $('.vis-network').focus();
                 $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                 //$('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-
+                */
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
@@ -1799,6 +1938,8 @@
                         $('#mynetwork').focus();
                         $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
                     }
+                    processingInputFilter=false;
+                    $('#mynetwork').css('opacity','1.0');
                 } else
                 if (e.key === 'Enter') {
                     console.log("'Enter' pressed");
@@ -1847,6 +1988,8 @@
                         $('#mynetwork').focus();
                         $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
                     }
+                    processingInputFilter=false;
+                    $('#mynetwork').css('opacity','1.0');
                 }  else {
                     const phrase = $('#input').val();
                     const suggestions = [];
@@ -1867,9 +2010,10 @@
                             console.log(`currentWord=${currentWord}`);
                             console.log(`phrase=${phrase.replace(/\\/g,"")}`);
                             const regex = new RegExp(`${currentWord}$`);
+                            const regex2 = new RegExp(`[ \t]+.*$`);
                             //input.value = phrase.replace(regex,"").replace(/\\/g,"") + suggestion;
                             var inputField = $('#input');
-                            inputField.val(phrase.replace(regex,"").replace(/\\/g,"") + suggestion);
+                            inputField.val(phrase.replace(regex,"").replace(/\\/g,"") + suggestion.replace(regex2,""));
                         });
                         suggestionsList.appendChild(listItem);
                     }

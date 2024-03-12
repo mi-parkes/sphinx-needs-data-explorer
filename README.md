@@ -80,7 +80,7 @@ You can use attribute lookup table while writing your filters.
 
 ## Installation
 
-You can install the package with pip
+You can install [sphinx-needs-data-explorer](https://pypi.org/project/sphinx-needs-data-explorer/) with pip
 
     pip install sphinx-needs-data-explorer
 

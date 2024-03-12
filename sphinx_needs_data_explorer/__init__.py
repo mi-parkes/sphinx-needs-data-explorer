@@ -7,8 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
 
-__version__ = "0.8.7"
-version_info = (0,8,7)
+__version__ = "0.8.8"
+version_info = (0,8,8)
 
 logger = logging.getLogger(__name__)
 
@@ -147,7 +147,6 @@ def SphinxNeedsDataExplorer_role(typ, rawtext, text, lineno, inliner, options={}
 def setup(app):
     app.connect('config-inited',add_files)
     app.add_role('sphinx_needs_data_explorer', SphinxNeedsDataExplorer_role)
-    app.add_css_file('sphinx_needs_data_explorer.css')
     app.add_config_value('sphinx_needs_data_explorer_config',{'filters':[] },"html")
     return {
         "parallel_read_safe": True,

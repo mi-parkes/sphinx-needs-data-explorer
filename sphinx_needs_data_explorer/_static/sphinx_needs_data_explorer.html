@@ -645,15 +645,20 @@
                                         console.log(to);
                                     const itype=needs[key]['type'];
                                     const otype=needs[to]['type'];
-                                    const valid=Object.keys(valid_linkage).length === 0 || (
-                                        (itype in valid_linkage) &&
-                                        (otype in valid_linkage[itype] &&
-                                        (valid_linkage[itype][otype]==link_type)));
+                                    var expected_link_type=link_type;
+                                    var valid;
+                                    if(Object.keys(valid_linkage).length === 0)
+                                        valid=true;
+                                    else if ((itype in valid_linkage) && (otype in valid_linkage[itype])) {
+                                        valid=valid_linkage[itype][otype]==link_type;
+                                        if(!valid)
+                                            expected_link_type=`${expected_link_type} -> ${valid_linkage[itype][otype]}`
+                                    }
                                     var jsonData={
                                         "arrows":"to",
                                         "from":key,
                                         "to":to,
-                                        "labelx":link_type,
+                                        "labelx":expected_link_type,
                                         "color": valid?"black":"red",
                                         "width": valid?0.5:3,
                                         //"dashes": dashes
@@ -1099,7 +1104,10 @@
                         "smooth": {
                             "enabled": false,
                             "type": "horizontal"
-                        }
+                        },
+                        // "font": {
+                        //     multi: 'html'
+                        // }
                     },
                     physics: {
                         enabled: false,

@@ -301,6 +301,7 @@
             var inUpdateTable=0;
             var filters = {{FILTERS}};
             const link_types = {{ LINK_TYPES }};
+            const valid_linkage={{ VALID_LINKAGE }};
             var networkContainer;
             const autocompletionDelimiters = [" ",",", "[", "("];
             var suggestionsList;
@@ -635,7 +636,6 @@
                             </tr>`.replace(/^[\s]+/gm,""))
                     autocompletionAttributes.push(`${att} (array)`);
                 }
-
                 for(const key in needs) {
                     for(const link_type of link_types) {
                         if(link_type in needs[key]) {
@@ -643,11 +643,20 @@
                                 if(to in needs) {
                                     if(verbose)
                                         console.log(to);
+                                    const itype=needs[key]['type'];
+                                    const otype=needs[to]['type'];
+                                    const valid=Object.keys(valid_linkage).length === 0 || (
+                                        (itype in valid_linkage) &&
+                                        (otype in valid_linkage[itype] &&
+                                        (valid_linkage[itype][otype]==link_type)));
                                     var jsonData={
                                         "arrows":"to",
                                         "from":key,
                                         "to":to,
-                                        "labelx":link_type
+                                        "labelx":link_type,
+                                        "color": valid?"black":"red",
+                                        "width": valid?0.5:3,
+                                        //"dashes": dashes
                                     };
                                     children[to].push(key);
                                     children_edges[to].push(jsonData);

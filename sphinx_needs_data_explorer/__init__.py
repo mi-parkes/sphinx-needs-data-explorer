@@ -117,13 +117,18 @@ def add_files(app, config):
                 if ('directive' in item) and ('color' in item):
                     type_color_map[item['directive']]=item['color']
         filters=[]
+        valid_linkage={}
         if 'sphinx_needs_data_explorer_config' in app.config:
             if 'filters' in app.config['sphinx_needs_data_explorer_config']:
                 filters=app.config['sphinx_needs_data_explorer_config']['filters']
+            if 'valid-linkage' in app.config['sphinx_needs_data_explorer_config']:
+                valid_linkage=app.config['sphinx_needs_data_explorer_config']['valid-linkage']
+
         context = {
             "LINK_TYPES": link_types,
             "TYPE2COLOR": type_color_map,
             "FILTERS": filters,
+            "VALID_LINKAGE":valid_linkage,
             "EXTRA_OPTIONS":needs_extra_options,
             "VERSION":__version__
         }

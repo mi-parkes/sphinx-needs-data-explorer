@@ -637,6 +637,28 @@
                 }
 
                 for(const key in needs) {
+                    for(const link_type of link_types) {
+                        if(link_type in needs[key]) {
+                            for(to of needs[key][link_type]) {
+                                if(to in needs) {
+                                    if(verbose)
+                                        console.log(to);
+                                    var jsonData={
+                                        "arrows":"to",
+                                        "from":key,
+                                        "to":to,
+                                        "labelx":link_type
+                                    };
+                                    children[to].push(key);
+                                    children_edges[to].push(jsonData);
+                                    parents[key].push(to);
+                                    parents_edges[key].push(jsonData);
+                                }
+                            }
+                        }
+                    }
+
+                    /*
                     for(to of parse_links(needs[key])) {
                         if(to in needs) {
                             if(verbose)
@@ -648,6 +670,7 @@
                             parents_edges[key].push(jsonData);
                         }
                     }
+                    */
                 }
                 let stype=document.getElementById('select-type')
                 for(elm of typeSet) {
@@ -1060,7 +1083,7 @@
                     edges: {
                         arrows: { to: {enabled: true} },
                         width: 0.01,
-                        hoverWidth: 5.0,
+                        hoverWidth: 8.0,
                         "color": {
                             "inherit": false
                         },
@@ -1219,6 +1242,19 @@
                 network.on("dragEnd",function(params){
                     lastZoomPosition = network.getViewPosition()
                     console.log(`dragEnd handler: MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
+                });
+
+                network.on("hoverEdge", function (event) {
+                    var edgeId = event.edge;
+                    var edge = edges.get(edgeId);
+                    edges.update({ id: edgeId, label: edge.labelx,
+                        font: {size : 70} }); // Hide label when the edge is not hovered
+                });
+
+                network.on("blurEdge", function (event) {
+                    var edgeId = event.edge;
+                    edges.update({ id: edgeId, label: undefined,
+                        font: {size : 0} }); // Hide label when the edge is not hovered
                 });
 
                 function handleHoverNode(e) {

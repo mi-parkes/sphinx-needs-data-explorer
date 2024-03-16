@@ -199,9 +199,12 @@ div.dataTables_length select {
     align-items: center;
     text-align: center;
     min-width: 200px;
-    white-space: nowrap;
     background-color: rgb(23, 70, 210);
-    font-size: 18px;
+    font-size: 14px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis !important;
+    /* text-overflow-direction: initial; */
 }
 
 #select-type {

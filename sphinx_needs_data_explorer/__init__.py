@@ -118,11 +118,17 @@ def add_files(app, config):
                     type_color_map[item['directive']]=item['color']
         filters=[]
         valid_linkage={}
+        valid_linkage_color='black'
+        invalid_linkage_color='red'
         if 'sphinx_needs_data_explorer_config' in app.config:
             if 'filters' in app.config['sphinx_needs_data_explorer_config']:
                 filters=app.config['sphinx_needs_data_explorer_config']['filters']
             if 'valid-linkage' in app.config['sphinx_needs_data_explorer_config']:
                 valid_linkage=app.config['sphinx_needs_data_explorer_config']['valid-linkage']
+            if 'invalid-linkage-color' in app.config['sphinx_needs_data_explorer_config']:
+                invalid_linkage_color=app.config['sphinx_needs_data_explorer_config']['invalid-linkage-color']
+            if 'valid-linkage-color' in app.config['sphinx_needs_data_explorer_config']:
+                valid_linkage_color=app.config['sphinx_needs_data_explorer_config']['valid-linkage-color']
 
         context = {
             "LINK_TYPES": link_types,
@@ -130,7 +136,9 @@ def add_files(app, config):
             "FILTERS": filters,
             "VALID_LINKAGE":valid_linkage,
             "EXTRA_OPTIONS":needs_extra_options,
-            "VERSION":__version__
+            "VERSION":__version__,
+            "VALID_LINKAGE_COLOR":valid_linkage_color,
+            "INVALID_LINKAGE_COLOR":invalid_linkage_color
         }
 
         with open(ofile,"w+") as out:

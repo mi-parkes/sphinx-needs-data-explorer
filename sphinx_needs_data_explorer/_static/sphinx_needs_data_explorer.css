@@ -1,6 +1,9 @@
 body {
     font-size: 1em;
+    font-family: monospace;
 }
+
+
 /* my_custom_role.css */
 .custom-reference {
     font-size: 18px;
@@ -32,7 +35,7 @@ body {
 }
 
 .dataTables_wrapper {
-    font-family: tahoma;
+    /* font-family: tahoma; */
     font-size: 18px;
     position: relative;
     clear: both;
@@ -44,7 +47,7 @@ div.dataTables_length select {
 }
 
 .table.dataTable  {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
     font-size: 18px;
     width:90%;
 }
@@ -73,7 +76,7 @@ div.dataTables_length select {
 
 .att-td {
     /* font-family: Consolas, Menlo, Courier, "Lucida Console", Monaco, monospace; */
-    font-family: "Monaco", "Menlo", Times, serif;
+    /* font-family: "Monaco", "Menlo", Times, serif; */
     font-size: 0.9em;
     border: 1px solid #dddddd;
     padding: 8px;

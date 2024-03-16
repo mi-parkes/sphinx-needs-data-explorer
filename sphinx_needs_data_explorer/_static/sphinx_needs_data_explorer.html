@@ -296,7 +296,7 @@
             <div id="mynetwork" tabindex="0">
             </div>
         </div>
-        <script type="text/javascript">
+        <script type="text/javascript" charset="UTF-8">
             const extra_options = {{ EXTRA_OPTIONS }};
             var inUpdateTable=0;
             var filters = {{FILTERS}};
@@ -1767,6 +1767,8 @@
                 var numParents=-1;
                 var typeFrequency={};
                 if(rootNodeLabel!=="") {
+                    //if(viewModeMaxDepth===1)
+                    //    findCycles(rootNodeLabel);
                     if(viewMode===0) {
                         while(stack.length) {
                             const currentNode = stack.pop();
@@ -1914,6 +1916,41 @@
                 else {
                     network.fit({maxZoomLevel:0.4});
                     lastZoomPosition = network.getViewPosition();
+                }
+            }
+
+            function findCycles(rootNodeLabel) {
+                var visited = {};
+                var stack = {};
+                if(rootNodeLabel in gnodes) {
+                    const rootNodeLabelType=gnodes[rootNodeLabel]['data']['type'];
+                    stack=[{node:rootNodeLabel,prev:null}];
+                    while(stack.length) {
+                        const currentNode = stack.pop();
+                        const currentNodeID     =currentNode['node'];
+                        const currentNodePrev   =currentNode['prev'];
+                        if(currentNodeID in visited) {
+                            // cycle detected
+                            visited[currentNodeID].push(currentNodePrev);
+                            console.log(`${currentNodeID} `);
+                            visited[currentNodeID].forEach(neighbor => {
+                                var cid=visited[neighbor]['node'];
+                                while(cid!=null) {
+                                    console.log(`${cid} `);
+                                    cid=cid=visited[neighbor]['node'];
+                                }
+                            });
+                            continue;
+                        }
+                        // keep back reference
+                        visited[currentNodeID]=[currentNodePrev];
+                        //visited[currentNodeID].push(currentNodePrev);
+                        // stop if we cross type boundary
+                        if(gnodes[currentNodeID]['data']['type']===rootNodeLabelType) {
+                            for(const node of children[currentNodeID])
+                                stack.push({node:node,prev:currentNodeID})
+                        }
+                    }
                 }
             }
             

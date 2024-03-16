@@ -56,6 +56,9 @@ webserver:
 show:
 	open http://localhost:$(WEBSERVERPORT)
 
+gshow:
+	open -a '/Applications/Google Chrome.app' http://localhost:$(WEBSERVERPORT)
+
 show-session:
 	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=req&filter=status%3D%3D%27implemented%27&id=R_00005+-+Title+of+%27R_00005%27&layout=&view=2"
 

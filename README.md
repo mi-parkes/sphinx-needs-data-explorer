@@ -72,6 +72,11 @@ You can use attribute lookup table while writing your filters.
 
 <br>
 
+### Controlling Neighborhood Depth in Network Visualization
+
+![](doc/source/_static/depthview.gif)
+
+<br>
 
 ### Switching between Perspective Views and Documentation
 

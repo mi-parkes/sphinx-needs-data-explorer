@@ -9,7 +9,7 @@ The `sphinx_needs_data_explorer` is a web application written in HTML, CSS, and 
 
 <br>
 
-![](doc/source/_static/images/sphinx_needs_data_explorer.svg)
+![](doc/source/images/sphinx_needs_data_explorer.svg)
 
 <br>
 
@@ -30,7 +30,7 @@ You can choose **network layout**
 - hierarchical right-to-left
 - hierarchical with repulsion
 
-![](doc/source/_static/images/network-perspective.jpg)
+![](doc/source/images/network-perspective.jpg)
 
 <br>
 
@@ -38,43 +38,55 @@ You can choose **network layout**
 In Table-View-Perspective you can see sphinx-needs data in table. You can select which columns should
 be visible and which hidden.
 
-![](doc/source/_static/images/table-perspective.jpg)
+![](doc/source/images/table-perspective.jpg)
 
 <br>
 
 #### `File-View`
 In File-View-Perspective, you can see a list of files in which Sphinx-needs data were found.
 
-![](doc/source/_static/images/file-perspective.jpg)
+![](doc/source/images/file-perspective.jpg)
 
 <br>
 
 ### Powerfull Interactive Data Filtering
 You can predefine filtering expressions during documentation generation or interactively while browsing documentation, and apply the data filtering across all three view perspectives.
 
-![](doc/source/_static/images/data-filtering.jpg)
+![](doc/source/images/data-filtering.jpg)
 
 You can use attribute lookup table while writing your filters.
 
-![](doc/source/_static/images/scr6.jpg)
+![](doc/source/images/scr6.jpg)
 
 <br>
 
 ### Exploring In-Neighbours, Out-Neighbours or both
 
-![](doc/source/_static/images/sh2.jpg)
+![](doc/source/images/sh2.jpg)
+
+<br>
+
+### Visualizing Constraint Violations in Network Transitions 
+
+![](doc/source/images/scr7.jpg)
+
+<br>
+
+### Controlling Neighborhood Depth in Network Visualization
+
+![](doc/source/images/depthview.gif)
 
 <br>
 
 ### Switching between Perspective Views and Documentation
 
-![](doc/source/_static/images/sh3.jpg)
+![](doc/source/images/sh3.jpg)
 
 <br>
 
 ### Interaction
 
-![](doc/source/_static/sphinx-needs-data-explorer.gif)
+![](doc/source/images/sphinx-needs-data-explorer.gif)
 
 <br>
 
@@ -124,7 +136,7 @@ or you can include it only if the extension is available in your virtual environ
 If your project uses [sphinx_book_theme](https://github.com/executablebooks/sphinx-book-theme),
 `sphinx_needs_data_explorer` supports full integration in your documentation by adding `E` header button accesible from any documentation page.
 
-![](doc/source/_static/images/E-header-button-doc.jpg)
+![](doc/source/images/E-header-button-doc.jpg)
 
 Otherwise, you can create hyperlink to `sphinx_needs_data_explorer` by adding the following role in your .rst file(s)
 
@@ -152,4 +164,23 @@ You can predefine filtering expressions to populate the filter drop-down list:
 
 `sphinx_needs_data_explorer` Help lists all attributes found in your project that can be used for data filtering.
 
-![](doc/source/_static/images/help1.jpg)
+![](doc/source/images/help1.jpg)
+
+
+Visualizing Constraint Violations in Network Transitions:
+
+    sphinx_needs_data_explorer_config = {
+        "valid-linkage-color":"Black",
+        "invalid-linkage-color":"OrangeRed",
+        "valid-linkage":{
+            'need': {
+                'need':'refinement'
+            },
+            'feat': {
+                'fear':'refinement',
+                'need':'links'
+            },
+            ...
+        }
+    }
+

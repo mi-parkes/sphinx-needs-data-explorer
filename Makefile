@@ -1,6 +1,14 @@
 .ONESHELL:
 SHELL=/bin/bash
 
+UNAME := $(shell uname 2>/dev/null || echo Windows)
+
+ifeq ($(UNAME),Linux)
+endif
+
+ifeq ($(UNAME),Darwin)
+endif
+
 help:
 	echo "$(MAKE) install         # Rebuild and reinstall sphinx_needs_data_explorer"
 	echo "$(MAKE) installx        # Reinstall sphinx_needs_data_explorer in active virtual environment"
@@ -51,13 +59,21 @@ WEBSERVERPORT=8080
 
 webserver:
 	docker ps | awk '$$NF=="sphinx_needs_data_explorer"{print "docker stop "$$1}' | bash
+	sleep 1
 	docker run -it --rm -d -p $(WEBSERVERPORT):80 --name sphinx_needs_data_explorer -v $$PWD/doc/build/html:/usr/share/nginx/html nginx
 
 show:
 	open http://localhost:$(WEBSERVERPORT)
 
-show-session:
-	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=req&filter=status%3D%3D%27implemented%27&id=R_00005+-+Title+of+%27R_00005%27&layout=&view=2"
+ifeq ($(UNAME),Darwin)
+gshow:
+	open -a '/Applications/Google Chrome.app' http://localhost:$(WEBSERVERPORT)
 
+gshowx:
+	open -a '/Applications/Google Chrome.app' http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html
+endif
+
+show-session:
+	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=any&filter=&id=F00016+-+Title+of+%27F00016%27&layout=DU&view=2&viewModeMaxDepth=2&mode=0"
 -include ../tests.mak
 

@@ -285,7 +285,7 @@
                 <select title="selectNode" id="select-need-id" onchange="handleSelectNodeEvent()" class="select2 select2-container select2-container--bootstrap select2-container--focus">
                     <option value="">Select Sphinx-Needs 'ID'...</option>
                 </select>
-                <button id="explorerModeButton" onclick="exploreMode()" 
+                <button id="explorerModeButton" onclick="nextExploreMode()"
                     title="View Perpsective [Network, Table, File]">Network</button>
                 <button id="helpButton" onclick="openHelpDialog()" 
                     title="View how to use Sphinx-Needs-Data-Explorer">Help
@@ -296,11 +296,15 @@
             <div id="mynetwork" tabindex="0">
             </div>
         </div>
-        <script type="text/javascript">
+        <script type="text/javascript" charset="UTF-8">
             const extra_options = {{ EXTRA_OPTIONS }};
+            const valid_linkage_color="{{VALID_LINKAGE_COLOR}}";
+            const invalid_linkage_color="{{INVALID_LINKAGE_COLOR}}";
+            const type2color={{TYPE2COLOR}};
             var inUpdateTable=0;
             var filters = {{FILTERS}};
             const link_types = {{ LINK_TYPES }};
+            const valid_linkage={{ VALID_LINKAGE }};
             var networkContainer;
             const autocompletionDelimiters = [" ",",", "[", "("];
             var suggestionsList;
@@ -409,10 +413,17 @@
                             layoutDirection=decodedData['layout']
                         if('view' in decodedData && decodedData['view'])
                             viewMode=parseInt(decodedData['view']);
+                        if('mode' in decodedData && decodedData['mode']) {
+                            mode=parseInt(decodedData['mode']);
+                        }
+                        if('viewModeMaxDepth' in decodedData && decodedData['viewModeMaxDepth'])
+                            viewModeMaxDepth=parseInt(decodedData['viewModeMaxDepth']);
                     }
 
-                    initNetwork();
-                    handleSelectTypeEvent();
+                    exploreMode();
+                    //else
+                    //initNetwork();
+                    //handleSelectTypeEvent();
                     if('type' in decodedData && decodedData['type']!=null) {
                         if('filter' in decodedData && decodedData['filter']!=null) {
                             const newText=decodedData['filter']
@@ -427,14 +438,14 @@
                         if('id' in decodedData && decodedData['id']!=null )
                             $('#select-need-id').val(decodedData['id']).trigger('change.select2');
                     }
-                    $('.vis-network').focus();
-                    $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    if(mode==0) {
+                        $('.vis-network').focus();
+                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    }
                 }
             ).catch(error => {
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
             });
-
-            type2color= {{TYPE2COLOR}};
 
             function handleResize() {
                 //console.log('HandlingResize');
@@ -635,8 +646,43 @@
                             </tr>`.replace(/^[\s]+/gm,""))
                     autocompletionAttributes.push(`${att} (array)`);
                 }
-
                 for(const key in needs) {
+                    for(const link_type of link_types) {
+                        if(link_type in needs[key]) {
+                            for(to of needs[key][link_type]) {
+                                if(to in needs) {
+                                    if(verbose)
+                                        console.log(to);
+                                    const itype=needs[key]['type'];
+                                    const otype=needs[to]['type'];
+                                    var expected_link_type=link_type;
+                                    var valid;
+                                    if(Object.keys(valid_linkage).length === 0)
+                                        valid=true;
+                                    else if ((itype in valid_linkage) && (otype in valid_linkage[itype])) {
+                                        valid=valid_linkage[itype][otype]==link_type;
+                                        if(!valid)
+                                            expected_link_type=`${expected_link_type} -> ${valid_linkage[itype][otype]}`
+                                    }
+                                    var jsonData={
+                                        "arrows":"to",
+                                        "from":key,
+                                        "to":to,
+                                        "labelx":expected_link_type,
+                                        "color": valid?valid_linkage_color:invalid_linkage_color,
+                                        "width": valid?0.5:3,
+                                        //"dashes": dashes
+                                    };
+                                    children[to].push(key);
+                                    children_edges[to].push(jsonData);
+                                    parents[key].push(to);
+                                    parents_edges[key].push(jsonData);
+                                }
+                            }
+                        }
+                    }
+
+                    /*
                     for(to of parse_links(needs[key])) {
                         if(to in needs) {
                             if(verbose)
@@ -648,6 +694,7 @@
                             parents_edges[key].push(jsonData);
                         }
                     }
+                    */
                 }
                 let stype=document.getElementById('select-type')
                 for(elm of typeSet) {
@@ -677,7 +724,7 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex',0).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    console.log('handleSelectFirstNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -688,7 +735,7 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex',svalue.options.length-1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    console.log('handleSelectLastNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -699,7 +746,7 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex - 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    console.log('handleSelectPrevNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -980,10 +1027,14 @@
                     }
                 }
             }
-
+            function nextExploreMode() {
+                const curSelection=$('#select-need-id').val();
+                mode=(mode+1)%3;
+                exploreMode();
+                $('#select-need-id').val(curSelection).trigger('change.select2');
+            }
             function exploreMode() {
                 //setTimeout(function() {
-                    mode=(mode+1)%3;
                     if(mode==0) {
                         $('#select-need-id').prop('disabled',false);
                         $('#needtable').DataTable().destroy();
@@ -998,13 +1049,19 @@
                     if(mode==1) {
                         $('#select-need-id').prop('disabled',true);
                         $("#explorerModeButton").text("Table");
-                        network.destroy();
-                        network=null;
+                        if(network!=null) {
+                            network.destroy();
+                            network=null;
+                        }
                         handleSelectTypeEvent();
                     }
                     else
                     if(mode==2) {
                         $("#explorerModeButton").text("File");
+                        if(network!=null) {
+                            network.destroy();
+                            network=null;
+                        }
                         handleSelectTypeEvent();
                     }
                 //},1);
@@ -1060,14 +1117,17 @@
                     edges: {
                         arrows: { to: {enabled: true} },
                         width: 0.01,
-                        hoverWidth: 5.0,
+                        hoverWidth: 8.0,
                         "color": {
                             "inherit": false
                         },
                         "smooth": {
                             "enabled": false,
                             "type": "horizontal"
-                        }
+                        },
+                        // "font": {
+                        //     multi: 'html'
+                        // }
                     },
                     physics: {
                         enabled: false,
@@ -1219,6 +1279,19 @@
                 network.on("dragEnd",function(params){
                     lastZoomPosition = network.getViewPosition()
                     console.log(`dragEnd handler: MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
+                });
+
+                network.on("hoverEdge", function (event) {
+                    var edgeId = event.edge;
+                    var edge = edges.get(edgeId);
+                    edges.update({ id: edgeId, label: edge.labelx,
+                        font: {size : 70} }); // Hide label when the edge is not hovered
+                });
+
+                network.on("blurEdge", function (event) {
+                    var edgeId = event.edge;
+                    edges.update({ id: edgeId, label: undefined,
+                        font: {size : 0} }); // Hide label when the edge is not hovered
                 });
 
                 function handleHoverNode(e) {
@@ -1375,6 +1448,7 @@
                             document.getElementById('display-needs-count').innerHTML = `Filter matches ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
                             handleSelectNodeEvent();
                         }
+                        return;
                     } else
                     if (event.key === '<' && event.shiftKey) {
                         event.preventDefault();
@@ -1383,6 +1457,7 @@
                             document.getElementById('display-needs-count').innerHTML = `Filter matches ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
                             handleSelectNodeEvent();
                         }
+                        return;
                     } else
                     if (event.key === 'ArrowLeft' && network!==null) {
                         event.preventDefault();
@@ -1429,34 +1504,44 @@
                     if(event.key==='v'||event.key==='V') {
                         event.preventDefault();
                         let svalue=document.getElementById('select-need-id');
-                        if(svalue.options.length>0) {
+                        if(svalue.options.length>0 && network!==null) {
                             text = svalue.options[svalue.selectedIndex].text;
                             viewMode=(viewMode+1)%3;
                             drawFilteredGraph(getID(text));
                             //console.log(`viewMode update -> ${viewMode}`);
                         }
+                        return;
                     }
                     // jump to node list beginning
-                    if(event.key==='b'||event.key==='B')
-                        handleSelectFirstNodeEvent();
-
+                    if(event.key==='b'||event.key==='B') {
+                        if(network!==null)
+                            handleSelectFirstNodeEvent();
+                        return;
+                    }
                     // jump to node list end
-                    if(event.key==='e'||event.key==='E')
-                        handleSelectLastNodeEvent();
+                    if(event.key==='e'||event.key==='E') {
+                        if(network!==null)
+                            handleSelectLastNodeEvent();
+                        return;
+                    }
 
                     // previous node
                     if(event.key==='p'||event.key==='P') {
                         event.preventDefault();
-                        console.log(`prev Key Up ${ecounter}`);
-                        handleSelectPrevNodeEvent();
+                        if(network!==null) {
+                            console.log(`prev Key Up ${ecounter}`);
+                            handleSelectPrevNodeEvent();
+                        }
                         return;
                     }
 
                     // next node
                     if(event.key==='n'||event.key==='N') {
                         event.preventDefault();
-                        console.log(`next Key Up ${ecounter}`);
-                        handleSelectNextNodeEvent();
+                        if(network!==null) {
+                            console.log(`next Key Up ${ecounter}`);
+                            handleSelectNextNodeEvent();
+                        }
                         return;
                     }
 
@@ -1488,7 +1573,9 @@
 
                     // copy current network as JSON to clipboard
                     if(event.ctrlKey && (event.key==='c'||event.key==='C')) {
-                        copyNetworkToClipboard();
+                        if(network!==null)
+                            copyNetworkToClipboard();
+                        return;
                     }
 
                     // copy current network as SVG to clipboard
@@ -1504,8 +1591,11 @@
                             filter: $('#select-filter').val(),
                             id:     $('#select-need-id').val(),
                             layout: layoutDirection,
-                            view: viewMode
+                            view: viewMode,
+                            viewModeMaxDepth: viewModeMaxDepth,
+                            mode: mode
                         };
+
                         const queryString = new URLSearchParams(params).toString();
                         serializedString+=`?${queryString}`;
 
@@ -1525,8 +1615,8 @@
                     }
                 }
                 networkContainer = document.getElementById('mynetwork');
-                //networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
-                networkContainer.addEventListener('keyup',handleKeyUp);
+                networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
+                //networkContainer.addEventListener('keyup',handleKeyUp);
             }
 
             function copyNetworkAsSVGToClipboard() {
@@ -1700,6 +1790,8 @@
                 var numParents=-1;
                 var typeFrequency={};
                 if(rootNodeLabel!=="") {
+                    //if(viewModeMaxDepth===1)
+                    //    findCycles(rootNodeLabel);
                     if(viewMode===0) {
                         while(stack.length) {
                             const currentNode = stack.pop();
@@ -1796,45 +1888,51 @@
                     console.log(tmp_nodes);
                     console.log("edges");
                     console.log(tmp_edges);
-                }                
+                }
+
+                if(tmp_nodes.length>0) {
+                    if(rootNodeLabel!=="") {
+                        var msg;
+                        if(viewMode==0)
+                            msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
+                        else if(viewMode==1)
+                            msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
+                        else
+                            msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
+                        if(Object.keys(typeFrequency).length>0)
+                            msg+="\n\n"
+                        for(const type in  typeFrequency)
+                            msg+=`.. '${type}'=${typeFrequency[type]}\n`
+                        if(Object.keys(typeFrequency).length>0)
+                            msg+="\n"
+                        else
+                            msg+="\n\n"
+
+                        tmp_nodes[0]={
+                            shape:'box',
+                            label:tmp_nodes[0]['label'],
+                            id:rootNodeLabel,
+                            title:`${msg}${gnodes[rootNodeLabel]['title']}`,
+                            borderWidth:2,
+                            heightConstraint: {
+                                    minimum: 200
+                            },
+                            widthConstraint: {
+                                minimum: 300,
+                                maximum: 300
+                            },
+                            color: {
+                                border:'red'
+                            }
+                        };
+                    }
+                }
+
                 nodes = new vis.DataSet(tmp_nodes);
                 edges = new vis.DataSet(tmp_edges);
 
+                network.setOptions({ interaction: { keyboard: false } });
                 network.setData({ nodes: nodes, edges: edges });
-
-                if(rootNodeLabel!=="") {
-                    var msg;
-                    if(viewMode==0)
-                        msg=`=== In-Neighbours View\n\nNumber of incoming neighbours=${numChildren}`
-                    else if(viewMode==1)
-                        msg=`=== Out-Neighbours View\n\nNumber of outgoing neighbours=${numParents}`
-                    else
-                        msg=`=== InOut-Neighbours View\n\nNumber of incoming neighbours=${numChildren}\nNumber of outgoing neighbours=${numParents}`
-                    if(Object.keys(typeFrequency).length>0)
-                        msg+="\n\n"
-                    for(const type in  typeFrequency)
-                        msg+=`.. '${type}'=${typeFrequency[type]}\n`
-                    if(Object.keys(typeFrequency).length>0)
-                        msg+="\n"
-                    else
-                        msg+="\n\n"
-                    
-                    nodes.update({
-                        id:rootNodeLabel,
-                        title:`${msg}${gnodes[rootNodeLabel]['title']}`,
-                        borderWidth:2,
-                        heightConstraint: {
-                                minimum: 200
-                        },
-                        widthConstraint: {
-                            minimum: 300,
-                            maximum: 300
-                        },
-                        color: {
-                            border:'red'
-                        }
-                    });
-                }
                 
                 if(layoutDirection==='')
                     network.once("stabilized", function() {
@@ -1848,6 +1946,42 @@
                     network.fit({maxZoomLevel:0.4});
                     lastZoomPosition = network.getViewPosition();
                 }
+                network.setOptions({ interaction: { keyboard: true } });
+            }
+
+            function findCycles(rootNodeLabel) {
+                var visited = {};
+                var stack = {};
+                if(rootNodeLabel in gnodes) {
+                    const rootNodeLabelType=gnodes[rootNodeLabel]['data']['type'];
+                    stack=[{node:rootNodeLabel,prev:null}];
+                    while(stack.length) {
+                        const currentNode = stack.pop();
+                        const currentNodeID     =currentNode['node'];
+                        const currentNodePrev   =currentNode['prev'];
+                        if(currentNodeID in visited) {
+                            // cycle detected
+                            visited[currentNodeID].push(currentNodePrev);
+                            console.log(`${currentNodeID} `);
+                            visited[currentNodeID].forEach(neighbor => {
+                                var cid=visited[neighbor]['node'];
+                                while(cid!=null) {
+                                    console.log(`${cid} `);
+                                    cid=cid=visited[neighbor]['node'];
+                                }
+                            });
+                            continue;
+                        }
+                        // keep back reference
+                        visited[currentNodeID]=[currentNodePrev];
+                        //visited[currentNodeID].push(currentNodePrev);
+                        // stop if we cross type boundary
+                        if(gnodes[currentNodeID]['data']['type']===rootNodeLabelType) {
+                            for(const node of children[currentNodeID])
+                                stack.push({node:node,prev:currentNodeID})
+                        }
+                    }
+                }
             }
             
             $(document).ready(function() {
@@ -1858,6 +1992,7 @@
                 $("#select-need-id").select2({
                     //width: '100%' // need to override the changed default
                     dropdownCssClass : 'bigdrop',
+                    width:'200px'
                 });
                 initSelectFilter();
             });
@@ -2060,6 +2195,7 @@
             function initSelectFilter() {
                 $('#select-filter').select2({
                     dropdownCssClass: 'bigdropFilter',
+                    width:'200px',
                     allowClear: true,
                     placeholder: 'Filters',
                     language: {

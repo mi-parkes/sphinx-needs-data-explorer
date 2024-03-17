@@ -408,6 +408,8 @@ document.write(`
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#powerfull-interactive-data-filtering">Powerfull Interactive Data Filtering</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-in-neighbours-out-neighbours-or-both">Exploring In-Neighbours, Out-Neighbours or both</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-constraint-violations-in-network-transitions">Visualizing Constraint Violations in Network Transitions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#controlling-neighborhood-depth-in-network-visualization">Controlling Neighborhood Depth in Network Visualization</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#switching-between-perspective-views-and-documentation">Switching between Perspective Views and Documentation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interaction">Interaction</a></li>
 </ul>
@@ -437,7 +439,8 @@ document.write(`
 <section id="goals-and-realization">
 <h2>Goals and Realization<a class="headerlink" href="#goals-and-realization" title="Permalink to this heading">#</a></h2>
 <br>
-<object data="_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml"></object><br>
+<p><img alt="" src="_images/sphinx_needs_data_explorer.svg" /></p>
+<br>
 </section>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this heading">#</a></h2>
@@ -486,6 +489,16 @@ be visible and which hidden.</p>
 <section id="exploring-in-neighbours-out-neighbours-or-both">
 <h3>Exploring In-Neighbours, Out-Neighbours or both<a class="headerlink" href="#exploring-in-neighbours-out-neighbours-or-both" title="Permalink to this heading">#</a></h3>
 <p><img alt="" src="_images/sh2.jpg" /></p>
+<br>
+</section>
+<section id="visualizing-constraint-violations-in-network-transitions">
+<h3>Visualizing Constraint Violations in Network Transitions<a class="headerlink" href="#visualizing-constraint-violations-in-network-transitions" title="Permalink to this heading">#</a></h3>
+<p><img alt="" src="_images/scr7.jpg" /></p>
+<br>
+</section>
+<section id="controlling-neighborhood-depth-in-network-visualization">
+<h3>Controlling Neighborhood Depth in Network Visualization<a class="headerlink" href="#controlling-neighborhood-depth-in-network-visualization" title="Permalink to this heading">#</a></h3>
+<p><img alt="" src="_images/depthview.gif" /></p>
 <br>
 </section>
 <section id="switching-between-perspective-views-and-documentation">
@@ -572,6 +585,23 @@ needs_build_json = True
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">sphinx_needs_data_explorer</span></code> Help lists all attributes found in your project that can be used for data filtering.</p>
 <p><img alt="" src="_images/help1.jpg" /></p>
+<p>Visualizing Constraint Violations in Network Transitions:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sphinx_needs_data_explorer_config = {
+    &quot;valid-linkage-color&quot;:&quot;Black&quot;,
+    &quot;invalid-linkage-color&quot;:&quot;OrangeRed&quot;,
+    &quot;valid-linkage&quot;:{
+        &#39;need&#39;: {
+            &#39;need&#39;:&#39;refinement&#39;
+        },
+        &#39;feat&#39;: {
+            &#39;fear&#39;:&#39;refinement&#39;,
+            &#39;need&#39;:&#39;links&#39;
+        },
+        ...
+    }
+}
+</pre></div>
+</div>
 </section>
 <section id="test-it-in-action">
 <h2>Test it in Action<a class="headerlink" href="#test-it-in-action" title="Permalink to this heading">#</a></h2>
@@ -619,6 +649,8 @@ needs_build_json = True
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#powerfull-interactive-data-filtering">Powerfull Interactive Data Filtering</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-in-neighbours-out-neighbours-or-both">Exploring In-Neighbours, Out-Neighbours or both</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-constraint-violations-in-network-transitions">Visualizing Constraint Violations in Network Transitions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#controlling-neighborhood-depth-in-network-visualization">Controlling Neighborhood Depth in Network Visualization</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#switching-between-perspective-views-and-documentation">Switching between Perspective Views and Documentation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interaction">Interaction</a></li>
 </ul>

@@ -37,7 +37,7 @@ skinparam DefaultTextAlignment center
 
 top to bottom direction
 'right to left direction
-scale 0.5
+scale 0.45
 !$rootColor="#Orange"
 
 !procedure $mcolor($arg1,$arg2)
@@ -45,12 +45,6 @@ scale 0.5
 !endprocedure
 
 *[$rootColor] sphinx_needs_data_explorer
-**[#lightgreen] Open Source Project\navailable in
-*** Github
-*** PYPI
-**[#lightgreen] Platforms
-*** Windows +10
-*** Linux
 **[#lightgreen] [[ https://www.sphinx-doc.org/en/master/ Sphinx ]]
 *** Sphinx Extension
 ****[#LightSkyBlue] Documentation
@@ -67,7 +61,14 @@ scale 0.5
 ******* Library for creating\nand managing user input
 ****** [[ https://github.com/jquery/jquery jQuery ]]
 ******* DOM manipulation library
-
+****** [[ https://github.com/DataTables/DataTablesSrc DataTables ]]
+******* HTML table enhancing library
 ****[#LightSkyBlue] Complement to Sphinx-Needs
+**[#lightgreen] Open Source Project\navailable in
+*** Github
+*** PYPI
+**[#lightgreen] Platforms
+*** Windows +10
+*** Linux
 
 @endmindmap

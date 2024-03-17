@@ -1,6 +1,14 @@
 .ONESHELL:
 SHELL=/bin/bash
 
+UNAME := $(shell uname 2>/dev/null || echo Windows)
+
+ifeq ($(UNAME),Linux)
+endif
+
+ifeq ($(UNAME),Darwin)
+endif
+
 help:
 	echo "$(MAKE) install         # Rebuild and reinstall sphinx_needs_data_explorer"
 	echo "$(MAKE) installx        # Reinstall sphinx_needs_data_explorer in active virtual environment"
@@ -57,11 +65,15 @@ webserver:
 show:
 	open http://localhost:$(WEBSERVERPORT)
 
+ifeq ($(UNAME),Darwin)
 gshow:
+	open -a '/Applications/Google Chrome.app' http://localhost:$(WEBSERVERPORT)
+
+gshowx:
 	open -a '/Applications/Google Chrome.app' http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html
+endif
 
 show-session:
-	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=req&filter=status%3D%3D%27implemented%27&id=R_00005+-+Title+of+%27R_00005%27&layout=&view=2"
-
+	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=any&filter=&id=F00016+-+Title+of+%27F00016%27&layout=DU&view=2&viewModeMaxDepth=2&mode=0"
 -include ../tests.mak
 

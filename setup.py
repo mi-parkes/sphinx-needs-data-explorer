@@ -5,7 +5,7 @@ with open('README_pypi.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='sphinx-needs-data-explorer',
-    version='0.8.8',
+    version='0.8.9',
     packages=find_packages(),
     author='Michael Parkes',
     author_email='mparkes@post.cz',

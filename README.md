@@ -177,7 +177,7 @@ Visualizing Constraint Violations in Network Transitions:
                 'need':'refinement'
             },
             'feat': {
-                'fear':'refinement',
+                'feat':'refinement',
                 'need':'links'
             },
             ...

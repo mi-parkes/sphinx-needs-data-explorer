@@ -8,7 +8,7 @@ The `sphinx_needs_data_explorer` is a web application written in HTML, CSS, and 
 
 <br>
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/sphinx_needs_data_explorer.svg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/sphinx_needs_data_explorer.svg)
 
 <br>
 
@@ -29,7 +29,7 @@ You can choose **network layout**
 - hierarchical right-to-left
 - hierarchical with repulsion
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/network-perspective.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/network-perspective.jpg)
 
 <br>
 
@@ -37,33 +37,52 @@ You can choose **network layout**
 In Table-View-Perspective you can see sphinx-needs data in table. You can select which columns should
 be visible and which hidden.
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/table-perspective.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/table-perspective.jpg)
 
 <br>
 
 #### `File-View`
 In File-View-Perspective, you can see a list of files in which Sphinx-needs data were found.
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/file-perspective.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/file-perspective.jpg)
 
 <br>
 
 ### Powerfull Interactive Data Filtering
 You can predefine filtering expressions during documentation generation or interactively while browsing documentation, and apply the data filtering across all three view perspectives.
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/data-filtering.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/data-filtering.jpg)
+
+
+<br>
+
+You can use attribute lookup table while writing your filters.
+
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/scr6.jpg)
 
 <br>
 
 ### Exploring In-Neighbours, Out-Neighbours or both
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/sh2.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/sh2.jpg)
+
+<br>
+
+### Visualizing Constraint Violations in Network Transitions 
+
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/scr7.jpg)
+
+<br>
+
+### Controlling Neighborhood Depth in Network Visualization
+
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/depthview.gif)
 
 <br>
 
 ### Switching between Perspective Views and Documentation
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/sh3.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/sh3.jpg)
 
 <br>
 
@@ -119,7 +138,7 @@ or you can include it only if the extension is available in your virtual environ
 If your project uses [sphinx_book_theme](https://github.com/executablebooks/sphinx-book-theme),
 `sphinx_needs_data_explorer` supports full integration in your documentation by adding `E` header button accesible from any documentation page.
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/E-header-button-doc.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/E-header-button-doc.jpg)
 
 Otherwise, you can create hyperlink to `sphinx_needs_data_explorer` by adding the following role in your .rst file(s)
 
@@ -147,4 +166,22 @@ You can predefine filtering expressions to populate the filter drop-down list:
 
 `sphinx_needs_data_explorer` Help lists all attributes found in your project that can be used for data filtering.
 
-![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_static/images/help1.jpg)
+![](https://mi-parkes.github.io/sphinx-needs-data-explorer/_images/help1.jpg)
+
+Visualizing Constraint Violations in Network Transitions:
+
+    sphinx_needs_data_explorer_config = {
+        "valid-linkage-color":"Black",
+        "invalid-linkage-color":"OrangeRed",
+        "valid-linkage":{
+            'need': {
+                'need':'refinement'
+            },
+            'feat': {
+                'feat':'refinement',
+                'need':'links'
+            },
+            ...
+        }
+    }
+

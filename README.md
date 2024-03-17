@@ -66,6 +66,13 @@ You can use attribute lookup table while writing your filters.
 
 <br>
 
+### Visualizing Constraint Violations in Network Transitions 
+
+![](doc/source/_static/images/scr7.jpg)
+
+<br>
+
+
 ### Switching between Perspective Views and Documentation
 
 ![](doc/source/_static/images/sh3.jpg)

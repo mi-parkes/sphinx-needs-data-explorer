@@ -51,6 +51,7 @@ WEBSERVERPORT=8080
 
 webserver:
 	docker ps | awk '$$NF=="sphinx_needs_data_explorer"{print "docker stop "$$1}' | bash
+	sleep 1
 	docker run -it --rm -d -p $(WEBSERVERPORT):80 --name sphinx_needs_data_explorer -v $$PWD/doc/build/html:/usr/share/nginx/html nginx
 
 show:

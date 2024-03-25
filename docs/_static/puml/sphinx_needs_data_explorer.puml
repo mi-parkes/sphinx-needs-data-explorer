@@ -2,7 +2,9 @@
 
 'rankdir=LR nodesep=20
 
-skinparam defaultFontSize 30%
+'skinparam nodesep 50%
+'skinparam ranksep 50%
+skinparam defaultFontSize 40%
 skinparam DefaultTextAlignment center
 
 /'
@@ -30,6 +32,8 @@ skinparam DefaultTextAlignment center
 <style>
   mindmapDiagram {
    node {
+    Padding 30
+    Margin 65
     'MinimumWidth 100
     MaximumWidth 300
   }
@@ -65,10 +69,11 @@ scale 0.45
 ******* HTML table enhancing library
 ****[#LightSkyBlue] Complement to Sphinx-Needs
 **[#lightgreen] Open Source Project\navailable in
-*** Github
-*** PYPI
+*** [[ https://github.com/mi-parkes/sphinx-needs-data-explorer Github ]]
+*** [[ https://pypi.org/project/sphinx-needs-data-explorer PYPI ]]
 **[#lightgreen] Platforms
-*** Windows +10
 *** Linux
+*** Mac OS X
+*** Windows +10
 
 @endmindmap

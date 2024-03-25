@@ -54,17 +54,20 @@ class Node {
             //  '..' in attr
             case "in_1":
                 ret=(this.right['value'] in currentNode['data']) && 
+                    currentNode['data'][this.right['value']] &&
                     currentNode['data'][this.right['value']].includes(this.left['value']);
                 // console.log(`${this.left} in ${this.right} = ${ret}`);
                 break;                
             // attr in ['..','..']
             case "in_3":
                 ret=(this.left['value'] in currentNode['data']) && 
+                    currentNode['data'][this.left['value']] &&
                     this.right['value'].split(",").includes(currentNode['data'][this.left['value']]);
                 break;
             // ['..','..'] in attr
             case "in_4":
-                ret=(this.right['value'] in currentNode['data']) && 
+                ret=(this.right['value'] in currentNode['data']) &&
+                    currentNode['data'][this.right['value']] &&
                     this.left['value'].split(",").some(v=> currentNode['data'][this.right['value']].includes(v))
                 break;
             // '..' == attr 
@@ -164,14 +167,46 @@ class Node {
             case "EOL":
                 ret=true;
                 break;
+            // attr ~ '/RegEx/'
             case "~":
                 //console.log(`${this.left} in ${this.right} = ${ret}`);
                 // var re = new RegExp("a|b", "i");
+                //data[data.length-1]['outgoing']=parents[id];
+                //data[data.length-1]['incoming']=children[id];
+                //  any(id~/req_arc/,outgoing)
+                if(!this.left['value'])
+                    break;
                 var re = new RegExp(this.right['value']);
-                ret=(this.left['value'] in currentNode['data']) && 
-                (currentNode['data'][this.left['value']].match(re));
-                if(ret) {
-                    //console.log(currentNode['data'][this.left]);
+                const cid=currentNode['data']['id'];
+                if(this.left['value']=='incoming') {
+                    for(const cur of children[cid]) {
+                        ret=cur.match(re);
+                        if(ret)
+                            return ret;
+                    }
+                }
+                else
+                if(this.left['value']=='outgoing') {
+                    for(const cur of parents[cid]) {
+                        ret=cur.match(re);
+                        if(ret)
+                            return ret;
+                    }
+                } this.else
+                if(this.left['value'] in currentNode['data']) {
+                    var type=typeof currentNode['data'][this.left['value']];
+                    if(type==='object')
+                        type=Array.isArray(currentNode['data'][this.left['value']])?'array':'object';
+                    if(type === 'string')
+                        ret=currentNode['data'][this.left['value']].match(re);
+                    else 
+                    if(type === 'array') {
+                        for(const cur of currentNode['data'][this.left['value']]) {
+                            ret=cur.match(re);
+                            if(ret)
+                                return ret;
+                        }
+                    }
                 }
                 break;
             case "~i":
@@ -179,6 +214,7 @@ class Node {
                 // var re = new RegExp("a|b", "i");
                 var re = new RegExp(this.right['value'],'i');
                 ret=(this.left['value'] in currentNode['data']) && 
+                currentNode['data'][this.left['value']] &&
                 (currentNode['data'][this.left['value']].match(re));
                 if(ret) {
                     //console.log(currentNode['data'][this.left]);
@@ -215,7 +251,7 @@ function prepareParser() {
         start = expr
         ws = ws:[ \t]* { return ws.join("").length>0?" ":""}
         newline = [ \\t\\n\\r]* { return { left: "", right: "", operand: "EOL" } }
-        QuotedString = "'" text:[A-Za-z0-9_/\\-]* "'" { 
+        QuotedString = "'" text:[A-Za-z0-9_/\\-\.]* "'" {
             return {'value':text.join(""),'location':location(),'type':'qs'};
         }
 
@@ -224,6 +260,8 @@ function prepareParser() {
         LOperator = "&&" / "||"
 
         expr =  exprz0 / expr0 / exprz2 / exprz1
+
+        //exprNeg = "!" / ""
 
         exprz1="(" ws r:expr ws ")" {
             return { left: {'value':'','type':'empty'}, right: r, operand: "()" }

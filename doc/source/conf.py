@@ -104,12 +104,13 @@ def copy_and_modify_readme_md(app, docname, source):
         ofilename = os.path.join(app.srcdir,'_README.txt')
         with open(ifilename,encoding='utf-8') as thefile:
             content = thefile.read()
-            replacedText = content.replace('doc/source/images','images')
-            # This needs to be redesigned!!!
-            replacedText = replacedText.replace('''![](doc/source/images/sphinx_needs_data_explorer.svg)''',
+            replacedText = content.replace('''![](doc/source/images/sphinx_needs_data_explorer.svg)''',
             """```{raw} html
-<object data="images/sphinx_needs_data_explorer.svg" type="image/svg+xml"></object>
+<object data="_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml" style="width:1000px;background:#FFFFFF;"></object>
 ```""")
+
+            replacedText = replacedText.replace('doc/source/images','images')
+            # This needs to be redesigned!!!
             if replacedText!=content:
                 print(f"Creating {colorize('darkgreen',ofilename)}")
                 with open(ofilename,'w',encoding='utf-8') as thefile:

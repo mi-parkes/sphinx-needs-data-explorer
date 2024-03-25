@@ -51,13 +51,17 @@ class Node {
         var ret=false;
         // console.log(`" --> ${this.operand}"`);
         switch (this.operand) {
+            // ! (..)
+            case "!":
+                ret=!((this.isObject(this.right) ? this.cast(this.right).evaluate(currentNode) : this.right['value']));
+                break;
             //  '..' in attr
             case "in_1":
                 ret=(this.right['value'] in currentNode['data']) && 
                     currentNode['data'][this.right['value']] &&
                     currentNode['data'][this.right['value']].includes(this.left['value']);
                 // console.log(`${this.left} in ${this.right} = ${ret}`);
-                break;                
+                break;
             // attr in ['..','..']
             case "in_3":
                 ret=(this.left['value'] in currentNode['data']) && 
@@ -261,10 +265,20 @@ function prepareParser() {
 
         expr =  exprz0 / expr0 / exprz2 / exprz1
 
-        //exprNeg = "!" / ""
+        //exprNeg1 = "!" { return { left:{'value':'','type':'empty'}, right:null, operand: "!" } }
+        //exprNeg2 = 
+        exprNeg = "!" { return { left:{'value':'','type':'empty'}, right:null, operand: "!" } } / ""
 
-        exprz1="(" ws r:expr ws ")" {
-            return { left: {'value':'','type':'empty'}, right: r, operand: "()" }
+        exprz1= n:exprNeg ws "(" ws r:expr ws ")" {
+            const out= {
+                left: {'value':'','type':'empty'}, right: r, operand: "()" 
+            }
+            if(typeof n === 'string')
+                return out
+            else {
+                n['right']=out
+                return n
+            }
         }
         
         exprz2="(" ws l:expr ws ")" ws o:LOperator ws r:expr {

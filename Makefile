@@ -28,6 +28,7 @@ doc/.venv:
 	python3 -m venv doc/.venv
 	source doc/.venv/bin/activate
 	pip install -r doc/requirements.txt
+	pip install --upgrade pip
 
 install: doc/.venv
 	source doc/.venv/bin/activate

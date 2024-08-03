@@ -575,14 +575,16 @@
                         if(link_type in needs[key])
                             jsonData['data'][link_type]=needs[key][link_type]
                     }
-
-                    jsonData["shape"]='box'
-                    jsonData["id"]=needs[key].id
-                    jsonData["label"]=needs[key].id
+                    // if(key==='N00027') {
+                    //     jsonData["shape"]='box';
+                    // }
+                    jsonData['shape']='box'
+                    jsonData['id']=needs[key].id
+                    jsonData['label']=needs[key].id
                     //jsonData["size"]= { width: 30, height: 30 } }
-                    jsonData["title"]=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\nstatus=${needs[key]['status']}\ntitle=${needs[key]['title']}`
-                    jsonData["title-html"]=`<b>type</b>=${needs[key]['type']}<br>`
-                    jsonData["title-html"]=`
+                    jsonData['title']=`id=${needs[key]['id']}\ntype=${needs[key]['type']}\nstatus=${needs[key]['status']}\ntitle=${needs[key]['title']}`
+                    jsonData['title-html']=`<b>type</b>=${needs[key]['type']}<br>`
+                    jsonData['title-html']=`
                     <table class="ack-table">
                         <thead>
                         <tr>
@@ -609,11 +611,16 @@
                     `
                     //
                     if(needs[key].type in type2color) {
-                        jsonData["color"]=type2color[needs[key].type];
+                        jsonData['color']=type2color[needs[key].type];
                     } else {
-                        jsonData["color"]='white'
+                        jsonData['color']='white'
                     }
                     gnodes[key]=jsonData
+                    // if(key==='N00027') {
+                    //     for(let k in gnodes[key]) {
+                    //         console.log(`${key} -> ${k} -> ${gnodes[key][k]}`);
+                    //     }
+                    // }
                 }
 
                 if(Object.keys(gnodes).length>0) {
@@ -635,7 +642,8 @@
                     // synthetic attributes
                     att='outgoing'
                     $("#help-attributes").append(`<tr>
-                            <td class="att-td">${att}</td>
+                            <td class="a
+                            tt-td">${att}</td>
                             <td class="att-td">${typeof parents[firstKey]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
                     autocompletionAttributes.push(`${att} (array)`);
@@ -1222,7 +1230,8 @@
                             var id = properties.nodes[0];
                             var clickedNode = nodes.get(id);
                             //document.getElementById('tooltip-window').value     = clickedNode['title'];
-                            document.getElementById('tooltip-window').innerHTML = clickedNode['title-html'];
+                            //document.getElementById('tooltip-window').innerHTML = clickedNode['title-html'];
+                            document.getElementById('tooltip-window').innerHTML = gnodes[id]['title-html']
                         }
                     } else {
                         document.getElementById('tooltip-window').value     = '';
@@ -1498,7 +1507,8 @@
                     if(event.key==='r'||event.key==='R') {
                         event.preventDefault();
                         if(network!=null)
-                            network.fit({maxZoomLevel:0.4});
+                            //network.fit({maxZoomLevel:0.4});
+                            network.fit();
                         return;
                     }
                     if(event.key==='v'||event.key==='V') {

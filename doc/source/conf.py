@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 project = 'Sphinx Needs Data Explorer'
 copyright = '2024, MP'
 author  = 'MP'
-release = '0.8.9'
-version = '0.8.9'
+release = '0.9.0'
+version = '0.9.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 

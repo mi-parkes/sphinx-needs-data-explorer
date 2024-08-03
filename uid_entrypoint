@@ -1,0 +1,20 @@
+#!/bin/bash
+if [ "$VERBOSE" == "true" ]; then
+    echo "Current shell path:$SHELL"
+    set -x
+fi
+if [ ! -d myvenv ]; then
+    python3 -m venv myvenv
+    source myvenv/bin/activate
+    if [ -f requirements.txt ]; then
+        pip install -r requirements.txt
+    else
+        ls -l /tmp/requirements.txt
+        pip install -r /tmp/requirements.txt
+    fi
+    python -m pip install --upgrade pip
+else
+    source myvenv/bin/activate
+fi
+pwd
+exec /usr/bin/bash

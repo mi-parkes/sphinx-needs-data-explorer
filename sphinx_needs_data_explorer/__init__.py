@@ -7,8 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
 
-__version__ = "0.8.9"
-version_info = (0,8,9)
+__version__ = "0.9.0"
+version_info = (0,9,0)
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +120,14 @@ def add_files(app, config):
         valid_linkage={}
         valid_linkage_color='black'
         invalid_linkage_color='red'
+
+        for item in getattr(app.config,"needs_external_needs",[]):
+            if 'base_url' in item:
+                if 'json_url' in item:
+                    logger.debug(f"json_url: {item['json_url']}")
+                elif 'json_path' in item:
+                    logger.debug(f"json_path: {item['json_path']}")
+
         if 'sphinx_needs_data_explorer_config' in app.config:
             if 'filters' in app.config['sphinx_needs_data_explorer_config']:
                 filters=app.config['sphinx_needs_data_explorer_config']['filters']

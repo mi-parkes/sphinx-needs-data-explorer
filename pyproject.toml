@@ -44,7 +44,7 @@ doc = "cd doc && sphinx-build -M html source build"
 [tool.black]
 line-length = 88
 target-version = ['py38']
-include = '\.pyi?$'
+include = 'sphinx_needs_data_explorer\/.*\.pyi?$'
 extend-exclude = '''
 /(
   # Exclude Example

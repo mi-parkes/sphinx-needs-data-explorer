@@ -1,4 +1,4 @@
-name: Package and Documentation Generation
+name: github pages
 
 on:
   workflow_dispatch:

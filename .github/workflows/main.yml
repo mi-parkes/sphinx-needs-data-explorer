@@ -1,0 +1,16 @@
+name: Package and Documentation Generation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  pages: write
+
+jobs:
+  ci:
+    uses: mi-parkes/custom-reusable-workflow/.github/workflows/ci-python.yml@main
+    with:
+      python-version: '3.12'
+      coverage: false
+      doc: true

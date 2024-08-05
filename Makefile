@@ -28,6 +28,7 @@ doc/.venv:
 	python3 -m venv doc/.venv
 	source doc/.venv/bin/activate
 	pip install -r doc/requirements.txt
+	pip install --upgrade pip
 
 install: doc/.venv
 	source doc/.venv/bin/activate
@@ -77,3 +78,36 @@ show-session:
 	open "http://localhost:$(WEBSERVERPORT)/_static/sphinx_needs_data_explorer.html?type=any&filter=&id=F00016+-+Title+of+%27F00016%27&layout=DU&view=2&viewModeMaxDepth=2&mode=0"
 -include ../tests.mak
 
+new-install:
+	$(eval VENV=.venv)
+	python3 -m venv $(VENV)
+	source $(VENV)/bin/activate
+	python -m pip install --upgrade pip
+	pip install poetry
+
+	echo source $(VENV)/bin/activate
+
+test-package:
+	$(eval WDIR=/tmp/test)
+	mkdir -p $(WDIR)
+	rm -rf $(WDIR)/*
+	cd $(WDIR)
+	git clone -b new-features5 --single-branch \
+			https://github.com/mi-parkes/sphinx-needs-data-explorer.git
+	cd sphinx-needs-data-explorer
+#	cp $(CURDIR)/pyproject.toml .
+	python3 -m venv .venv
+	source .venv/bin/activate
+	python -m pip install --upgrade pip
+	pip install poetry
+	poetry install
+	poetry build
+	poetry run task doc
+
+test-package-show:
+	$(eval WDIR=/tmp/test)
+	cd $(WDIR)/sphinx-needs-data-explorer
+	$(MAKE) webserver show
+
+show-package:
+	tar -tvf dist/sphinx_needs_data_explorer-0.9.0.tar.gz

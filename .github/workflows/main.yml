@@ -1,15 +1,7 @@
 name: CI with Reusable Python Workflow
 
 on:
-  # push:
-  #   branches:
-  #     - main
   workflow_dispatch:
-
-  #     - Init
-  # pull_request:
-  #   branches:
-  #     - main
 
 permissions:
   id-token: write

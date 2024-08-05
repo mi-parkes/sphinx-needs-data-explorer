@@ -40,6 +40,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.taskipy.tasks]
 doc = "cd doc && sphinx-build -M html source build"
+black = "poetry run -vvv black ."
 
 [tool.black]
 line-length = 88

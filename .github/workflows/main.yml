@@ -1,4 +1,4 @@
-name: Package and Documentation Generation
+name: github-pages-feature5
 
 on:
   workflow_dispatch:

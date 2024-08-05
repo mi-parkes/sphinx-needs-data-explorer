@@ -1,7 +1,6 @@
 name: CI with Reusable Python Workflow
 
-on:
-  workflow_dispatch:
+on:[workflow_dispatch]
 
 permissions:
   id-token: write

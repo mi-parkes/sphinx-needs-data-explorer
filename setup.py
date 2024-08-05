@@ -1,16 +1,16 @@
 from setuptools import setup, find_packages
 
-with open('README_pypi.md', 'r', encoding='utf-8') as f:
+with open("README_pypi.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
-    name='sphinx-needs-data-explorer',
-    version='0.8.9',
+    name="sphinx-needs-data-explorer",
+    version="0.8.9",
     packages=find_packages(),
-    author='Michael Parkes',
-    author_email='mparkes@post.cz',
-    description='Sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data',
-    url='https://github.com/mi-parkes/sphinx-needs-data-explorer',
+    author="Michael Parkes",
+    author_email="mparkes@post.cz",
+    description="Sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data",
+    url="https://github.com/mi-parkes/sphinx-needs-data-explorer",
     license="MIT License",
     package_data={
         "sphinx_needs_data_explorer": [
@@ -32,12 +32,12 @@ setup(
             "_static/vis-network/vis-network.min.js.map",
             "_static/vis-network/LICENSE-APACHE-2.0",
             "_static/vis-network/package.json",
-            "_static/vis-network/LICENSE-MIT"
+            "_static/vis-network/LICENSE-MIT",
         ]
     },
     include_package_data=True,
     python_requires=">=3.10",
     install_requires=["Sphinx>=5.3.0"],
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type="text/markdown",
 )

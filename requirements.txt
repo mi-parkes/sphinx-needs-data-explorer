@@ -1,0 +1,2 @@
+poetry
+pre-commit>=3.0.0

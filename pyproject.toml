@@ -1,0 +1,60 @@
+[project]
+license = {file = "LICENSE"}
+
+[tool.poetry]
+name = "sphinx_needs_data_explorer"
+version = "0.9.0"
+description = "Sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data"
+authors = ["Michael Parkes <mparkes@post.cz>"]
+readme = "README.md"
+license = "MIT"
+#homepage = "https://python-poetry.org/"
+repository = "https://github.com/mi-parkes/sphinx_needs_data_explorer"
+documentation = "https://mi-parkes.github.io/sphinx_needs_data_explorer/"
+exclude = [
+    "build/*",
+    "dist/*",
+    "doc/*",
+    "myvenv/*"
+]
+
+[tool.poetry.dependencies]
+python              = "^3.12"
+Sphinx              = ">=6.1.3"
+
+[tool.poetry.group.dev.dependencies]
+taskipy             = ">=1.11.0"
+black               = ">=24.1.0"
+
+[tool.poetry.group.doc.dependencies]
+sphinx-book-theme       = "1.0.1"
+myst_parser             = ">=2.0.0"
+GitPython               = ">=3.1.10"
+sphinxcontrib-plantuml  = "0.24"
+sphinx-needs            = "2.0.0"
+sphinx-copybutton       = "0.5.2"
+#sphinx-needs-data-explorer= {path = "./", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.taskipy.tasks]
+doc = "cd doc && sphinx-build -M html source build"
+black = "poetry run -vvv black ."
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = 'sphinx_needs_data_explorer\/.*\.pyi?$'
+extend-exclude = '''
+/(
+  # Exclude Example
+  tests
+  | build/
+  | dist/
+  | myvenv/
+  | profiling/
+  | scripts/generate_schema.py
+)
+'''

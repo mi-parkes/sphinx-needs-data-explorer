@@ -1,4 +1,4 @@
-name: CI with Reusable Python Workflow
+name: Package and Documentation Generation
 
 on: [workflow_dispatch]
 

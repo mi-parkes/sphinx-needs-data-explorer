@@ -104,5 +104,10 @@ test-package:
 	poetry build
 	poetry run task doc
 
+test-package-show:
+	$(eval WDIR=/tmp/test)
+	cd $(WDIR)/sphinx-needs-data-explorer
+	$(MAKE) webserver show
+
 show-package:
 	tar -tvf dist/sphinx_needs_data_explorer-0.9.0.tar.gz

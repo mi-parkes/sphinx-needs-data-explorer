@@ -1,6 +1,7 @@
 name: Package and Documentation Generation
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 permissions:
   id-token: write

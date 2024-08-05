@@ -1,0 +1,11 @@
+{
+	"name": "Python Environment",
+	// "image": "sphinx-ubuntu-24.04:0.2",
+	"build": {
+	 	"dockerfile": "Dockerfile",
+	 	"context": ".."
+	 },
+	"workspaceFolder": "/workspace",
+  	"runArgs": ["-v", "${localWorkspaceFolder}:/workspace"],
+	"postCreateCommand": "./uid_entrypoint"
+}

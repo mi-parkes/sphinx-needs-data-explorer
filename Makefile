@@ -1,5 +1,6 @@
 .ONESHELL:
 SHELL=/bin/bash
+.SHELLFLAGS = -e -c
 
 UNAME := $(shell uname 2>/dev/null || echo Windows)
 
@@ -86,6 +87,9 @@ new-install:
 	pip install poetry
 
 	echo source $(VENV)/bin/activate
+
+test-package-cur:
+	$(MAKE) test-package BRANCH=`git branch | awk '$$1=="*"{print $$2}'`
 
 test-package:
 	$(eval WDIR=/tmp/test)

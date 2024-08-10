@@ -1,26 +1,35 @@
 {
-	"name": "sphinx-needs-data-explorer dev env",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": ".."
-	},
-	"workspaceFolder": "/workspace",
-	"runArgs": [
-		"-v",
-		"${localWorkspaceFolder}:/workspace",
-		// "--rm",
-		"--name","sphinx-needs-data-explorer-dc"
-	],
-	"postCreateCommand": "./uid_entrypoint",
-	"mounts": [
-		"source=/etc/localtime,target=/usr/share/zoneinfo/hostlocaltime,type=bind,readonly"
-	],
-	"containerEnv": {
-		"TZ": "Europe/Berlin",
-		"GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
-		"GITHUB_USER": "${localEnv:GITHUB_USER}",
-		"LC_ALL": "en_US.UTF-8",
-		"LANG": "en_US.UTF-8",
-		"LANGUAGE": "en_US.UTF-8"
-	}
+  "name": "sphinx-needs-data-explorer-development-environment",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/workspace",
+  "runArgs": [
+    "-v",
+    "${localWorkspaceFolder}:/workspace",
+    // "--rm",
+    "--name",
+    "sphinx-needs-data-explorer-dc"
+  ],
+  "postCreateCommand": "./uid_entrypoint",
+  "mounts": [
+    "source=/etc/localtime,target=/usr/share/zoneinfo/hostlocaltime,type=bind,readonly"
+  ],
+  "containerEnv": {
+    "TZ": "Europe/Berlin",
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+    "GITHUB_USER": "${localEnv:GITHUB_USER}",
+    "LC_ALL": "en_US.UTF-8",
+    "LANG": "en_US.UTF-8",
+    "LANGUAGE": "en_US.UTF-8"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.debugpy"
+      ]
+    }
+  }
 }

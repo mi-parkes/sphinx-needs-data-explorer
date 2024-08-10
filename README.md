@@ -103,9 +103,12 @@ Alternatively (Linux)
     
     python3 -m venv .venv
     source .venv/bin/activate
-    pip install -r doc/requirements.txt
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
     
-    python3 -m build --wheel
+    poetry install
+    poetry build
+    poetry run task doc
     pip install dist/sphinx_needs_data_explorer*.whl
 
 ## Activation

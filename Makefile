@@ -89,10 +89,11 @@ new-install:
 
 test-package:
 	$(eval WDIR=/tmp/test)
+	$(eval BRANCH=new-features5)
 	mkdir -p $(WDIR)
 	rm -rf $(WDIR)/*
 	cd $(WDIR)
-	git clone -b new-features5 --single-branch \
+	git clone -b $(BRANCH) --single-branch \
 			https://github.com/mi-parkes/sphinx-needs-data-explorer.git
 	cd sphinx-needs-data-explorer
 #	cp $(CURDIR)/pyproject.toml .
@@ -111,3 +112,6 @@ test-package-show:
 
 show-package:
 	tar -tvf dist/sphinx_needs_data_explorer-0.9.0.tar.gz
+
+clean-dc:
+	docker images | awk '$$1=="<none>"{print "docker rmi "$$3}' | bash

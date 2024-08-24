@@ -40,8 +40,11 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.taskipy.tasks]
-doc = "cd doc && sphinx-build -M html source build"
-black = "poetry run -vvv black ."
+help      = { cmd = "task --list", help="Show this help" }
+doc       = { cmd = "cd doc && sphinx-build -M html source build", help = "Generate the package documentation using Sphinx." }
+black     = { cmd = "poetry run -vvv black .", help = "Apply the Black code formatter to the package's source tree." }
+clean     = { cmd = "rm -rf build dist doc/build", help = "Remove all intermediate and output files." }
+clean-doc = { cmd = "rm -rf doc/build" , help = "Remove all intermediate and output documentation files."}
 
 [tool.black]
 line-length = 88

@@ -1,0 +1,15 @@
+{
+  "esbonio.sphinx.buildDir": "${workspaceFolder}/_build/html",
+  "esbonio.sphinx.confDir": "${workspaceFolder}/doc/source",
+  "esbonio.server.showDeprecationWarnings": "false",
+  "esbonio.server.enabled": true,
+  "sphinx.quiet": true,
+  "sphinx.silent": true,
+  "sphinx.verbosity": 0,
+  "restructuredtext.syntaxHighlighting.disabled": true,
+  "plantuml.exportOutDir": "${workspaceFolder}/out",
+  "plantuml.exportSubFolder": false,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false
+}

@@ -1,0 +1,28 @@
+{
+    "version": "0.3.0",
+    "configurations": [
+        {
+            "name": "Python: Sphinx Module",
+            "type": "debugpy",
+            "purpose": [
+                "debug-in-terminal"
+            ],
+            "request": "launch",
+            "module": "sphinx",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "stopOnEntry": true,
+            "args": [
+                "-b",
+                "html",
+                "source",
+                "build",
+                "-Ea"
+            ],
+            "cwd": "${workspaceFolder}/doc",
+            "env": {
+                "TEST": "true",
+            }
+        },
+    ]
+}

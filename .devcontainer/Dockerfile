@@ -1,6 +1,5 @@
 FROM ubuntu:24.04
 
-ARG CACHEBUST=1
 ARG PLANTUML_VERSION=1.2024.6
 ARG PYTHON_VERSION=3.12
 
@@ -32,8 +31,10 @@ RUN DEBIAN_FRONTEND=noninteractive  apt install -y \
     python3-pip-whl \
     python3-pip
 
+RUN apt install -y pipx 
+
 RUN mkdir -p /usr/share/plantuml
-RUN wget --no-check-certificate \
+RUN wget  \
     https://github.com/plantuml/plantuml/releases/download/v${PLANTUML_VERSION}/plantuml-mit-${PLANTUML_VERSION}.jar \
     -O /usr/share/plantuml/plantuml.jar
 
@@ -42,8 +43,11 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTH
 COPY ./uid_entrypoint /usr/local/bin/
 RUN chmod 777 /usr/local/bin/uid_entrypoint
 
-COPY requirements.txt /tmp/requirements.txt
+ENV PIPX_HOME=/opt/pipx \
+    PIPX_BIN_DIR=/usr/local/bin
+
+RUN pipx ensurepath
+RUN pipx install poetry==1.8.0
 
 USER ubuntu
-
 ENTRYPOINT [ "uid_entrypoint"]

@@ -1,7 +1,7 @@
 Sphinx Needs Data Explorer
 ==========================
 
-.. include:: _README.txt
+.. include:: ../../README.md
    :parser: myst_parser.sphinx_
 
 ..

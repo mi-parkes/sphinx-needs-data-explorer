@@ -39,6 +39,7 @@ RUN wget  \
     -O /usr/share/plantuml/plantuml.jar
 
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 311
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 COPY ./uid_entrypoint /usr/local/bin/
 RUN chmod 777 /usr/local/bin/uid_entrypoint

@@ -78,52 +78,6 @@ else:
 
 suppress_warnings = ["myst.header"]
 
-
-def setup(app):
-    app.connect("source-read", copy_and_modify_readme_md)
-    app.connect("build-finished", build_finished)
-    app.connect("config-inited", config_inited)
-
-
-def config_inited(app, config):
-    pass
-
-
-def build_finished(app, docname):
-    return
-    ofilename = os.path.join(app.srcdir, "_README.txt")
-    try:
-        print(f"Removing {colorize('darkgreen',ofilename)}")
-        os.remove(ofilename)
-    except FileNotFoundError:
-        print("File not found:", ofilename)
-    except PermissionError:
-        print("Insufficient permissions to delete file:", ofilename)
-    except OSError as error:
-        print("Error deleting file:", error)
-
-
-def copy_and_modify_readme_md(app, docname, source):
-    if docname == "index":
-        ifilename = os.path.join(app.srcdir, "..", "..", "README.md")
-        ofilename = os.path.join(app.srcdir, "_README.txt")
-        with open(ifilename, encoding="utf-8") as thefile:
-            content = thefile.read()
-            replacedText = content.replace(
-                """![](doc/source/images/sphinx_needs_data_explorer.svg)""",
-                """```{raw} html
-<object data="_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml" style="width:1000px;background:#FFFFFF;"></object>
-```""",
-            )
-
-            replacedText = replacedText.replace("doc/source/images", "images")
-            # This needs to be redesigned!!!
-            if replacedText != content:
-                print(f"Creating {colorize('darkgreen',ofilename)}")
-                with open(ofilename, "w", encoding="utf-8") as thefile:
-                    thefile.write(replacedText)
-
-
 needs_statuses = [
     dict(name="open", description="Nothing done yet"),
     dict(name="working", description="Someone is working on it"),

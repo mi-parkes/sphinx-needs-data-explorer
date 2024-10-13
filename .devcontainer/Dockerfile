@@ -48,7 +48,7 @@ ENV PIPX_HOME=/opt/pipx \
     PIPX_BIN_DIR=/usr/local/bin
 
 RUN pipx ensurepath
-RUN pipx install poetry==1.8.0
+RUN pipx install poetry==1.8.3
 
 USER ubuntu
 ENTRYPOINT [ "uid_entrypoint"]

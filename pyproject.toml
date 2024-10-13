@@ -33,7 +33,6 @@ GitPython               = ">=3.1.10"
 sphinxcontrib-plantuml  = "0.24"
 sphinx-needs            = "2.0.0"
 sphinx-copybutton       = "0.5.2"
-restview                = "3.0.2"
 #sphinx-needs-data-explorer= {path = "./", develop = true}
 
 [build-system]

@@ -1,4 +1,4 @@
-import os, sys
+import os, re, sys
 from sphinx.util.console import bold, colorize
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
@@ -109,14 +109,14 @@ def copy_and_modify_readme_md(app, docname, source):
         ofilename = os.path.join(app.srcdir, "_README.txt")
         with open(ifilename, encoding="utf-8") as thefile:
             content = thefile.read()
-            replacedText = content.replace(
-                """![](doc/source/images/sphinx_needs_data_explorer.svg)""",
-                """```{raw} html
-<object data="_static/images/sphinx_needs_data_explorer.svg" type="image/svg+xml" style="width:1000px;background:#FFFFFF;"></object>
-```""",
-            )
+            replacedText = re.sub(r'\!\[\]\(.*/doc/source/images/sphinx_needs_data_explorer.svg\)',
+                                  """```{raw} html
+<object data="_images/sphinx_needs_data_explorer.svg" type="image/svg+xml" style="width:1000px;background:#FFFFFF;"></object>
+```""",content)
 
-            replacedText = replacedText.replace("doc/source/images", "images")
+            # article = re.sub(r'(?is)</html>.+', '</html>', article)
+            # replacedText = replacedText.replace("doc/source/images", "images")
+            replacedText = re.sub(r'^.*doc/source/images','images',replacedText)
             # This needs to be redesigned!!!
             if replacedText != content:
                 print(f"Creating {colorize('darkgreen',ofilename)}")

@@ -1,6 +1,11 @@
 .DS_Store
 .venv
+myvenv
 build
+doc/build
 dist
-.vscode
-
+/*.json
+/*.zip
+/*.bak
+docs
+sphinx_needs_data_explorer/_static/sphinx_needs_data_explorer_bak*.html

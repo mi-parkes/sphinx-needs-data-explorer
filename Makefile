@@ -1,5 +1,6 @@
 .ONESHELL:
 SHELL=/bin/bash
+.SHELLFLAGS = -e -c
 
 UNAME := $(shell uname 2>/dev/null || echo Windows)
 
@@ -24,29 +25,16 @@ helpx:
 $(VERBOSE).SILENT:
 	echo
 
-doc/.venv:
-	python3 -m venv doc/.venv
-	source doc/.venv/bin/activate
-	pip install -r doc/requirements.txt
-	pip install --upgrade pip
-
-install: doc/.venv
-	source doc/.venv/bin/activate
+install:
 	rm -rf build dist doc/build
-	python -m build  --sdist --wheel
-	pip uninstall sphinx-needs-data-explorer -y
-	pip install dist/sphinx_needs_data_explorer*.whl
+	poetry install
 
-prep-release: doc/.venv
-	source doc/.venv/bin/activate
-	python -m pip install --upgrade twine
+prep-release:
 	rm -rf build dist doc/build
-	python -m build  --sdist
-	tar -tf dist/*
-
-upload-package:
-	source doc/.venv/bin/activate
-	python -m twine upload  dist/* --verbose
+	poetry install
+#	poetry build
+	poetry build -f sdist
+	tar -tf dist/*.tar.gz
 
 installx:
 	pip uninstall sphinx-needs-data-explorer -y
@@ -87,19 +75,19 @@ new-install:
 
 	echo source $(VENV)/bin/activate
 
+test-package-cur:
+	$(MAKE) test-package BRANCH=`git branch | awk '$$1=="*"{print $$2}'`
+
 test-package:
 	$(eval WDIR=/tmp/test)
+	$(eval BRANCH=updates6)
 	mkdir -p $(WDIR)
 	rm -rf $(WDIR)/*
 	cd $(WDIR)
-	git clone -b new-features5 --single-branch \
+	git clone -b $(BRANCH) --single-branch \
 			https://github.com/mi-parkes/sphinx-needs-data-explorer.git
 	cd sphinx-needs-data-explorer
-#	cp $(CURDIR)/pyproject.toml .
-	python3 -m venv .venv
-	source .venv/bin/activate
-	python -m pip install --upgrade pip
-	pip install poetry
+#	poetry install --only test,docs
 	poetry install
 	poetry build
 	poetry run task doc
@@ -110,4 +98,7 @@ test-package-show:
 	$(MAKE) webserver show
 
 show-package:
-	tar -tvf dist/sphinx_needs_data_explorer-0.9.0.tar.gz
+	tar -tvf dist/sphinx_needs_data_explorer-*.tar.gz
+
+clean-dc:
+	docker images | awk '$$1=="<none>"{print "docker rmi "$$3}' | bash

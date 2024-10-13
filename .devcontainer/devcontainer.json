@@ -1,11 +1,30 @@
 {
-	"name": "Python Environment",
-	// "image": "sphinx-ubuntu-24.04:0.2",
-	"build": {
-	 	"dockerfile": "Dockerfile",
-	 	"context": ".."
-	 },
-	"workspaceFolder": "/workspace",
-  	"runArgs": ["-v", "${localWorkspaceFolder}:/workspace"],
-	"postCreateCommand": "./uid_entrypoint"
+  "name": "sphinx-needs-data-explorer-dc",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "runArgs": [
+    "-v","${localWorkspaceFolder}:/workspace"
+  ],
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "./uid_entrypoint",
+  "mounts": [
+    "type=bind,readonly,source=/etc/localtime,target=/etc/localtime"
+  ],
+  "containerEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}",
+    "GITHUB_USER": "${localEnv:GITHUB_USER}",
+    "LC_ALL": "en_US.UTF-8",
+    "LANG": "en_US.UTF-8",
+    "LANGUAGE": "en_US.UTF-8"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.debugpy"
+      ]
+    }
+  }
 }

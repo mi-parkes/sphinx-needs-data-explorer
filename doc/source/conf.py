@@ -61,14 +61,11 @@ html_static_path = ["_static"]
 
 html_css_files = ["css/custom.css"]
 
-env_plantuml = os.getenv("PLANTUML")
-if env_plantuml != None:
-    plantuml = env_plantuml
+env_plantuml_path = os.getenv("PLANTUML_PATH")
+if env_plantuml_path != None:
+    plantuml = f"java -jar {env_plantuml_path}"
 else:
-    if sys.platform.startswith("linux"):
-        plantuml = "java -jar /usr/share/plantuml/plantuml.jar"
-    elif sys.platform == "darwin":
-        plantuml = "java -jar /usr/local/plantuml/plantuml.jar"
+    plantuml = "java -jar /usr/share/plantuml/plantuml.jar"
 
 env_plantuml_output_format = os.getenv("PLANTUML_OUTPUT_FORMAT")
 if env_plantuml_output_format != None:

@@ -102,3 +102,11 @@ show-package:
 
 clean-dc:
 	docker images | awk '$$1=="<none>"{print "docker rmi "$$3}' | bash
+
+mindmap:	
+	java -jar $(PLANTUML_PATH) -v \
+		-tpng doc/source/_static/puml/sphinx_needs_data_explorer.puml \
+		-o $(CURDIR)/doc/source/images
+	java -jar $(PLANTUML_PATH) -v \
+		-tsvg doc/source/_static/puml/sphinx_needs_data_explorer.puml \
+		-o $(CURDIR)/doc/source/images

@@ -75,5 +75,15 @@ scale 0.45
 *** Linux
 *** Mac OS X
 *** Windows +10
-
+**[#lightgreen] Development Tools
+***[#LightSkyBlue] Package Management
+**** poetry
+***[#LightSkyBlue] IDE
+**** VS Code
+***** DevContainer
+***[#LightSkyBlue]  CI/CD
+**** GitHub Actions
+***** Documentation
+****** Generation
+****** Deployment to GitHub Pages
 @endmindmap

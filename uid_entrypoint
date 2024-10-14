@@ -1,8 +1,0 @@
-#!/bin/bash
-if [ "$VERBOSE" == "true" ]; then
-    echo "Current shell path:$SHELL"
-    set -x
-fi
-poetry install
-pwd
-exec /usr/bin/bash

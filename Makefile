@@ -80,7 +80,7 @@ test-package-cur:
 
 test-package:
 	$(eval WDIR=/tmp/test)
-	$(eval BRANCH=updates6)
+	$(eval BRANCH=main)
 	mkdir -p $(WDIR)
 	rm -rf $(WDIR)/*
 	cd $(WDIR)

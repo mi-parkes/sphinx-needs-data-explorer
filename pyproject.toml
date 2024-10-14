@@ -45,7 +45,7 @@ doc       = { cmd = "cd doc && sphinx-build -M html source build", help = "Gener
 black     = { cmd = "poetry run -vvv black .", help = "Apply the Black code formatter to the package's source tree." }
 clean     = { cmd = "rm -rf build dist doc/build", help = "Remove all intermediate and output files." }
 clean-doc = { cmd = "rm -rf doc/build" , help = "Remove all intermediate and output documentation files."}
-set-readme-refs = { cmd = "sed -i 's/6d9afc22473bdcf64cf12f92188f1c4203ce3ae5/6d9afc22473bdcf64cf12f92188f1c4203ce3ae5/g' README.md" }
+set-readme-refs = { cmd = "sed -i 's/41b530aa785343e4d378f0a5664ce520b158ed16/41b530aa785343e4d378f0a5664ce520b158ed16/g' README.md" }
 
 [tool.black]
 line-length = 88

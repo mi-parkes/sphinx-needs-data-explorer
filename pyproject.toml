@@ -6,7 +6,7 @@ name = "sphinx_needs_data_explorer"
 version = "0.9.0"
 description = "Sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data"
 authors = ["Michael Parkes <mparkes@post.cz>"]
-readme = "README.md"
+readme = "README.rst"
 license = "MIT"
 #homepage = "https://python-poetry.org/"
 repository = "https://github.com/mi-parkes/sphinx_needs_data_explorer"
@@ -33,6 +33,8 @@ GitPython               = ">=3.1.10"
 sphinxcontrib-plantuml  = "0.24"
 sphinx-needs            = "2.0.0"
 sphinx-copybutton       = "0.5.2"
+sphinx_mindmap          = ">=0.5.0"
+restview                = "3.0.2"
 #sphinx-needs-data-explorer= {path = "./", develop = true}
 
 [build-system]
@@ -46,6 +48,7 @@ black     = { cmd = "poetry run -vvv black .", help = "Apply the Black code form
 clean     = { cmd = "rm -rf build dist doc/build", help = "Remove all intermediate and output files." }
 clean-doc = { cmd = "rm -rf doc/build" , help = "Remove all intermediate and output documentation files."}
 set-readme-refs = { cmd = "sed -i 's/41b530aa785343e4d378f0a5664ce520b158ed16/41b530aa785343e4d378f0a5664ce520b158ed16/g' README.md" }
+restview  = { cmd = "poetry run restview README.poetry" }
 
 [tool.black]
 line-length = 88

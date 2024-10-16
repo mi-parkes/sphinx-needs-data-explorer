@@ -19,6 +19,7 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinxcontrib.plantuml",
     "myst_parser",
+    "sphinx_mindmap"
 ]
 
 try:
@@ -31,7 +32,7 @@ except ImportError:
 needs_build_json = True
 
 exclude_patterns = []
-exclude_patterns = ["project", "mydir1"]
+exclude_patterns = ["project", "mydir1", "_README.rst"]
 
 language = "en"
 
@@ -99,21 +100,21 @@ def build_finished(app, docname):
     except OSError as error:
         print("Error deleting file:", error)
 
-
 def copy_and_modify_readme_md(app, docname, source):
     if docname == "index":
-        ifilename = os.path.join(app.srcdir, "..", "..", "README.md")
-        ofilename = os.path.join(app.srcdir, "_README.txt")
+        ifilename = os.path.join(app.srcdir, "..", "..", "README.rst")
+        ofilename = os.path.join(app.srcdir, "_README.rst")
+
         with open(ifilename, encoding="utf-8") as thefile:
             content = thefile.read()
-            replacedText = re.sub(r'\!\[\]\(.*/doc/source/images/sphinx_needs_data_explorer.svg\)',
-                                  """```{raw} html
-<object data="_images/sphinx_needs_data_explorer.svg" type="image/svg+xml" style="width:1000px;background:#FFFFFF;"></object>
-```""",content)
+            replacedText = re.sub(r'.. image:: .*sphinx_needs_data_explorer.svg',
+                                  ".. mindmap:: _static/puml/sphinx_needs_data_explorer.puml",
+                                  content)
 
-            # article = re.sub(r'(?is)</html>.+', '</html>', article)
-            # replacedText = replacedText.replace("doc/source/images", "images")
-            replacedText = re.sub(r'^.*doc/source/images','images',replacedText)
+            replacedText = re.sub(r'https://.*/mi-parkes/sphinx-needs-data-explorer/.*/doc/source/',
+                                  "",
+                                  replacedText)
+
             # This needs to be redesigned!!!
             if replacedText != content:
                 print(f"Creating {colorize('darkgreen',ofilename)}")

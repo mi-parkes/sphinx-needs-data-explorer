@@ -45,7 +45,7 @@ be visible and which hidden.
 -----------
 In File-View-Perspective, you can see a list of files in which Sphinx-needs data were found.
 
-https://raw.githubusercontent.com/mi-parkes/sphinx-needs-data-explorer/41b530aa785343e4d378f0a5664ce520b158ed16/doc/source/images/file-perspective.jpg
+.. image:: https://raw.githubusercontent.com/mi-parkes/sphinx-needs-data-explorer/41b530aa785343e4d378f0a5664ce520b158ed16/doc/source/images/file-perspective.jpg
 
 Powerfull Interactive Data Filtering
 ====================================

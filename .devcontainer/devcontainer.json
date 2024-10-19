@@ -23,7 +23,8 @@
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-python.debugpy"
+        "ms-python.debugpy",
+        "jebbs.plantuml@2.18.1"
       ]
     }
   }

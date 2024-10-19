@@ -35,6 +35,7 @@ sphinx-needs            = "2.0.0"
 sphinx-copybutton       = "0.5.2"
 sphinx_mindmap          = ">=0.5.0"
 restview                = "3.0.2"
+pillow                  = "11.0.0"
 #sphinx-needs-data-explorer= {path = "./", develop = true}
 
 [build-system]
@@ -46,7 +47,7 @@ help      = { cmd = "task --list", help="Show this help" }
 doc       = { cmd = "cd doc && sphinx-build -M html source build", help = "Generate the package documentation using Sphinx." }
 black     = { cmd = "poetry run -vvv black .", help = "Apply the Black code formatter to the package's source tree." }
 clean     = { cmd = "rm -rf build dist doc/build", help = "Remove all intermediate and output files." }
-clean-doc = { cmd = "rm -rf doc/build" , help = "Remove all intermediate and output documentation files."}
+clean-doc = { cmd = "rm -rf doc/build",  help = "Remove all intermediate and output documentation files." }
 set-readme-refs = { cmd = "sed -i 's/41b530aa785343e4d378f0a5664ce520b158ed16/41b530aa785343e4d378f0a5664ce520b158ed16/g' README.md" }
 restview  = { cmd = "poetry run restview README.poetry" }
 

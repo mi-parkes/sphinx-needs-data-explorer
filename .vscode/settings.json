@@ -11,5 +11,6 @@
   "plantuml.exportSubFolder": false,
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "plantuml.jar":"${env:PLANTUML_PATH}"
 }

@@ -3,7 +3,7 @@ license = {file = "LICENSE"}
 
 [tool.poetry]
 name = "sphinx_needs_data_explorer"
-version = "0.9.0"
+version = "0.9.1"
 description = "Sphinx-needs-data-explorer is a Sphinx extension to visualize Sphinx-Needs data"
 authors = ["Michael Parkes <mparkes@post.cz>"]
 readme = "README.rst"
@@ -19,7 +19,7 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
-python              = "^3.12"
+python              = "^3.10"
 Sphinx              = ">=6.1.3"
 
 [tool.poetry.group.dev.dependencies]

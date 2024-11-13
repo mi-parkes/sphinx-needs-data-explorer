@@ -127,8 +127,8 @@ or you can include it only if the extension is available in your virtual environ
 
   ...
   try:
-      import sphinx-needs-data-explorer
-      extensions.add('sphinx-needs-data-explorer')
+      import sphinx_needs_data_explorer
+      extensions.add('sphinx_needs_data_explorer')
   except ImportError:
       pass
   ...

@@ -869,14 +869,18 @@
             function transformAndJoin(data,gnodes) {
                 const transformedData = [];
                 for (const key of data) {
-                    const docname = gnodes[key]['data']?.["docname"];
-                    if (docname) {
-                        const transformedValue = `
-                            <a href="../${docname}.html#${key}"
-                            title="${docname}.html">${key}</a>`;
-                        transformedData.push(transformedValue);
+                    if(key in gnodes) {
+                      const docname = gnodes[key]['data']?.["docname"];
+                      if (docname) {
+                          const transformedValue = `
+                              <a href="../${docname}.html#${key}"
+                              title="${docname}.html">${key}</a>`;
+                          transformedData.push(transformedValue);
+                      } else {
+                          //transformedData.push("");
+                      }
                     } else {
-                        //transformedData.push("");
+                      console.log(`key=${key} not found!`);
                     }
                 }
                 return transformedData;

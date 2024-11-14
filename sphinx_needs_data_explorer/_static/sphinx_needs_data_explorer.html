@@ -572,8 +572,11 @@
                     }
 
                     for(const link_type of link_types) {
+                        const linktype_back=`${link_type}_back`
                         if(link_type in needs[key])
                             jsonData['data'][link_type]=needs[key][link_type]
+                        if(linktype_back in needs[key])
+                            jsonData['data'][linktype_back]=needs[key][linktype_back]
                     }
                     // if(key==='N00027') {
                     //     jsonData["shape"]='box';
@@ -903,12 +906,12 @@
                         data[data.length-1]['outgoing']=parents[id];
                         data[data.length-1]['incoming']=children[id];
                     }
-
+                    var mcolumnsx=[]
                     var mcolumns=[]
                     const defaultColumns=['id','title','status','type'];
                     if(Object.keys(data[0]).length>0) {
                         for(const key of defaultColumns)
-                            mcolumns.push({ title:key, data:key, visible: true })
+                            mcolumnsx.push({ title:key, data:key, visible: true })
                         for(const link_type of link_types.concat(['outgoing','incoming'])) {
                             if(link_type in data[0])
                                 mcolumns.push({ title:link_type, data:link_type, visible: false,
@@ -935,6 +938,9 @@
                             }
                         }
                     }
+
+                    mcolumns=mcolumnsx.concat(mcolumns.sort((a,b)=>a.title.localeCompare(b.title)))
+
                     $('#needtable').DataTable().destroy();
                     $(`#mynetwork #needtable`).remove();
 

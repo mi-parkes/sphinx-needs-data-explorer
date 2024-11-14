@@ -645,8 +645,7 @@
                     // synthetic attributes
                     att='outgoing'
                     $("#help-attributes").append(`<tr>
-                            <td class="a
-                            tt-td">${att}</td>
+                            <td class="att-td">${att}</td>
                             <td class="att-td">${typeof parents[firstKey]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
                     autocompletionAttributes.push(`${att} (array)`);
@@ -718,6 +717,7 @@
                 //    console.log(elm);
                 computeNodeDepth();
                 computeNodeSumOfSubnodes();
+                needs=null;
                 return;
             }
 
@@ -2006,13 +2006,16 @@
             
             $(document).ready(function() {
                 $('#select-type').select2({
-                    dropdownCssClass :'typedrop'
+                    dropdownCssClass :'typedrop',
+                    width:'100px',
+                    dropdownAutoWidth: true
                 });                
                 $('#select-need-id2').select2();
                 $("#select-need-id").select2({
                     //width: '100%' // need to override the changed default
                     dropdownCssClass : 'bigdrop',
                     width:'200px'
+                    // dropdownAutoWidth: true
                 });
                 initSelectFilter();
             });

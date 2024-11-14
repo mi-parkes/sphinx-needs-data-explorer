@@ -24,7 +24,8 @@
       "extensions": [
         "ms-python.python",
         "ms-python.debugpy",
-        "jebbs.plantuml@2.18.1"
+        "jebbs.plantuml@2.18.1",
+        "ritwickdey.liveserver"
       ]
     }
   }

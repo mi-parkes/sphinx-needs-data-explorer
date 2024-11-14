@@ -9,8 +9,8 @@ authors = ["Michael Parkes <mparkes@post.cz>"]
 readme = "README.rst"
 license = "MIT"
 #homepage = "https://python-poetry.org/"
-repository = "https://github.com/mi-parkes/sphinx_needs_data_explorer"
-documentation = "https://mi-parkes.github.io/sphinx_needs_data_explorer/"
+repository = "https://github.com/mi-parkes/sphinx-needs-data-explorer"
+documentation = "https://mi-parkes.github.io/sphinx-needs-data-explorer/"
 exclude = [
     "build/*",
     "dist/*",

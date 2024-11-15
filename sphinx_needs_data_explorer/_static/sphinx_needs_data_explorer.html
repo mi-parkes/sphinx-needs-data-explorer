@@ -28,6 +28,14 @@
         <script src="sphinx-needs/libs/html/sphinx_needs_collapse.js"
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+        <script src="sphinx-needs/libs/html/Buttons-1.5.1/js/dataTables.buttons.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script src="sphinx-needs/libs/html/pdfmake-0.1.32"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="sphinx-needs/libs/html/pdfmake-0.1.32/vfs_fonts.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
         <center>
             <h1></h1>
         </center>
@@ -961,7 +969,30 @@
                             'copy',
                             'csv',
                             'excel',
-                            'pdf',
+                            //'pdf',
+                            {
+                              extend: 'pdfHtml5', // Export to PDF
+                              text: 'PDF',
+                              exportOptions: {
+                                  columns: ':visible' // Export only visible columns
+                              }
+                            },
+                            {
+                              text: 'JSON',
+                              action: function (e, dt, button, config) {
+                                  var data = dt.rows().data().toArray(); // Get table data
+                                  var json = JSON.stringify(data, null, 2);
+
+                                  // Download the JSON
+                                  var blob = new Blob([json], { type: 'application/json' });
+                                  var url = URL.createObjectURL(blob);
+                                  var a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = 'table-data.json';
+                                  a.click();
+                                  URL.revokeObjectURL(url);
+                              }
+                            },
                             'print'
                         ],
                         stateSave: true,

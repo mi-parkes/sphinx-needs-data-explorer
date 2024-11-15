@@ -447,10 +447,10 @@
                         if('id' in decodedData && decodedData['id']!=null )
                             $('#select-need-id').val(decodedData['id']).trigger('change.select2');
                     }
-                    if(mode==0) {
-                        $('.vis-network').focus();
-                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
+                    // if(mode==0) {
+                    //     $('.vis-network').focus();
+                    //     $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
                 }
             ).catch(error => {
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
@@ -859,10 +859,24 @@
                 // for(option of svalue.options) {
                 //     option.style.background = 'color:"red"';
                 // }
-                //document.getElementById('display-needs-count').innerHTML = `Found '${+counter.toString()}' instances of type ->`;
-                /// document.getElementById('display-needs-count').innerHTML = `Filter matches '${+counter.toString()}' IDs`;
-                //document.getElementById('display-needs-count').innerHTML = `FM ${tmp_nodes.length} IDs, NDV:${viewModeMaxDepth}`;
                 handleSelectNodeEvent();
+                if(mode==0) {
+                    console.log(`!!! mode==0`);
+                    setTimeout(function() {
+                      $('.vis-network').focus();
+                      $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    },500);
+                }
+                else
+                if(mode==1) {
+                    $('#mynetwork').focus();
+                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                }
+                else
+                if(mode==2) {
+                    $('#mynetwork').focus();
+                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                }
             }
 
             let selectType = function() {
@@ -899,7 +913,7 @@
                           //transformedData.push("");
                       }
                     } else {
-                      console.log(`key=${key} not found!`);
+                      //console.log(`key=${key} not found!`);
                     }
                 }
                 return transformedData;
@@ -1129,8 +1143,8 @@
                         $("#explorerModeButton").text("Network");
                         initNetwork();
                         handleSelectTypeEvent();
-                        $('.vis-network').focus();
-                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                        //$('.vis-network').focus();
+                        //$('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                     }
                     else
                     if(mode==1) {
@@ -2112,26 +2126,7 @@
             }
 
             $("#input").blur(function() {
-                /*
-                processingInputFilter=false;
-                $('#mynetwork').css('opacity','1.0');
-                //$('#mynetwork').css('border','none');
-                $('#mynetwork').focus();
-
-                $('.vis-network').focus();
-                $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                //$('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                */
                 closeInput();
-                return;
-                var textBox = $(this);
-                var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
-                handleSelectTypeEvent();
-                console.log(`$("#input").blur(function())`);
-                //$(this).off('keydown',handleKeydown);
-                if(network!=null) {
-                    network.setOptions( saveOpt );
-                }
             });
 
             function findOptionByText(select2Element,text) {
@@ -2209,20 +2204,20 @@
                     } else
                         handleSelectTypeEvent();
                     e.preventDefault();
-                    if(mode==0) {
-                        $('.vis-network').focus();
-                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
-                    else
-                    if(mode==1) {
-                        $('#mynetwork').focus();
-                        $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
-                    else
-                    if(mode==2) {
-                        $('#mynetwork').focus();
-                        $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
+                    // if(mode==0) {
+                    //     $('.vis-network').focus();
+                    //     $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
+                    // else
+                    // if(mode==1) {
+                    //     $('#mynetwork').focus();
+                    //     $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
+                    // else
+                    // if(mode==2) {
+                    //     $('#mynetwork').focus();
+                    //     $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
                     processingInputFilter=false;
                     $('#mynetwork').css('opacity','1.0');
                 }  else {

@@ -310,6 +310,7 @@
             const invalid_linkage_color="{{INVALID_LINKAGE_COLOR}}";
             const type2color={{TYPE2COLOR}};
             var inUpdateTable=0;
+            var firstNetworkInit=true;
             var filters = {{FILTERS}};
             const link_types = {{ LINK_TYPES }};
             const valid_linkage={{ VALID_LINKAGE }};
@@ -1692,9 +1693,11 @@
                         });
                     }
                 }
-                networkContainer = document.getElementById('mynetwork');
-                networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
-                //networkContainer.addEventListener('keyup',handleKeyUp);
+                if(firstNetworkInit) {
+                    firstNetworkInit=false;
+                    networkContainer = document.getElementById('mynetwork');
+                    networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
+                }
             }
 
             function copyNetworkAsSVGToClipboard() {

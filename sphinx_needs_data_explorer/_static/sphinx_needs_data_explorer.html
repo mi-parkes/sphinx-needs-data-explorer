@@ -274,8 +274,8 @@
         </div>
         <div>
             <div class="row">
-                <div id="display-needs-count" title="This number shows how many sphinx-needs items match the active filter(s). NDV stands for Neighborhood Depth View">
-                    Filter matches: 0 IDs
+                <div id="display-needs-count" 
+                      title="The format x/y indicates the current position (x) of an item in the Sphinx-Needs listbox relative to the total number of items (y) that match the active filter(s). NDV stands for Neighborhood Depth View">
                 </div>
                 <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" 
                     class="select2 select2-container select2-container--bootstrap select2-container--focus"
@@ -784,8 +784,15 @@
             function handleSelectNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
                 var text="";
-                if(svalue.options.length>0)
+                if(svalue.options.length>0) {
                      text = svalue.options[svalue.selectedIndex].text;
+                     //svalue.selectedIndex
+                     document.getElementById('display-needs-count').innerHTML = 
+                      `${svalue.selectedIndex}/${svalue.options.length}, NDV:${viewModeMaxDepth}`;
+                } else {
+                    document.getElementById('display-needs-count').innerHTML = 
+                        `0/0, NDV:${viewModeMaxDepth}`;
+                }
                 drawFilteredGraph(getID(text));
             }
 
@@ -853,7 +860,7 @@
                 // }
                 //document.getElementById('display-needs-count').innerHTML = `Found '${+counter.toString()}' instances of type ->`;
                 /// document.getElementById('display-needs-count').innerHTML = `Filter matches '${+counter.toString()}' IDs`;
-                document.getElementById('display-needs-count').innerHTML = `Filter matches ${tmp_nodes.length} IDs, NDV:${viewModeMaxDepth}`;
+                //document.getElementById('display-needs-count').innerHTML = `FM ${tmp_nodes.length} IDs, NDV:${viewModeMaxDepth}`;
                 handleSelectNodeEvent();
             }
 
@@ -1272,16 +1279,6 @@
                     return;
                 });
 
-                function closeInput() {
-                    if($('#input').css('color')==='rgb(255,0,0)')
-                        $('#input').css('color','black');
-                    $('#input').removeClass('input-active').addClass('input-inactive');
-                    if(textBoxEditingActive) {
-                        textBoxEditingActive=false;
-                        network.setOptions({ interaction: { keyboard: true } });
-                    }
-                }
-
                 network.on('click', function (properties) {
                     suggestionsList.innerHTML = "";
                     closeInput();
@@ -1525,7 +1522,7 @@
                             viewModeMaxDepth+=1;
                             //let svalue=document.getElementById('select-need-id');
                             //if(svalue.options.length>0 && svalue.selectedIndex!=0) {
-                            document.getElementById('display-needs-count').innerHTML = `Filter matches ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
+                            //document.getElementById('display-needs-count').innerHTML = `FM ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
                             handleSelectNodeEvent();
                         }
                         return;
@@ -1534,7 +1531,7 @@
                         event.preventDefault();
                         if(viewModeMaxDepth>0 && network!==null) {
                             viewModeMaxDepth-=1;
-                            document.getElementById('display-needs-count').innerHTML = `Filter matches ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
+                            //document.getElementById('display-needs-count').innerHTML = `FM ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
                             handleSelectNodeEvent();
                         }
                         return;
@@ -2100,6 +2097,17 @@
                 console.log(`$("#input").focus(function())`)
             });
 
+            function closeInput() {
+                if($('#input').css('color')==='rgb(255,0,0)')
+                    $('#input').css('color','black');
+                $('#input').removeClass('input-active').addClass('input-inactive');
+                if(textBoxEditingActive) {
+                    textBoxEditingActive=false;
+                    if(network!=null)
+                      network.setOptions({ interaction: { keyboard: true } });
+                }
+            }
+
             $("#input").blur(function() {
                 /*
                 processingInputFilter=false;
@@ -2111,6 +2119,7 @@
                 $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                 //$('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
                 */
+                closeInput();
                 return;
                 var textBox = $(this);
                 var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces

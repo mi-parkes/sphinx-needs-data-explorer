@@ -969,14 +969,6 @@
                             'copy',
                             'csv',
                             'excel',
-                            //'pdf',
-                            {
-                              extend: 'pdfHtml5', // Export to PDF
-                              text: 'PDF',
-                              exportOptions: {
-                                  columns: ':visible' // Export only visible columns
-                              }
-                            },
                             {
                               text: 'JSON',
                               action: function (e, dt, button, config) {
@@ -993,7 +985,45 @@
                                   URL.revokeObjectURL(url);
                               }
                             },
-                            'print'
+                            {
+                              extend: 'pdfHtml5', // Export to PDF
+                              text: 'PDF',
+                              exportOptions: {
+                                  columns: ':visible' // Export only visible columns
+                              }
+                            },
+                            /*
+                            {
+                              text: 'XML',
+                              action: function (e, dt, button, config) {
+                                  // Collect data from the table
+                                  const data = dt.rows({ search: 'applied' }).data().toArray();
+
+                                  // Convert data to XML format
+                                  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<rows>\n';
+                                    for (let i = 0; i < data.length; i++) {
+                                      xml += '  <row>\n';
+
+                                      // Convert row data into an array (if necessary) and iterate
+                                      const rowArray = Array.isArray(data[i]) ? data[i] : Object.values(data[i]);
+                                      rowArray.forEach((value, index) => {
+                                          xml += `    <col${index + 1}>${value}</col${index + 1}>\n`;
+                                      });
+
+                                      xml += '  </row>\n';
+                                  }
+                                  xml += '</rows>';
+                                  // Download the XML file
+                                  const blob = new Blob([xml], { type: 'application/xml' });
+                                  const link = document.createElement('a');
+                                  link.href = URL.createObjectURL(blob);
+                                  link.download = 'data.xml';
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                              }
+                          },*/
+                          'print'
                         ],
                         stateSave: true,
                         searching: false,

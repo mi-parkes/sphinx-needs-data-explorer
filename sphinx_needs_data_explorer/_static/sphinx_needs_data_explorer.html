@@ -292,14 +292,14 @@
                 <div id="display-needs-count" 
                       title="The format x/y indicates the current position (x) of an item in the Sphinx-Needs listbox relative to the total number of items (y) that match the active filter(s). NDV stands for Neighborhood Depth View">
                 </div>
-                <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" 
+                <select id="select-type" onchange="handleSelectTypeEvent()" 
                     class="select2 select2-container select2-container--bootstrap select2-container--focus"
                     title="Select which Sphinx-Needs type you want view">
                 </select>
                 <input type="text" id="input"
                     title="Here you can specify filter expression. See Help for examples." 
                     class="input-inactive">
-                <select title="selectFilter" id="select-filter" 
+                <select id="select-filter" 
                     title="You can select from already defined or define new or delete existing filter"
                     class="select2 select2-container select2-container--bootstrap select2-container--focus"
                     >
@@ -324,6 +324,8 @@
             const valid_linkage_color="{{VALID_LINKAGE_COLOR}}";
             const invalid_linkage_color="{{INVALID_LINKAGE_COLOR}}";
             const type2color={{TYPE2COLOR}};
+            const disabledOptions = new Set();
+            var highlighted_item="";
             var inUpdateTable=0;
             var firstNetworkInit=true;
             var filters = {{FILTERS}};
@@ -1938,7 +1940,8 @@
                             tmp_nodes.push(clonedObject);
                             for(const node of children[currentNode['node'].label]) {
                                 if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
-                                    stack.push({node:gnodes[node],depth:currentNode['depth']+1});
+                                    if(!disabledOptions.has(gnodes[node]['data']['type']))
+                                      stack.push({node:gnodes[node],depth:currentNode['depth']+1});
                                 // if(!viewMode) {
                                 //     for(const n of parents[node])
                                 //         stack.push(gnodes[n]);
@@ -1981,6 +1984,7 @@
                             for(const node of children[currentNode['node'].label]) {
                                 //stack.push(gnodes[node]);
                                 if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
+                                  if(!disabledOptions.has(gnodes[node]['data']['type']))
                                     stack.push({node:gnodes[node],depth:currentNode['depth']+1});
                                 // if(!viewMode) {
                                 //     for(const n of parents[node])
@@ -2122,7 +2126,22 @@
                     dropdownCssClass :'typedrop',
                     width:'100px',
                     dropdownAutoWidth: true
-                });                
+                    ,templateResult: function(state) {
+                      var $result = $(`<div></div>`);
+                      $result.text(state.text);
+                      if (state.id && disabledOptions.has(state.id)) {
+                        //s$result.css('background-color', 'grey');
+                        $result.css({
+                            'background-color': 'rgba(128, 128, 128, 0.3)',  // Background with 30% opacity
+                            'pointer-events': 'none',
+                            'color': 'rgba(0,0,0,0.3)' // Text with 90% opacity
+                        });
+                      }
+                      // else
+                      //   $result.css('background-color', 'lightgreen');
+                      return $result;
+                  }
+                });
                 $('#select-need-id2').select2();
                 $("#select-need-id").select2({
                     //width: '100%' // need to override the changed default
@@ -2131,6 +2150,15 @@
                     // dropdownAutoWidth: true
                 });
                 initSelectFilter();
+                $('body').on({
+                  mouseenter: function () {
+                      highlighted_item = $(this).text();
+                  // CODE   
+                  },
+                  mouseleave: function () {
+                  // CODE
+                  }
+                },'.select2-results__option.select2-results__option--highlighted');
             });
 
             const textBox = document.getElementById('input');
@@ -2292,6 +2320,28 @@
             $(window).resize(handleResize);
 
             $(document).keydown(function(event) {
+                if (event.ctrlKey && event.key.toLowerCase() === 'e') {
+                  const highlightedOption = $('#select-type').data('select2').dropdown.$dropdown.find('.select2-results__option--highlighted');
+                  if(highlightedOption.length) {
+                      console.log(`highlighted_item=${highlighted_item}`);
+                      if (disabledOptions.has(highlighted_item)) {
+                        disabledOptions.delete(highlighted_item);
+                        $('#select-type').val(userInput).css({
+                          'background-color': '',
+                          'color': ''
+                        });
+                      } else {
+                        disabledOptions.add(highlighted_item);
+                        $('#select-type').val(userInput).css({
+                            'background-color': 'rgba(128, 128, 128, 0.3)',
+                            'pointer-events': 'none',
+                            'color': 'rgba(0,0,0,0.3)'
+                        });
+                      }
+                  }
+                  event.preventDefault();
+                  return;
+                }
                 if (event.keyCode === 112 || event.key === 'F1') {
                     if(network!=null)
                       network.setOptions({ interaction: { keyboard: false } });

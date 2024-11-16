@@ -156,6 +156,31 @@
                             <td>Reset network display (position and scale)</td>
                         </tr>
                         <tr>
+                          <td class="kbd-td"><kbd>D</kbd></td>
+                          <td>Toggle the ability to drag the network view (panning) ON/OFF</td>
+                        </tr>
+                        <tr>
+                          <td class="kbd-td"><kbd>Z</kbd></td>
+                          <td>Toggle zooming in and out of the network view ON/OFF</td>
+                        </tr>
+                        <tr>
+                          <td class="kbd-td"><kbd>L</kbd></td>
+                          <td>Cycle network layout mode</td>
+                      </tr>
+                      <tr>
+                          <td class="kbd-td"><kbd>V</kbd></td>
+                          <td>Cycle network neighbour view mode</td>
+                      </tr>
+
+                      <tr>
+                          <td class="kbd-td"><kbd>&lt;</kbd></td>
+                          <td>Decrease neighborhood depth view of the current node</td>
+                      </tr>
+                      <tr>
+                          <td class="kbd-td"><kbd>&gt;</kbd></td>
+                          <td>Increase neighborhood depth view of the current node</td>
+                      </tr>
+                      <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
                         <tr>
@@ -165,23 +190,6 @@
                         <tr>
                             <td class="kbd-td"><kbd>N</kbd></td>
                             <td>Navigate to the next sphinx_need item</td>
-                        </tr>
-                        <tr>
-                            <td class="kbd-td"><kbd>L</kbd></td>
-                            <td>Cycle network layout mode</td>
-                        </tr>
-                        <tr>
-                            <td class="kbd-td"><kbd>V</kbd></td>
-                            <td>Cycle network neighbour view mode</td>
-                        </tr>
-
-                        <tr>
-                            <td class="kbd-td"><kbd>&lt;</kbd></td>
-                            <td>Decrease neighborhood depth view of the current node</td>
-                        </tr>
-                        <tr>
-                            <td class="kbd-td"><kbd>&gt;</kbd></td>
-                            <td>Increase neighborhood depth view of the current node</td>
                         </tr>
                         <tr>
                             <td class="kbd-td"><kbd>B</kbd></td>
@@ -197,9 +205,8 @@
                         </tr>
                         <tr>
                             <td class="kbd-td"><kbd>S</kbd></td>
-                            <td>store the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</td>
+                            <td>Store the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</td>
                         </tr>
-
                     </tbody>
                 </table>
                 <br>
@@ -256,7 +263,15 @@
                             <td class="att-td">type != 'test' && incoming==[]</td>
                             <td>Find items with no incoming links</td>
                         </tr>
-                    </tbody>
+                        <tr>
+                          <td class="att-td">satisfies!=[]</td>
+                          <td>Find nodes with at least one outgoing link of type 'satisfies'</td>
+                      </tr>
+                      <tr>
+                        <td class="att-td">satisfies_back!=[]</td>
+                        <td>Find nodes that are referenced by at least one 'satisfies' link.</td>
+                    </tr>
+                </tbody>
                 </table>
                 <br>
                 <h3>Sphinx-Needs attributes found in this project that can be used for data filtering:</h3>
@@ -347,6 +362,8 @@
             var parents;
             var parents_edges;
             var layoutDirection='DU';
+            var dragView=false;
+            var zoomView=false;
             var 
             needsURL = "../needs.json";
             var parser;
@@ -801,6 +818,26 @@
                 return str.trim().replace(/\n/g,'');
             }
 
+            function refocus() {
+              if(mode==0) {
+                    console.log(`!!! mode==0`);
+                    setTimeout(function() {
+                      $('.vis-network').focus();
+                      $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    },500);
+                }
+                else
+                if(mode==1) {
+                    $('#mynetwork').focus();
+                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                }
+                else
+                if(mode==2) {
+                    $('#mynetwork').focus();
+                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                }
+            }
+
             function handleSelectTypeEvent() {
                 clearFilter();
                 let stype=document.getElementById('select-type');
@@ -860,23 +897,7 @@
                 //     option.style.background = 'color:"red"';
                 // }
                 handleSelectNodeEvent();
-                if(mode==0) {
-                    console.log(`!!! mode==0`);
-                    setTimeout(function() {
-                      $('.vis-network').focus();
-                      $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                    },500);
-                }
-                else
-                if(mode==1) {
-                    $('#mynetwork').focus();
-                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                }
-                else
-                if(mode==2) {
-                    $('#mynetwork').focus();
-                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                }
+                refocus();
             }
 
             let selectType = function() {
@@ -896,7 +917,8 @@
             // Close the help dialog
             function closeHelpDialog() {
                 document.getElementById('helpModal').style.display = 'none';
-                network.setOptions({ interaction: { keyboard: true } });
+                if(network!=null)
+                  network.setOptions({ interaction: { keyboard: true } });
             }
 
             function transformAndJoin(data,gnodes) {
@@ -1179,8 +1201,8 @@
                             tooltipDelay:200,
                             navigationButtons: false,
                             selectable:true,
-                            zoomView:true,
-                            dragView:true,
+                            zoomView:zoomView,
+                            dragView:dragView,
                             keyboard:{
                                 enabled:false
                                 // enabled:!textBoxEditingActive
@@ -1530,6 +1552,22 @@
                     if (event.key === 'Escape' || event.keyCode === 27) {
                         $('.vis-tooltip').css('display', 'none');
                         return;
+                    }
+                    // toggle network dragView
+                    if(event.key==='d'||event.key==='D') {
+                        if(network!=null) {
+                          dragView=!dragView;
+                          network.setOptions({ interaction: { dragView: dragView } });
+                        }
+                        return;
+                    }
+                    // toggle network zoomView
+                    if(event.key==='z'||event.key==='Z') {
+                      if(network!=null) {
+                          zoomView=!zoomView;
+                          network.setOptions({ interaction: { zoomView: zoomView } });
+                      }
+                      return;
                     }
                     if (event.key === '>' && event.shiftKey) {
                         event.preventDefault();
@@ -2255,7 +2293,8 @@
 
             $(document).keydown(function(event) {
                 if (event.keyCode === 112 || event.key === 'F1') {
-                    network.setOptions({ interaction: { keyboard: false } });
+                    if(network!=null)
+                      network.setOptions({ interaction: { keyboard: false } });
                     $('#helpModal').css('display', 'block').scrollTop(0);
                     event.preventDefault();
                     return;
@@ -2264,9 +2303,11 @@
                     event.preventDefault();
                     if ($('#helpModal').is(':visible')) {
                         $('#helpModal').hide();
-                        setTimeout(function() {
-                            network.setOptions({ interaction: { keyboard: true } });
-                        }, 1000);
+                        refocus();
+                          setTimeout(function() {
+                            if(network!=null)
+                              network.setOptions({ interaction: { keyboard: true } });
+                          }, 1000);
                     }
                     return;
                 }

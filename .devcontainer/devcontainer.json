@@ -5,7 +5,9 @@
     "context": ".."
   },
   "runArgs": [
-    "-v","${localWorkspaceFolder}:/workspace"
+    "-v","${localWorkspaceFolder}:/workspace",
+    "--network=host",
+    "-p=11434:11434"
   ],
   "workspaceFolder": "/workspace",
   "postCreateCommand": "poetry install;/usr/bin/bash",

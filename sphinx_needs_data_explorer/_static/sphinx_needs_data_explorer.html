@@ -28,6 +28,14 @@
         <script src="sphinx-needs/libs/html/sphinx_needs_collapse.js"
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+        <script src="sphinx-needs/libs/html/Buttons-1.5.1/js/dataTables.buttons.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <script src="sphinx-needs/libs/html/pdfmake-0.1.32"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="sphinx-needs/libs/html/pdfmake-0.1.32/vfs_fonts.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
         <center>
             <h1></h1>
         </center>
@@ -148,6 +156,31 @@
                             <td>Reset network display (position and scale)</td>
                         </tr>
                         <tr>
+                          <td class="kbd-td"><kbd>D</kbd></td>
+                          <td>Toggle the ability to drag the network view (panning) ON/OFF</td>
+                        </tr>
+                        <tr>
+                          <td class="kbd-td"><kbd>Z</kbd></td>
+                          <td>Toggle zooming in and out of the network view ON/OFF</td>
+                        </tr>
+                        <tr>
+                          <td class="kbd-td"><kbd>L</kbd></td>
+                          <td>Cycle network layout mode</td>
+                      </tr>
+                      <tr>
+                          <td class="kbd-td"><kbd>V</kbd></td>
+                          <td>Cycle network neighbour view mode</td>
+                      </tr>
+
+                      <tr>
+                          <td class="kbd-td"><kbd>&lt;</kbd></td>
+                          <td>Decrease neighborhood depth view of the current node</td>
+                      </tr>
+                      <tr>
+                          <td class="kbd-td"><kbd>&gt;</kbd></td>
+                          <td>Increase neighborhood depth view of the current node</td>
+                      </tr>
+                      <tr>
                             <td colspan="2">&nbsp;</td>
                         </tr>
                         <tr>
@@ -157,23 +190,6 @@
                         <tr>
                             <td class="kbd-td"><kbd>N</kbd></td>
                             <td>Navigate to the next sphinx_need item</td>
-                        </tr>
-                        <tr>
-                            <td class="kbd-td"><kbd>L</kbd></td>
-                            <td>Cycle network layout mode</td>
-                        </tr>
-                        <tr>
-                            <td class="kbd-td"><kbd>V</kbd></td>
-                            <td>Cycle network neighbour view mode</td>
-                        </tr>
-
-                        <tr>
-                            <td class="kbd-td"><kbd>&lt;</kbd></td>
-                            <td>Decrease neighborhood depth view of the current node</td>
-                        </tr>
-                        <tr>
-                            <td class="kbd-td"><kbd>&gt;</kbd></td>
-                            <td>Increase neighborhood depth view of the current node</td>
                         </tr>
                         <tr>
                             <td class="kbd-td"><kbd>B</kbd></td>
@@ -189,9 +205,8 @@
                         </tr>
                         <tr>
                             <td class="kbd-td"><kbd>S</kbd></td>
-                            <td>store the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</td>
+                            <td>Store the current URL, including search parameters, to the clipboard for the purpose of restoring their browsing context later</td>
                         </tr>
-
                     </tbody>
                 </table>
                 <br>
@@ -248,7 +263,15 @@
                             <td class="att-td">type != 'test' && incoming==[]</td>
                             <td>Find items with no incoming links</td>
                         </tr>
-                    </tbody>
+                        <tr>
+                          <td class="att-td">satisfies!=[]</td>
+                          <td>Find nodes with at least one outgoing link of type 'satisfies'</td>
+                      </tr>
+                      <tr>
+                        <td class="att-td">satisfies_back!=[]</td>
+                        <td>Find nodes that are referenced by at least one 'satisfies' link.</td>
+                    </tr>
+                </tbody>
                 </table>
                 <br>
                 <h3>Sphinx-Needs attributes found in this project that can be used for data filtering:</h3>
@@ -266,17 +289,17 @@
         </div>
         <div>
             <div class="row">
-                <div id="display-needs-count" title="This number shows how many sphinx-needs items match the active filter(s). NDV stands for Neighborhood Depth View">
-                    Filter matches: 0 IDs
+                <div id="display-needs-count" 
+                      title="The format x/y indicates the current position (x) of an item in the Sphinx-Needs listbox relative to the total number of items (y) that match the active filter(s). NDV stands for Neighborhood Depth View">
                 </div>
-                <select title="selectType" id="select-type" onchange="handleSelectTypeEvent()" 
+                <select id="select-type" onchange="handleSelectTypeEvent()" 
                     class="select2 select2-container select2-container--bootstrap select2-container--focus"
                     title="Select which Sphinx-Needs type you want view">
                 </select>
                 <input type="text" id="input"
                     title="Here you can specify filter expression. See Help for examples." 
                     class="input-inactive">
-                <select title="selectFilter" id="select-filter" 
+                <select id="select-filter" 
                     title="You can select from already defined or define new or delete existing filter"
                     class="select2 select2-container select2-container--bootstrap select2-container--focus"
                     >
@@ -301,7 +324,10 @@
             const valid_linkage_color="{{VALID_LINKAGE_COLOR}}";
             const invalid_linkage_color="{{INVALID_LINKAGE_COLOR}}";
             const type2color={{TYPE2COLOR}};
+            const disabledOptions = new Set();
+            var highlighted_item="";
             var inUpdateTable=0;
+            var firstNetworkInit=true;
             var filters = {{FILTERS}};
             const link_types = {{ LINK_TYPES }};
             const valid_linkage={{ VALID_LINKAGE }};
@@ -338,6 +364,8 @@
             var parents;
             var parents_edges;
             var layoutDirection='DU';
+            var dragView=false;
+            var zoomView=false;
             var 
             needsURL = "../needs.json";
             var parser;
@@ -438,10 +466,10 @@
                         if('id' in decodedData && decodedData['id']!=null )
                             $('#select-need-id').val(decodedData['id']).trigger('change.select2');
                     }
-                    if(mode==0) {
-                        $('.vis-network').focus();
-                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
+                    // if(mode==0) {
+                    //     $('.vis-network').focus();
+                    //     $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
                 }
             ).catch(error => {
                 console.log(`Failed featching needs data:${urlToFetch} -> ${error}`);
@@ -645,8 +673,7 @@
                     // synthetic attributes
                     att='outgoing'
                     $("#help-attributes").append(`<tr>
-                            <td class="a
-                            tt-td">${att}</td>
+                            <td class="att-td">${att}</td>
                             <td class="att-td">${typeof parents[firstKey]}</td>
                             </tr>`.replace(/^[\s]+/gm,""))
                     autocompletionAttributes.push(`${att} (array)`);
@@ -718,6 +745,7 @@
                 //    console.log(elm);
                 computeNodeDepth();
                 computeNodeSumOfSubnodes();
+                needs=null;
                 return;
             }
 
@@ -776,13 +804,40 @@
             function handleSelectNodeEvent() {
                 let svalue=document.getElementById('select-need-id');
                 var text="";
-                if(svalue.options.length>0)
+                if(svalue.options.length>0) {
                      text = svalue.options[svalue.selectedIndex].text;
+                     //svalue.selectedIndex
+                     document.getElementById('display-needs-count').innerHTML = 
+                      `${svalue.selectedIndex}/${svalue.options.length}, NDV:${viewModeMaxDepth}`;
+                } else {
+                    document.getElementById('display-needs-count').innerHTML = 
+                        `0/0, NDV:${viewModeMaxDepth}`;
+                }
                 drawFilteredGraph(getID(text));
             }
 
             function removeNewlinesAndTrimString(str) {
                 return str.trim().replace(/\n/g,'');
+            }
+
+            function refocus() {
+              if(mode==0) {
+                    console.log(`!!! mode==0`);
+                    setTimeout(function() {
+                      $('.vis-network').focus();
+                      $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    },500);
+                }
+                else
+                if(mode==1) {
+                    $('#mynetwork').focus();
+                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                }
+                else
+                if(mode==2) {
+                    $('#mynetwork').focus();
+                    $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                }
             }
 
             function handleSelectTypeEvent() {
@@ -843,10 +898,8 @@
                 // for(option of svalue.options) {
                 //     option.style.background = 'color:"red"';
                 // }
-                //document.getElementById('display-needs-count').innerHTML = `Found '${+counter.toString()}' instances of type ->`;
-                /// document.getElementById('display-needs-count').innerHTML = `Filter matches '${+counter.toString()}' IDs`;
-                document.getElementById('display-needs-count').innerHTML = `Filter matches ${tmp_nodes.length} IDs, NDV:${viewModeMaxDepth}`;
                 handleSelectNodeEvent();
+                refocus();
             }
 
             let selectType = function() {
@@ -866,7 +919,8 @@
             // Close the help dialog
             function closeHelpDialog() {
                 document.getElementById('helpModal').style.display = 'none';
-                network.setOptions({ interaction: { keyboard: true } });
+                if(network!=null)
+                  network.setOptions({ interaction: { keyboard: true } });
             }
 
             function transformAndJoin(data,gnodes) {
@@ -883,7 +937,7 @@
                           //transformedData.push("");
                       }
                     } else {
-                      console.log(`key=${key} not found!`);
+                      //console.log(`key=${key} not found!`);
                     }
                 }
                 return transformedData;
@@ -961,8 +1015,61 @@
                             'copy',
                             'csv',
                             'excel',
-                            'pdf',
-                            'print'
+                            {
+                              text: 'JSON',
+                              action: function (e, dt, button, config) {
+                                  var data = dt.rows().data().toArray(); // Get table data
+                                  var json = JSON.stringify(data, null, 2);
+
+                                  // Download the JSON
+                                  var blob = new Blob([json], { type: 'application/json' });
+                                  var url = URL.createObjectURL(blob);
+                                  var a = document.createElement('a');
+                                  a.href = url;
+                                  a.download = 'table-data.json';
+                                  a.click();
+                                  URL.revokeObjectURL(url);
+                              }
+                            },
+                            {
+                              extend: 'pdfHtml5', // Export to PDF
+                              text: 'PDF',
+                              exportOptions: {
+                                  columns: ':visible' // Export only visible columns
+                              }
+                            },
+                            /*
+                            {
+                              text: 'XML',
+                              action: function (e, dt, button, config) {
+                                  // Collect data from the table
+                                  const data = dt.rows({ search: 'applied' }).data().toArray();
+
+                                  // Convert data to XML format
+                                  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<rows>\n';
+                                    for (let i = 0; i < data.length; i++) {
+                                      xml += '  <row>\n';
+
+                                      // Convert row data into an array (if necessary) and iterate
+                                      const rowArray = Array.isArray(data[i]) ? data[i] : Object.values(data[i]);
+                                      rowArray.forEach((value, index) => {
+                                          xml += `    <col${index + 1}>${value}</col${index + 1}>\n`;
+                                      });
+
+                                      xml += '  </row>\n';
+                                  }
+                                  xml += '</rows>';
+                                  // Download the XML file
+                                  const blob = new Blob([xml], { type: 'application/xml' });
+                                  const link = document.createElement('a');
+                                  link.href = URL.createObjectURL(blob);
+                                  link.download = 'data.xml';
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                              }
+                          },*/
+                          'print'
                         ],
                         stateSave: true,
                         searching: false,
@@ -1060,8 +1167,8 @@
                         $("#explorerModeButton").text("Network");
                         initNetwork();
                         handleSelectTypeEvent();
-                        $('.vis-network').focus();
-                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                        //$('.vis-network').focus();
+                        //$('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
                     }
                     else
                     if(mode==1) {
@@ -1096,8 +1203,8 @@
                             tooltipDelay:200,
                             navigationButtons: false,
                             selectable:true,
-                            zoomView:true,
-                            dragView:true,
+                            zoomView:zoomView,
+                            dragView:dragView,
                             keyboard:{
                                 enabled:false
                                 // enabled:!textBoxEditingActive
@@ -1210,16 +1317,6 @@
                     drawCurrentSelection(pnode);
                     return;
                 });
-
-                function closeInput() {
-                    if($('#input').css('color')==='rgb(255,0,0)')
-                        $('#input').css('color','black');
-                    $('#input').removeClass('input-active').addClass('input-inactive');
-                    if(textBoxEditingActive) {
-                        textBoxEditingActive=false;
-                        network.setOptions({ interaction: { keyboard: true } });
-                    }
-                }
 
                 network.on('click', function (properties) {
                     suggestionsList.innerHTML = "";
@@ -1458,13 +1555,29 @@
                         $('.vis-tooltip').css('display', 'none');
                         return;
                     }
+                    // toggle network dragView
+                    if(event.key==='d'||event.key==='D') {
+                        if(network!=null) {
+                          dragView=!dragView;
+                          network.setOptions({ interaction: { dragView: dragView } });
+                        }
+                        return;
+                    }
+                    // toggle network zoomView
+                    if(event.key==='z'||event.key==='Z') {
+                      if(network!=null) {
+                          zoomView=!zoomView;
+                          network.setOptions({ interaction: { zoomView: zoomView } });
+                      }
+                      return;
+                    }
                     if (event.key === '>' && event.shiftKey) {
                         event.preventDefault();
                         if(viewModeMaxDepth<10 && network!==null) {
                             viewModeMaxDepth+=1;
                             //let svalue=document.getElementById('select-need-id');
                             //if(svalue.options.length>0 && svalue.selectedIndex!=0) {
-                            document.getElementById('display-needs-count').innerHTML = `Filter matches ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
+                            //document.getElementById('display-needs-count').innerHTML = `FM ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
                             handleSelectNodeEvent();
                         }
                         return;
@@ -1473,7 +1586,7 @@
                         event.preventDefault();
                         if(viewModeMaxDepth>0 && network!==null) {
                             viewModeMaxDepth-=1;
-                            document.getElementById('display-needs-count').innerHTML = `Filter matches ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
+                            //document.getElementById('display-needs-count').innerHTML = `FM ${$('#select-need-id').children('option').length} IDs, NDV:${viewModeMaxDepth}`;
                             handleSelectNodeEvent();
                         }
                         return;
@@ -1634,9 +1747,11 @@
                         });
                     }
                 }
-                networkContainer = document.getElementById('mynetwork');
-                networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
-                //networkContainer.addEventListener('keyup',handleKeyUp);
+                if(firstNetworkInit) {
+                    firstNetworkInit=false;
+                    networkContainer = document.getElementById('mynetwork');
+                    networkContainer.addEventListener('keyup',debounce(handleKeyUp,300));
+                }
             }
 
             function copyNetworkAsSVGToClipboard() {
@@ -1825,7 +1940,8 @@
                             tmp_nodes.push(clonedObject);
                             for(const node of children[currentNode['node'].label]) {
                                 if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
-                                    stack.push({node:gnodes[node],depth:currentNode['depth']+1});
+                                    if(!disabledOptions.has(gnodes[node]['data']['type']))
+                                      stack.push({node:gnodes[node],depth:currentNode['depth']+1});
                                 // if(!viewMode) {
                                 //     for(const n of parents[node])
                                 //         stack.push(gnodes[n]);
@@ -1868,6 +1984,7 @@
                             for(const node of children[currentNode['node'].label]) {
                                 //stack.push(gnodes[node]);
                                 if(viewModeMaxDepth===0 || ((currentNode['depth']+1)<=viewModeMaxDepth))
+                                  if(!disabledOptions.has(gnodes[node]['data']['type']))
                                     stack.push({node:gnodes[node],depth:currentNode['depth']+1});
                                 // if(!viewMode) {
                                 //     for(const n of parents[node])
@@ -2006,15 +2123,42 @@
             
             $(document).ready(function() {
                 $('#select-type').select2({
-                    dropdownCssClass :'typedrop'
-                });                
+                    dropdownCssClass :'typedrop',
+                    width:'100px',
+                    dropdownAutoWidth: true
+                    ,templateResult: function(state) {
+                      var $result = $(`<div></div>`);
+                      $result.text(state.text);
+                      if (state.id && disabledOptions.has(state.id)) {
+                        //s$result.css('background-color', 'grey');
+                        $result.css({
+                            'background-color': 'rgba(128, 128, 128, 0.3)',  // Background with 30% opacity
+                            'pointer-events': 'none',
+                            'color': 'rgba(0,0,0,0.3)' // Text with 90% opacity
+                        });
+                      }
+                      // else
+                      //   $result.css('background-color', 'lightgreen');
+                      return $result;
+                  }
+                });
                 $('#select-need-id2').select2();
                 $("#select-need-id").select2({
                     //width: '100%' // need to override the changed default
                     dropdownCssClass : 'bigdrop',
                     width:'200px'
+                    // dropdownAutoWidth: true
                 });
                 initSelectFilter();
+                $('body').on({
+                  mouseenter: function () {
+                      highlighted_item = $(this).text();
+                  // CODE   
+                  },
+                  mouseleave: function () {
+                  // CODE
+                  }
+                },'.select2-results__option.select2-results__option--highlighted');
             });
 
             const textBox = document.getElementById('input');
@@ -2036,26 +2180,19 @@
                 console.log(`$("#input").focus(function())`)
             });
 
-            $("#input").blur(function() {
-                /*
-                processingInputFilter=false;
-                $('#mynetwork').css('opacity','1.0');
-                //$('#mynetwork').css('border','none');
-                $('#mynetwork').focus();
-
-                $('.vis-network').focus();
-                $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                //$('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                */
-                return;
-                var textBox = $(this);
-                var text=$(this).val().trim(); // Get the text content and remove leading/trailing whitespaces
-                handleSelectTypeEvent();
-                console.log(`$("#input").blur(function())`);
-                //$(this).off('keydown',handleKeydown);
-                if(network!=null) {
-                    network.setOptions( saveOpt );
+            function closeInput() {
+                if($('#input').css('color')==='rgb(255,0,0)')
+                    $('#input').css('color','black');
+                $('#input').removeClass('input-active').addClass('input-inactive');
+                if(textBoxEditingActive) {
+                    textBoxEditingActive=false;
+                    if(network!=null)
+                      network.setOptions({ interaction: { keyboard: true } });
                 }
+            }
+
+            $("#input").blur(function() {
+                closeInput();
             });
 
             function findOptionByText(select2Element,text) {
@@ -2133,20 +2270,20 @@
                     } else
                         handleSelectTypeEvent();
                     e.preventDefault();
-                    if(mode==0) {
-                        $('.vis-network').focus();
-                        $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
-                    else
-                    if(mode==1) {
-                        $('#mynetwork').focus();
-                        $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
-                    else
-                    if(mode==2) {
-                        $('#mynetwork').focus();
-                        $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
-                    }
+                    // if(mode==0) {
+                    //     $('.vis-network').focus();
+                    //     $('.vis-network').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
+                    // else
+                    // if(mode==1) {
+                    //     $('#mynetwork').focus();
+                    //     $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
+                    // else
+                    // if(mode==2) {
+                    //     $('#mynetwork').focus();
+                    //     $('#mynetwork').trigger($.Event('keydown', { key: 'Enter' }));
+                    // }
                     processingInputFilter=false;
                     $('#mynetwork').css('opacity','1.0');
                 }  else {
@@ -2183,8 +2320,31 @@
             $(window).resize(handleResize);
 
             $(document).keydown(function(event) {
+                if (event.ctrlKey && event.key.toLowerCase() === 'e') {
+                  const highlightedOption = $('#select-type').data('select2').dropdown.$dropdown.find('.select2-results__option--highlighted');
+                  if(highlightedOption.length) {
+                      console.log(`highlighted_item=${highlighted_item}`);
+                      if (disabledOptions.has(highlighted_item)) {
+                        disabledOptions.delete(highlighted_item);
+                        $('#select-type').val(userInput).css({
+                          'background-color': '',
+                          'color': ''
+                        });
+                      } else {
+                        disabledOptions.add(highlighted_item);
+                        $('#select-type').val(userInput).css({
+                            'background-color': 'rgba(128, 128, 128, 0.3)',
+                            'pointer-events': 'none',
+                            'color': 'rgba(0,0,0,0.3)'
+                        });
+                      }
+                  }
+                  event.preventDefault();
+                  return;
+                }
                 if (event.keyCode === 112 || event.key === 'F1') {
-                    network.setOptions({ interaction: { keyboard: false } });
+                    if(network!=null)
+                      network.setOptions({ interaction: { keyboard: false } });
                     $('#helpModal').css('display', 'block').scrollTop(0);
                     event.preventDefault();
                     return;
@@ -2193,9 +2353,11 @@
                     event.preventDefault();
                     if ($('#helpModal').is(':visible')) {
                         $('#helpModal').hide();
-                        setTimeout(function() {
-                            network.setOptions({ interaction: { keyboard: true } });
-                        }, 1000);
+                        refocus();
+                          setTimeout(function() {
+                            if(network!=null)
+                              network.setOptions({ interaction: { keyboard: true } });
+                          }, 1000);
                     }
                     return;
                 }

@@ -103,9 +103,9 @@ div.dataTables_length select {
 .bigdrop {
     width: 900px !important;
     margin-top: +20px;
+    position: fixed;
     left: 50px !important;
     font-size: 22px;
-    position: fixed;
 }
 
 .bigdropFilter {

@@ -8,14 +8,15 @@ logger = logging.getLogger(__name__)
 project = "Sphinx Needs Data Explorer"
 copyright = "2024, MP"
 author = "MP"
-release = "0.9.2"
-version = "0.9.2"
+release = "0.9.3"
+version = "0.9.3"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     "sphinx_needs",
     "sphinx_copybutton",
+    "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
     "sphinxcontrib.plantuml",
     "myst_parser",

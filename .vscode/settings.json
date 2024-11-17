@@ -13,5 +13,6 @@
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
   "plantuml.jar":"${env:PLANTUML_PATH}",
-  "liveServer.settings.root": "doc/build/html"
+  "liveServer.settings.root": "doc/build/html",
+  "liveServer.settings.port": 5501
 }

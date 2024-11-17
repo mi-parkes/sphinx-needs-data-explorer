@@ -1,7 +1,3 @@
-##########################
-Sphinx Needs Data Explorer
-##########################
-
 .. include:: _README.rst
 
 Test it in Action

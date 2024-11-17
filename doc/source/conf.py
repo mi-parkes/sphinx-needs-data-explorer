@@ -16,6 +16,7 @@ version = "0.9.3"
 extensions = [
     "sphinx_needs",
     "sphinx_copybutton",
+    "sphinx.ext.autosectionlabel",
     "sphinx.ext.githubpages",
     "sphinxcontrib.plantuml",
     "myst_parser",

@@ -7,8 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
 
-__version__ = "0.9.3"
-version_info = (0, 9, 3)
+__version__ = "0.9.4"
+version_info = (0, 9, 4)
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ _FILES = (
     (
         "peg",
         "",
-    ),
+    )
 )
 
 sphinx_needs_data_explorer_config_link_types_default = ["links"]
@@ -69,13 +69,15 @@ def add_files(app, config):
             ]
             if isinstance(disable_header_button_opt, bool):
                 disable_header_button = disable_header_button_opt
+
+    if not ("html_js_files" in app.config):
+        app.config["html_js_files"] = []
+    app.config["html_js_files"].append("js/explorer_button.js")
+
     if not disable_header_button:
         if ("html_theme" in app.config) and (
             app.config["html_theme"] == "sphinx_book_theme"
         ):
-            if not ("html_js_files" in app.config):
-                app.config["html_js_files"] = []
-            app.config["html_js_files"].append("js/explorer_button.js")
             if not ("templates_path" in app.config):
                 app.config["templates_path"] = []
             app.config["templates_path"].append(

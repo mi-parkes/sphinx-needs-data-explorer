@@ -15,6 +15,9 @@
         <script src="sphinx_needs_data_explorer.js"
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+        <script src="ollama/ollama.bundle.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
         <link rel="stylesheet" type="text/css" href="sphinx-needs/libs/html/datatables.min.css" />
         <link rel="stylesheet" type="text/css" href="sphinx-needs/common.css" />
         <link rel="stylesheet" type="text/css" href="sphinx-needs/styles.css" />
@@ -2320,6 +2323,25 @@
             $(window).resize(handleResize);
 
             $(document).keydown(function(event) {
+              if (event.ctrlKey && event.key === 'a') {
+                  const $select = $('#select-need-id');
+                  const needId_title = $('#select-need-id option:selected').text();
+                  if(needId_title) {
+                    const key = getID(needId_title);
+                    const description=gnodes[key]['data']['description'];
+                    console.log(`Starting ollama request for node=${key}`);
+                    console.log(description);
+                    OllamaClient.checkRequirement(description).then((result) => {
+                        console.log("Promise resolved:", result);
+                    })
+                    .catch((error) => {
+                        console.error("Promise rejected:", error);
+                    });
+                  }
+                  event.preventDefault();
+                  return;
+                }
+
                 if (event.ctrlKey && event.key.toLowerCase() === 'e') {
                   const highlightedOption = $('#select-type').data('select2').dropdown.$dropdown.find('.select2-results__option--highlighted');
                   if(highlightedOption.length) {

@@ -328,6 +328,8 @@
             const invalid_linkage_color="{{INVALID_LINKAGE_COLOR}}";
             const type2color={{TYPE2COLOR}};
             const disabledOptions = new Set();
+            let qcounter=0;
+            var startTime=undefined;
             var highlighted_item="";
             var inUpdateTable=0;
             var firstNetworkInit=true;
@@ -386,6 +388,15 @@
                     tabindex="0" style="width:100%'">
                 </table>
             `;
+
+            function timestamp(elapsedTime) {
+              const totalSeconds = Math.floor(elapsedTime / 1000);
+              const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+              const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+              const seconds = String(totalSeconds % 60).padStart(2, '0');
+              const timestamp = `${hours}:${minutes}:${seconds}`;
+              return timestamp;
+            }
 
             var absolute = function(rel) { 
                 var link = document.createElement("a"); 
@@ -766,6 +777,7 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex',0).trigger('change');
                     var text = $('#select-need-id option:selected').text();
+                    if(verbose)
                     console.log('handleSelectFirstNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
@@ -777,6 +789,7 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex',svalue.options.length-1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
+                    if(verbose)
                     console.log('handleSelectLastNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
@@ -825,6 +838,7 @@
 
             function refocus() {
               if(mode==0) {
+                    if(verbose)
                     console.log(`!!! mode==0`);
                     setTimeout(function() {
                       $('.vis-network').focus();
@@ -2323,16 +2337,20 @@
             $(window).resize(handleResize);
 
             $(document).keydown(function(event) {
-              if (event.ctrlKey && event.key === 'a') {
+              if (event.ctrlKey && event.key === '1') {
                   const $select = $('#select-need-id');
                   const needId_title = $('#select-need-id option:selected').text();
                   if(needId_title) {
+                    ++qcounter;
                     const key = getID(needId_title);
-                    const description=gnodes[key]['data']['description'];
-                    console.log(`Starting ollama request for node=${key}`);
+                    const description=gnodes[key]['data']['description'].replace(/\n/g," ");
+                    console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
                     console.log(description);
-                    OllamaClient.checkRequirement(description).then((result) => {
-                        console.log("Promise resolved:", result);
+                    startTime = performance.now();
+                    OllamaClient.spellChecker(description).then((result) => {
+                      const endTime = performance.now();
+                      const elapsedTime = endTime - startTime;
+                      console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);
                     })
                     .catch((error) => {
                         console.error("Promise rejected:", error);
@@ -2341,7 +2359,50 @@
                   event.preventDefault();
                   return;
                 }
-
+                if (event.ctrlKey && event.key === '2') {
+                  const $select = $('#select-need-id');
+                  const needId_title = $('#select-need-id option:selected').text();
+                  if(needId_title) {
+                    ++qcounter;
+                    const key = getID(needId_title);
+                    const description=gnodes[key]['data']['description'].replace(/\n/g," ");
+                    console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
+                    console.log(description);
+                    startTime = performance.now();
+                    OllamaClient.grammarChecker(description).then((result) => {
+                      const endTime = performance.now();
+                      const elapsedTime = endTime - startTime;
+                      console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);
+                    })
+                    .catch((error) => {
+                        console.error("Promise rejected:", error);
+                    });
+                  }
+                  event.preventDefault();
+                  return;
+                }
+                if (event.ctrlKey && event.key === 'a') {
+                  const $select = $('#select-need-id');
+                  const needId_title = $('#select-need-id option:selected').text();
+                  if(needId_title) {
+                    ++qcounter;
+                    const key = getID(needId_title);
+                    const description=gnodes[key]['data']['description'].replace(/\n/g," ");
+                    console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
+                    console.log(description);
+                    startTime = performance.now();
+                    OllamaClient.checkRequirement(description).then((result) => {
+                      const endTime = performance.now();
+                      const elapsedTime = endTime - startTime;
+                      console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);
+                    })
+                    .catch((error) => {
+                        console.error("Promise rejected:", error);
+                    });
+                  }
+                  event.preventDefault();
+                  return;
+                }
                 if (event.ctrlKey && event.key.toLowerCase() === 'e') {
                   const highlightedOption = $('#select-type').data('select2').dropdown.$dropdown.find('.select2-results__option--highlighted');
                   if(highlightedOption.length) {

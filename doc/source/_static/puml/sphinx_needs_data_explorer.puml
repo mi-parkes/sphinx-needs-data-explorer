@@ -35,7 +35,7 @@ skinparam DefaultTextAlignment center
     Padding 30
     Margin 65
     'MinimumWidth 100
-    MaximumWidth 300
+    MaximumWidth 600
   }
 </style>
 
@@ -50,15 +50,27 @@ left to right direction
 !endprocedure
 
 *[$rootColor] sphinx_needs_data_explorer
-**[#lightgreen] [[ https://github.com/ollama/ollama/blob/main/README.md Ollama ]]
-*** Requirements Analysis
-**** requirementChecker
-**** requirementFinder
-**** requirementConflictFinder
-**** requirementDependencyFinder
-*** Text Editing and Document Processing
-**** spellChecker
-**** grammarChecker
+**[#lightgreen] AI-Assisted Systems Engineering\n\n[[ https://github.com/ollama/ollama/blob/main/README.md Ollama/ChatGPT/Gemini ]]
+***[#LightSkyBlue] **Requirements Analysis**\n\nDetecting conflicts, dependencies, and ambiguities in requirements.
+****[#LawnGreen] Requirement Checker
+**** Requirement Finder
+**** Requirement Conflict Finder
+**** Requirement Dependency Finder
+***[#LightSkyBlue] **Requirement Traceability**\n\nMapping requirements to design, implementation, and test cases for full lifecycle traceability.
+***[#LightSkyBlue] **Impact Analysis**\n\nUsing AI to analyze how changes in one part of the system affect other traceability items.
+***[#LightSkyBlue] **Validation and Verification Support**\n\nEnsuring that requirements align with test results and system performance.
+***[#LightSkyBlue] **Compliance Checking**\n\nAutomating checks for ASPICE or ISO 26262 compliance.
+***[#LightSkyBlue] **Change Management**\n\nIdentifying the ripple effects of changes in requirements or designs across the V-Cycle.
+***[#LightSkyBlue] **Text Editing and Document Processing**
+****[#LawnGreen] Spell Checker
+****[#LawnGreen] Grammar Checker
+***[#LightSkyBlue] AI-Assisted Requirement Generation
+**** Requirement Generation
+***** Using AI to automatically draft high-level or detailed functional and non-functional requirements based on project descriptions or templates.
+**** Requirement Discovery
+***** AI analyzes inputs (e.g., user interviews, system logs, or documents) to suggest or infer requirements.
+**** Automated Requirement Drafting
+***** AI generates structured requirement documents from unstructured text or prompts.
 **[#lightgreen] [[ https://www.sphinx-doc.org/en/master/ Sphinx ]]
 *** Sphinx Extension
 ****[#LightSkyBlue] Documentation

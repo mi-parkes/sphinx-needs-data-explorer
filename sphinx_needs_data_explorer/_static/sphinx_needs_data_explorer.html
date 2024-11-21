@@ -778,7 +778,7 @@
                     $select.prop('selectedIndex',0).trigger('change');
                     var text = $('#select-need-id option:selected').text();
                     if(verbose)
-                    console.log('handleSelectFirstNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                      console.log('handleSelectFirstNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -790,7 +790,7 @@
                     $select.prop('selectedIndex',svalue.options.length-1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
                     if(verbose)
-                    console.log('handleSelectLastNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                      console.log('handleSelectLastNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -801,7 +801,8 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex - 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    console.log('handleSelectPrevNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    if(verbose)
+                      console.log('handleSelectPrevNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }
@@ -812,7 +813,8 @@
                     var $select = $('#select-need-id');
                     $select.prop('selectedIndex', svalue.selectedIndex + 1).trigger('change');
                     var text = $('#select-need-id option:selected').text();
-                    console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
+                    if(verbose)
+                      console.log('handleSelectNextNodeEvent',svalue.selectedIndex,svalue.options.length,text);
                     drawFilteredGraph(getID(text));
                 }
             }

@@ -2235,7 +2235,8 @@
                 }
             }
             function handleKeydown(e) {
-                console.log('handleKeydown()',e.key,e.keyCode);
+                if(verbose)  
+                  console.log('handleKeydown()',e.key,e.keyCode);
                 //e.preventDefault();
                 if (event.ctrlKey && event.key === 'c') {
                     e.preventDefault();
@@ -2350,14 +2351,15 @@
                   if(needId_title) {
                     ++qcounter;
                     const key = getID(needId_title);
-                    const description=gnodes[key]['data']['description'].replace(/\n/g," ");
-                    console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
+                    const description=gnodes[key]['data']['description'].replace(/\n/g," ").replace(/:term:/g,'');
+                    const command='spellChecker';
+                    console.log(`\n>>> ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key} command=${command}`);
                     console.log(description);
                     startTime = performance.now();
                     OllamaClient.spellChecker(description).then((result) => {
                       const endTime = performance.now();
                       const elapsedTime = endTime - startTime;
-                      console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);
+                      console.log(`\n<<< ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key} command=${command} time=${timestamp(elapsedTime)}\n`, result);
                     })
                     .catch((error) => {
                         console.error("Promise rejected:", error);
@@ -2372,14 +2374,15 @@
                   if(needId_title) {
                     ++qcounter;
                     const key = getID(needId_title);
-                    const description=gnodes[key]['data']['description'].replace(/\n/g," ");
-                    console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
+                    const description=gnodes[key]['data']['description'].replace(/\n/g," ").replace(/:term:/g,'');
+                    const command='grammarChecker';
+                    console.log(`\n>>> ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key} command=${command}`);
                     console.log(description);
                     startTime = performance.now();
                     OllamaClient.grammarChecker(description).then((result) => {
                       const endTime = performance.now();
                       const elapsedTime = endTime - startTime;
-                      console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);
+                      console.log(`\n<<< ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key} command=${command} time=${timestamp(elapsedTime)}\n`, result);
                     })
                     .catch((error) => {
                         console.error("Promise rejected:", error);
@@ -2394,14 +2397,15 @@
                   if(needId_title) {
                     ++qcounter;
                     const key = getID(needId_title);
-                    const description=gnodes[key]['data']['description'].replace(/\n/g," ");
-                    console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
+                    const description=gnodes[key]['data']['description'].replace(/\n/g," ").replace(/:term:/g,'');
+                    const command='requirementChecker';
+                    console.log(`\n>>> ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key} command=${command}`);
                     console.log(description);
                     startTime = performance.now();
                     OllamaClient.requirementChecker(description).then((result) => {
                       const endTime = performance.now();
                       const elapsedTime = endTime - startTime;
-                      console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);
+                      console.log(`\n<<< ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key} command=${command} time=${timestamp(elapsedTime)}\n`, result);
                     })
                     .catch((error) => {
                         console.error("Promise rejected:", error);

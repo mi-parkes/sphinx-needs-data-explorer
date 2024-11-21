@@ -1410,8 +1410,9 @@
                 });
 
                 network.on("dragEnd",function(params){
-                    lastZoomPosition = network.getViewPosition()
-                    console.log(`dragEnd handler: MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
+                    lastZoomPosition = network.getViewPosition();
+                    if(verbose)
+                      console.log(`dragEnd handler: MIN_ZOOM=${MIN_ZOOM} MAX_ZOOM=${MAX_ZOOM} lastZoomPosition=${lastZoomPosition}`)
                 });
 
                 network.on("hoverEdge", function (event) {
@@ -1610,7 +1611,8 @@
                     } else
                     if (event.key === 'ArrowLeft' && network!==null) {
                         event.preventDefault();
-                        console.log("ArrowLeft");
+                        if(verbose)
+                          console.log("ArrowLeft");
                         const currentPosition = network.getViewPosition();
                         const offset = {x:(event.shiftKey)?100:50, y: 0};
                         const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y + offset.y};
@@ -1618,7 +1620,8 @@
                         return;
                     } else if (event.key === 'ArrowRight' && network!==null) {
                         event.preventDefault();
-                        console.log("ArrowRight");
+                        if(verbose)  
+                          console.log("ArrowRight");
                         const currentPosition = network.getViewPosition();
                         const offset = {x:(event.shiftKey)?100:50, y: 0};
                         const newPosition = {x: currentPosition.x - offset.x, y: currentPosition.y + offset.y};
@@ -1626,7 +1629,8 @@
                         return;
                     } else if (event.key === 'ArrowUp' && network!==null) {
                         event.preventDefault();
-                        console.log("ArrowUp");
+                        if(verbose)
+                          console.log("ArrowUp");
                         //setTimeout(function() {
                         const currentPosition = network.getViewPosition();
                         const offset = {x:0, y:(event.shiftKey)?100:50}; // Adjust x and y for desired movement (pixels)
@@ -1636,7 +1640,8 @@
                         return;
                     } else if (event.key === 'ArrowDown' && network!==null) {
                         event.preventDefault();
-                        console.log("ArrowDown");
+                        if(verbose)
+                          console.log("ArrowDown");
                         const currentPosition = network.getViewPosition();
                         const offset = {x:0,y:(event.shiftKey)?100:50}; // Adjust x and y for desired movement (pixels)
                         const newPosition = {x: currentPosition.x + offset.x, y: currentPosition.y - offset.y};
@@ -1679,7 +1684,8 @@
                     if(event.key==='p'||event.key==='P') {
                         event.preventDefault();
                         if(network!==null) {
-                            console.log(`prev Key Up ${ecounter}`);
+                            if(verbose)
+                              console.log(`prev Key Up ${ecounter}`);
                             handleSelectPrevNodeEvent();
                         }
                         return;
@@ -1689,7 +1695,8 @@
                     if(event.key==='n'||event.key==='N') {
                         event.preventDefault();
                         if(network!==null) {
-                            console.log(`next Key Up ${ecounter}`);
+                            if(verbose)
+                              console.log(`next Key Up ${ecounter}`);
                             handleSelectNextNodeEvent();
                         }
                         return;
@@ -2391,7 +2398,7 @@
                     console.log(`>>> Starting ollama request no: ${qcounter.toString().padStart(3,'0')} node=${key}`);
                     console.log(description);
                     startTime = performance.now();
-                    OllamaClient.checkRequirement(description).then((result) => {
+                    OllamaClient.requirementChecker(description).then((result) => {
                       const endTime = performance.now();
                       const elapsedTime = endTime - startTime;
                       console.log(`Promise resolved time=${timestamp(elapsedTime)}`, result);

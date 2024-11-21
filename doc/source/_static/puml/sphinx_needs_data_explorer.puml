@@ -51,11 +51,14 @@ left to right direction
 
 *[$rootColor] sphinx_needs_data_explorer
 **[#lightgreen] [[ https://github.com/ollama/ollama/blob/main/README.md Ollama ]]
-*** Business and Technology
-**** Clarifying and Refining Requirements
-*** Text Editing and Document Processing ([[ https://en.wikipedia.org/wiki/Natural_language_processing NLP ]])
-**** SpellChecker
-**** GrammarChecker
+*** Requirements Analysis
+**** requirementChecker
+**** requirementFinder
+**** requirementConflictFinder
+**** requirementDependencyFinder
+*** Text Editing and Document Processing
+**** spellChecker
+**** grammarChecker
 **[#lightgreen] [[ https://www.sphinx-doc.org/en/master/ Sphinx ]]
 *** Sphinx Extension
 ****[#LightSkyBlue] Documentation

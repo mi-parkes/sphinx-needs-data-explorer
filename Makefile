@@ -92,6 +92,22 @@ test-package:
 	poetry build
 	poetry run task doc
 
+test-package2:
+	$(eval WDIR=/tmp/test)
+	$(eval BRANCH=main)
+	mkdir -p $(WDIR)
+	rm -rf $(WDIR)/*
+	cd $(WDIR)
+	git clone -b $(BRANCH) --single-branch \
+			https://github.com/mi-parkes/sphinx-needs-data-explorer.git
+	cd sphinx-needs-data-explorer
+	gsed -iE 's,^name\s*=\s*"sphinx_needs_data_explorer",name="test",'  pyproject.toml
+	rm -rf sphinx_needs_data_explorer
+	poetry add -G doc sphinx-needs-data-explorer
+	poetry install --no-root
+	poetry run task doc
+	code .
+
 test-package-show:
 	$(eval WDIR=/tmp/test)
 	cd $(WDIR)/sphinx-needs-data-explorer

@@ -7,8 +7,8 @@ from jinja2 import Environment, FileSystemLoader
 from sphinx.util import logging
 from sphinx.errors import ExtensionError
 
-__version__ = "0.9.5"
-version_info = (0, 9, 5)
+__version__ = "0.9.6"
+version_info = (0, 9, 6)
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +76,7 @@ def add_files(app, config):
 
     if not disable_header_button:
         if ("html_theme" in app.config) and (
-            app.config["html_theme"] in ["sphinx_book_theme","sphinx_cadge_theme"]
+            app.config["html_theme"] in ["sphinx_book_theme","sphinx_caedge_theme"]
         ):
             if not ("html_js_files" in app.config):
                 app.config["html_js_files"] = []

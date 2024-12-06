@@ -365,8 +365,10 @@
             var timeoutId = null;
             var gnodes={};
             var children;
+            var childrenSorted;
             var children_edges;
             var parents;
+            var parentsSorted;
             var parents_edges;
             var layoutDirection='DU';
             var dragView=false;
@@ -578,8 +580,10 @@
                 needs=data['versions'][vkey]['needs']
                 let nodes=[];
                 children={};
+                childrenSorted={}
                 children_edges={};
                 parents={};
+                parentsSorted={};
                 parents_edges={};
                 gnodes={};
                 let typeSet = new Set(['any']);
@@ -588,8 +592,10 @@
                     if(verbose)
                         console.log(key,needs[key].docname);
                     children[key]=[];
+                    childrenSorted[key]=false;
                     children_edges[key]=[];
                     parents[key]=[];
+                    parentsSorted[key]=false;
                     parents_edges[key]=[];
                     typeSet.add(needs[key]['type']);
                     var jsonData={'data':{
@@ -605,7 +611,8 @@
                         'id':           needs[key]['id'],
                         "depth" :0,
                         "count" :0,
-                        "sum":0
+                        "sum":0,
+                        "valid_linkage":'ok'
                     }};
 
                     for(const option of extra_options) {
@@ -713,8 +720,10 @@
                                         valid=true;
                                     else if ((itype in valid_linkage) && (otype in valid_linkage[itype])) {
                                         valid=valid_linkage[itype][otype]==link_type;
-                                        if(!valid)
+                                        if(!valid) {
+                                            gnodes[key]['data']['valid_linkage']='';
                                             expected_link_type=`${expected_link_type} -> ${valid_linkage[itype][otype]}`
+                                        }
                                     }
                                     var jsonData={
                                         "arrows":"to",

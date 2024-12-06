@@ -7,6 +7,18 @@ function stopTimer(msg) {
     console.log(`Execution time of ${msg}`,endTime - startTime);
 }
 
+function arraysEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 class Node {
     constructor(left, right, operand) {
     this.left = left;
@@ -85,47 +97,64 @@ class Node {
                 (currentNode['data'][this.left['value']]==this.right['value']);
                 break;
             // attr == []
-            case "==3":
+            case "==3": {
                 ret=false;
+                const id=currentNode['data']['id'];
                 var lhs=null;
                 if(this.left['value']==='outgoing') {
-                    if('attr' in this.left) {
+                  if(!parentsSorted[id]) {
+                    parentsSorted[id]=true;
+                    parents[id].sort();
+                  }
+                  if('attr' in this.left) {
                         //console.log('parents',this.left['attr'])
-                        lhs=parents[currentNode['data']['id']]
+                        lhs=parents[id]
                     } else
-                        lhs=parents[currentNode['data']['id']]
+                        lhs=parents[id]
                 }
                 else
                 if(this.left['value']==='incoming') {
+                    if(!childrenSorted[id]) {
+                      childrenSorted[id]=true;
+                      children[id].sort();
+                    }
                     if('attr' in this.left) {
                         //console.log('children',this.left['attr'])
-                        lhs=children[currentNode['data']['id']]
+                        lhs=children[id]
                     } else
-                        lhs=children[currentNode['data']['id']]
+                        lhs=children[id]
                 }
                 else
                     if(this.left['value'] in currentNode['data'])
                         lhs=currentNode['data'][this.left['value']]
                 if(lhs!=null) {
-                    if((this.right['value']==='')) {
-                        ret=lhs.length===0;
-                        //console.log(currentNode['data']['id']);
-                    } else {
-                        //console.log(currentNode['data']['id']);
-                        ret=false;
-                        //ret=lhs===this.right['value']
-                    }
+                  if((this.right['value']===''))
+                    ret=lhs.length===0;
+                  else
+                    ret=arraysEqual(lhs,this.right['value']);
                 }
                 break;
+            }
             // attr != []
-            case "==4":
+            case "==4": {
                 ret=false;
+                const id=currentNode['data']['id'];
                 var lhs=null;
-                if(this.left['value']==='outgoing')
-                    lhs=parents[currentNode['data']['id']]
+                if(this.left['value']==='outgoing') {
+                  if(!parentsSorted[id]) {
+                    parentsSorted[id]=true;
+                    parents[id].sort();
+                  }
+                  lhs=parents[id];
+                }
                 else
-                if(this.left['value']==='incoming')
-                    lhs=children[currentNode['data']['id']]
+                if(this.left['value']==='incoming') {
+                  if(!childrenSorted[id]) {
+                    childrenSorted[id]=true;
+                    children[id].sort();
+                  }
+                  lhs=children[id]
+                }
                 else
                     if(this.left['value'] in currentNode['data'])
                         lhs=currentNode['data'][this.left['value']]
@@ -139,6 +168,7 @@ class Node {
                     }
                 }
                 break;
+            }
             // attr != '..'
             case "==5":
                 ret=(this.left['value'] in currentNode['data']) && 
@@ -265,8 +295,6 @@ function prepareParser() {
 
         expr =  exprz0 / expr0 / exprz2 / exprz1
 
-        //exprNeg1 = "!" { return { left:{'value':'','type':'empty'}, right:null, operand: "!" } }
-        //exprNeg2 = 
         exprNeg = "!" { return { left:{'value':'','type':'empty'}, right:null, operand: "!" } } / ""
 
         exprz1= n:exprNeg ws "(" ws r:expr ws ")" {
@@ -289,14 +317,12 @@ function prepareParser() {
             return { left: l, right: r, operand: o }
         }
 
-        expr0 =  expr1 / expr2 / expr3 / reg_expr
+        expr0 = expr1 / expr2 / expr3 / reg_expr
 
         expr3 = q:QuotedString ws "in" ws w:Words {
             return { left: q, right: w, operand: 'in_1' }
         }
 
-        //str_array="[" ws l:listElm ws "]" {return l}
-        
         str_array="[" ws l:listElm ws "]" {
             return {'value':l,'location':location(),'type':'array'};
         }
@@ -323,6 +349,11 @@ function prepareParser() {
             return { left:q, right:w, operand: '==1' }
         }
         expr2_3 = w:Words ws "==" ws a:str_array {
+          if( (w.value==='outgoing') || (w.value==='incoming') )
+             return { left:w, right:a, operand: '==3' }
+          if( !('type' in w) || (w.type!=='array'))
+             return error("Comparison type mismatch: please ensure that both values being compared are of the same data type.");
+          else
             return { left:w, right:a, operand: '==3' }
         }
         expr2_4 = w:Words ws "!=" ws a:str_array {
@@ -335,7 +366,7 @@ function prepareParser() {
         expr2 = expr2_1 / expr2_2 / expr2_3 / expr2_4 / expr2_5
 
         reg_expr_pattern = [^/]
-        reg_expr_value=r:$(reg_expr_pattern+) {  
+        reg_expr_value=r:$(reg_expr_pattern+) {
             return {'value':r,'location':location(),'type':'re'};
         }
         
@@ -387,7 +418,7 @@ function parse_input(parser,gnodes,input) {
         msg = parser.parse(input,{gnodes});
         console.log(`Success parsing input: ${input} parsed as ${Node.create(msg).expand()}`);
     } catch (error) {
-        console.log(`Failure parsing input=${msg} ${error}`);
+        console.log(`Failure parsing input: ${input} ${error}`);
         msg=null;
     }
     return msg;

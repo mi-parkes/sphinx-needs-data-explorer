@@ -5,11 +5,14 @@ The ``sphinx_needs_data_explorer`` is a web application built with HTML, CSS, an
 as a `Sphinx <https://www.sphinx-doc.org/en/master/index.html>`_ extension. Created as a personal
 open-source project, it enhances the interactivity of Sphinx-generated documentation by enabling 
 users to explore the `needs.json <https://mi-parkes.github.io/sphinx-needs-data-explorer/needs.json>`_ 
-data produced by the `Sphinx-Needs <https://www.sphinx-needs.com>`_ extension. Users can filter data 
-attributes and view the data in three distinct modes: `network-view`_,
-`table-view`_ , and `file-view`_.
+data produced by the `Sphinx-Needs <https://www.sphinx-needs.com>`_ extension. 
+It utilizes my another project: the `nql library <https://github.com/mi-parkes/nql>`_, a simple query language designed for filtering and 
+search in sphinx_needs.json data. Users can filter data attributes and view the data in three distinct 
+modes: `network-view`_, `table-view`_ , and `file-view`_.
 Additionally, it supports generating reports in various formats, making it a powerful and flexible 
 tool for analyzing and presenting documentation data.
+
+**You can learn more** about this project on the `Sphinx-Needs Data Explorer Podcast <https://notebooklm.google.com/notebook/cc73dea2-36ed-43a0-b30a-96c468ebead2/audio>`_.
 
 Goals and Realization
 #####################

@@ -12,7 +12,7 @@ modes: `network-view`_, `table-view`_ , and `file-view`_.
 Additionally, it supports generating reports in various formats, making it a powerful and flexible 
 tool for analyzing and presenting documentation data.
 
-**You can learn more** about this project on the `Sphinx-Needs Data Explorer Podcast <https://notebooklm.google.com/notebook/cc73dea2-36ed-43a0-b30a-96c468ebead2/audio>`_.
+**You can learn more** about this project on the `Sphinx-Needs Data Explorer Podcast <https://https://notebook.google.com/notebook/cc73dea2-36ed-43a0-b30a-96c468ebead2/artifact/481276eb-449d-4388-91a0-6de278ea60c6>`_.
 
 Goals and Realization
 #####################
